@@ -1,3 +1,5 @@
+import plugin from "tailwindcss/plugin";
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: ["class"],
@@ -8,6 +10,12 @@ module.exports = {
 				lg: "var(--radius)",
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
+			},
+			height: {
+				header: "80px",
+			},
+			maxWidth: {
+				layout: "1400px",
 			},
 			colors: {
 				background: "hsl(var(--background))",
@@ -53,5 +61,21 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		plugin(function ({ matchUtilities, theme }) {
+			matchUtilities(
+				{
+					"auto-fill": (value) => ({
+						gridTemplateColumns: `repeat(auto-fill, minmax(min(${value}, 100%), 1fr))`,
+					}),
+					"auto-fit": (value) => ({
+						gridTemplateColumns: `repeat(auto-fit, minmax(min(${value}, 100%), 1fr))`,
+					}),
+				},
+				{
+					values: theme("width", {}),
+				}
+			);
+		}),],
 };

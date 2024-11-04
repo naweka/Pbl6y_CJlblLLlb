@@ -8,7 +8,7 @@ import js from "@eslint/js";
 
 export default tseslint.config(
 	{
-		ignores: ["dist", "node_modules"],
+		ignores: ["dist", "node_modules", "env.d.ts"],
 		extends: [js.configs.recommended, ...tseslint.configs.recommended],
 		files: ["**/*.{ts,tsx}"],
 		languageOptions: {
@@ -28,7 +28,7 @@ export default tseslint.config(
 		rules: {
 			...reactHooks.configs.recommended.rules,
 			"react-refresh/only-export-components": "warn",
-			"@typescript-eslint/no-empty-object-type": "off"
+			"@typescript-eslint/no-empty-object-type": "off",
 		},
 	},
 	prettier,
