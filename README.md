@@ -5,3 +5,6 @@
 1. Скачать Python
 2. Установить зависимости: `pip install Flask`
 3. Запустить `main.py`
+4. Перейти в папку с фронтедом `cd src/frontend`
+5. Собрать фронтенд `npm i && npm run build`
+6. Запустить `npm run preview`
