@@ -1,6 +1,6 @@
 # Python stuff
-__pycache__/
 *.py[cod]
+__pycache__
 
 # Logs
 logs
