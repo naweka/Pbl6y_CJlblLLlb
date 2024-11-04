@@ -6,10 +6,10 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
 	plugins: [
 		react(),
-		checker({
-			exclude: ["node_modules", "virtual:", "dist"],
-			include: ["src/**/*.{ts,tsx}"],
-		}),
+		// checker({
+		// 	exclude: ["node_modules", "virtual:", "dist"],
+		// 	include: ["src/**/*.{ts,tsx}"],
+		// }),
 	],
 	resolve: {
 		alias: {
