@@ -1,2 +1,2 @@
-const IndexPage = () => import("./IndexPage");
-export { IndexPage };
+const IndexPage = () => import('./IndexPage')
+export { IndexPage }

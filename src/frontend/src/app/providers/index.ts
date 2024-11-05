@@ -1,6 +1,6 @@
-import compose from "compose-function";
-import withRouter from "./with-router";
-import withTheme from "./with-theme";
+import compose from 'compose-function'
+import withRouter from './with-router'
+import withTheme from './with-theme'
 
 /**
  * @hoc Инициализирующая логика приложения
@@ -8,4 +8,4 @@ import withTheme from "./with-theme";
  * - логику инициализации роутера (withRouter)
  * - логику инициализации темы (withTheme)
  */
-export const withProviders = compose(withTheme, withRouter);
+export const withProviders = compose(withTheme, withRouter)

@@ -1,7 +1,7 @@
-import { FC } from "react";
+import { FC } from 'react'
 
-interface FooterProps { }
+interface FooterProps {}
 
 export const Footer: FC<FooterProps> = () => {
-	return <footer></footer>;
-};
+	return <footer></footer>
+}
