@@ -1,19 +1,14 @@
-import path from "path";
-import { defineConfig } from "vite";
-import checker from "vite-plugin-eslint2";
-import react from "@vitejs/plugin-react";
+import path from 'path'
+import { defineConfig } from 'vite'
+import checker from 'vite-plugin-checker'
+import tsconfigPath from 'vite-plugin-tsconfig-paths'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-	plugins: [
-		react(),
-		// checker({
-		// 	exclude: ["node_modules", "virtual:", "dist"],
-		// 	include: ["src/**/*.{ts,tsx}"],
-		// }),
-	],
+	plugins: [react(), tsconfigPath(), checker({ typescript: true })],
 	resolve: {
 		alias: {
-			"@": path.resolve(__dirname, "./src"),
+			'@': path.resolve(__dirname, './src'),
 		},
 	},
-});
+})
