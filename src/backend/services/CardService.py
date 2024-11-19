@@ -27,7 +27,6 @@ def get_cards(search_text:str, tags:List[str]) -> List[Card]:
     if tags is not None:
         res = [x for x in res if all([tag in x.tags for tag in tags])]
     
-    print(res[0].files)
     return res
 
 
