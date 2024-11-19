@@ -12,12 +12,26 @@ from services.CardService import (get_card,
 from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id
 from services.IdkJsonHelper import obj_to_json_simple
-
+from services.UserService import token_required, login_get_token, signup
 
 main_page_blueprint = Blueprint('main_page_blueprint', __name__)
 
+@main_page_blueprint.route('/api/v1/signup', methods=['POST'])
+def signupUser() -> str:
+    login, password, fullname = get_json_parameters(request.json, 'login', 'password', 'fullname')
+    res = signup(login, password, fullname)
+    return res
+
+
+@main_page_blueprint.route('/api/v1/login', methods=['POST'])
+def login() -> str:
+    login, password = get_json_parameters(request.json, 'login', 'password')
+    res = login_get_token(login, password)
+    return res
+
 
 @main_page_blueprint.route('/api/v1/getCards', methods=['POST'])
+@token_required
 def getCards() -> str:
     search_text, tags = get_json_parameters(request.json, 'search_text', 'tags')
     res = get_cards(search_text, tags)
@@ -25,6 +39,7 @@ def getCards() -> str:
 
 
 @main_page_blueprint.route('/api/v1/getCard', methods=['POST'])
+@token_required
 def getCard() -> Card:
     id = get_json_parameter(request.json, 'id')
     res, code = get_card(id)
@@ -32,12 +47,14 @@ def getCard() -> Card:
 
 
 @main_page_blueprint.route('/api/v1/getTags', methods=['GET'])
+@token_required
 def getTags() -> List[str]:
     res = get_all_tags()
     return obj_to_json_simple(res)
 
 
 @main_page_blueprint.route('/api/v1/deleteCard', methods=['POST'])
+@token_required
 def deleteCard() -> None:
     id = get_json_parameter(request.json, 'id')
     res, code = remove_card(id)
@@ -45,12 +62,14 @@ def deleteCard() -> None:
 
 
 @main_page_blueprint.route('/api/v1/getIdForNewFile', methods=['GET'])
+@token_required
 def getIdForNewFile() -> str:
     res = generate_id()
     return res
 
 
 @main_page_blueprint.route('/api/v1/createCard', methods=['POST'])
+@token_required
 def createCard() -> Card:
     title, description = get_json_parameters(request.json, 'title', 'description')
     res, code = add_card(title, description)
@@ -58,6 +77,7 @@ def createCard() -> Card:
 
 
 @main_page_blueprint.route('/api/v1/uploadFile', methods=['POST'])
+@token_required
 def uploadFile():
     print(request.files)
     fs = request.files[''] if 'file' not in request.files else request.files['file'] 
@@ -72,6 +92,7 @@ def uploadFile():
 
 
 @main_page_blueprint.route('/api/v1/getFiles', methods=['POST'])
+@token_required
 def getFiles() -> str:
     id = get_json_parameter(request.json, 'id')
     res, code = get_card_files(id)
