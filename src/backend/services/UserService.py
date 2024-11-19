@@ -4,7 +4,7 @@ from models.User import User
 from hashlib import sha3_256
 from functools import wraps
 from flask import request
-from typing import List
+from typing import List, Union
 import jwt
 
 # TODO
@@ -21,6 +21,23 @@ users_db:List[User] = [
 def get_all_users() -> List[User]:
     global users_db
     return users_db
+
+
+def get_current_user(jwt_data:dict) -> tuple[Union[User,str],int]:
+    user_id = jwt_data['user_id']
+
+    current_user = None
+    for user in users_db:
+        if user.id == user_id:
+            current_user = user
+            break
+
+    if current_user is None:
+        return f'Пользователь с ID "{user_id}" не найден', 400
+
+    res = current_user.__dict__
+    del res['password_hash']
+    return res, 200
 
 
 def add_user(name:str):
@@ -107,14 +124,13 @@ def token_required(f):
             return 'Token is missing', 401
   
         try:
-            data = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
-            print('jwt data: ', data)
-            if datetime.utcnow().timestamp() > data['exp']:
+            jwt_data = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
+            if datetime.utcnow().timestamp() > jwt_data['exp']:
                 return 'Expired token', 401
+            return  f(jwt_data, *args, **kwargs)
+        
         except Exception as e:
             print(e)
-            return 'Invalid token', 401
-        # returns the current logged in users context to the routes
-        return  f(*args, **kwargs)
+            return 'Invalid token', 401        
   
     return decorated
