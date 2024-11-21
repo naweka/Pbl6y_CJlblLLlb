@@ -108,7 +108,7 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
             'exp' : datetime.utcnow() + timedelta(hours=4)
         }, SECRET_JWT_KEY)
         print(token)
-        return token, 200
+        return {'token': token}, 200
     
     return 'Login or password is incorrect', 401
 
