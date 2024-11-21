@@ -14,6 +14,7 @@ from services.IdGeneratorService import generate_id
 from services.IdkJsonHelper import obj_to_json_simple
 from services.UserService import token_required, login_get_token, signup, get_current_user
 
+
 main_page_blueprint = Blueprint('main_page_blueprint', __name__)
 
 
