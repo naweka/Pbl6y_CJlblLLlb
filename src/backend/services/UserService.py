@@ -6,6 +6,7 @@ from functools import wraps
 from flask import request
 from typing import List, Union
 import jwt
+import copy
 
 # TODO
 SECRET_JWT_KEY = '111'
@@ -78,7 +79,8 @@ def signup(login:str, password:str, fullname:str) -> tuple[User,int]:
         'exp' : datetime.utcnow() + timedelta(hours=4)
     }, SECRET_JWT_KEY)
 
-    res = new_user.__dict__
+    # TODO выпилить копирование объекта и сделать всё на нормальных ссылках
+    res = copy.copy(new_user.__dict__)
     del res['password_hash']
     res['token'] = token
     return res, 200
@@ -98,6 +100,7 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
     if not current_user:
         return 'Login or password is incorrect', 401
     
+    print(dir(current_user))
     password_hash = sha3_256(f'{PASSWORD_SALT}{password}'.encode('utf-8')).hexdigest()
     if current_user.password_hash == password_hash:
         token = jwt.encode({
