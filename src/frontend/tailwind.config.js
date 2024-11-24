@@ -6,6 +6,20 @@ module.exports = {
 	content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}'],
 	theme: {
 		extend: {
+			keyframes: {
+				loadingFish1: {
+					"0%": { transform: "rotate(0deg) translateX(55px) rotate(90deg)" },
+					"100%": {
+						transform: "rotate(360deg) translateX(55px) rotate(90deg)"
+					}
+				},
+				loadingFish2: {
+					"0%": { transform: "rotate(180deg) translateX(55px) rotate(90deg)" },
+					"100%": {
+						transform: "rotate(540deg) translateX(55px) rotate(90deg)"
+					}
+				}
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
