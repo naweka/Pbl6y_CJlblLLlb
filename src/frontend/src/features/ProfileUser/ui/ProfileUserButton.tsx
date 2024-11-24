@@ -21,7 +21,7 @@ export const ProfileUserButton: FC<ProfileUserButtonProps> = observer(() => {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
+			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="[&_svg]:size-6" size="icon">
 					<User />
 				</Button>
