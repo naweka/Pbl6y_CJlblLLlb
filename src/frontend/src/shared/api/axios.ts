@@ -22,7 +22,7 @@ export const createAxios = (options: ConfigAxiosCreate) => {
 		const token = localStorage.getItem(tokenKeyLS)
 
 		if (token) {
-			config.headers['x-access-token'] = token
+			config.headers.Authorization = `Bearer ${token}`
 		}
 
 		return config
