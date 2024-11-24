@@ -26,10 +26,17 @@ class AuthStore implements IAuthStore {
 		return localStorage.getItem(config.tokenKeyLS)
 	}
 
+	setToken(token: string) {
+		localStorage.setItem(config.tokenKeyLS, token)
+	}
+
 	async login(data: SendLoginData) {
 		try {
 			const res = await sendLogin(data)
-			ls.setItem(config.tokenKeyLS, res?.data.token)
+			const token = res?.data.token
+			if (token) {
+				this.setToken(token)
+			}
 			this._isAuth = true
 		} catch (error) {
 			console.error(error)
@@ -39,7 +46,10 @@ class AuthStore implements IAuthStore {
 	async signUp(data: SignUpData) {
 		try {
 			const res = await sendSignUp(data)
-			ls.setItem(config.tokenKeyLS, res?.data.token)
+			const token = res?.data.token
+			if (token) {
+				this.setToken(token)
+			}
 			this._isAuth = true
 		} catch (error) {
 			console.error(error)
