@@ -36,7 +36,9 @@ def get_current_user(jwt_data:dict) -> tuple[Union[User,str],int]:
     if current_user is None:
         return f'Пользователь с ID "{user_id}" не найден', 400
 
-    res = current_user.__dict__
+
+    # TODO выпилить копирование объекта
+    res = copy.copy(current_user.__dict__)
     del res['password_hash']
     return res, 200
 
@@ -82,7 +84,7 @@ def signup(login:str, password:str, fullname:str) -> tuple[User,int]:
     # TODO выпилить копирование объекта и сделать всё на нормальных ссылках
     res = copy.copy(new_user.__dict__)
     del res['password_hash']
-    res['token'] = token
+    res['token'] = f'Bearer {token}'
     return res, 200
 
 
@@ -107,8 +109,7 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
             'user_id': current_user.id,
             'exp' : datetime.utcnow() + timedelta(hours=4)
         }, SECRET_JWT_KEY)
-        print(token)
-        return {'token': token}, 200
+        return {'token': f'Bearer {token}'}, 200
     
     return 'Login or password is incorrect', 401
 
@@ -121,8 +122,9 @@ def token_required(f):
         print(args, kwargs)
 
         # jwt is passed in the request header
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
+            token = token.replace('Bearer ', '').strip()
         if not token:
             return 'Token is missing', 401
   
