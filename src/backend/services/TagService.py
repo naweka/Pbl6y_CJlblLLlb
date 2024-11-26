@@ -4,9 +4,9 @@ from typing import List
 tags_db:List[str] = ['tag1', 'tag2']
 
 
-def get_all_tags() -> List[str]:
+def get_all_tags() -> tuple[List[str], int]:
     global tags_db
-    return tags_db
+    return tags_db, 200
 
 
 def add_tag(name:str):
