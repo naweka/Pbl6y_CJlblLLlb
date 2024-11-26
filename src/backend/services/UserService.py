@@ -34,7 +34,9 @@ def get_current_user(jwt_data:dict) -> tuple[Union[User,str],int]:
             break
 
     if current_user is None:
-        return f'Пользователь с ID "{user_id}" не найден', 400
+        return {
+            'error_message': f'Пользователь с ID "{user_id}" не найден'
+        }, 400
 
 
     # TODO выпилить копирование объекта
@@ -59,7 +61,10 @@ def remove_user(id:str):
 
 def signup(login:str, password:str, fullname:str) -> tuple[User,int]:
     if login is None or password is None or fullname is None:
-        return 'Provided information about user is incorrect', 401
+        return {
+            'error_message': 'Provided information about user is incorrect'
+        }, 401
+    
     global users_db
     current_user = None
     
@@ -69,7 +74,9 @@ def signup(login:str, password:str, fullname:str) -> tuple[User,int]:
             break
     
     if current_user:
-        return 'This user already exist', 401
+        return {
+            'error_message': 'This user already exist'
+        }, 401
     
     password_hash = sha3_256(f'{PASSWORD_SALT}{password}'.encode('utf-8')).hexdigest()
 
@@ -90,7 +97,9 @@ def signup(login:str, password:str, fullname:str) -> tuple[User,int]:
 
 def login_get_token(login:str, password:str) -> tuple[str,int]:
     if login is None or password is None:
-        return 'Login or password is incorrect', 401
+        return {
+            'error_message': 'Login or password is incorrect'
+        }, 401
     global users_db
     current_user = None
     
@@ -100,9 +109,10 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
             break
     
     if not current_user:
-        return 'Login or password is incorrect', 401
+        return {
+            'error_message': 'Login or password is incorrect'
+        }, 401
     
-    print(dir(current_user))
     password_hash = sha3_256(f'{PASSWORD_SALT}{password}'.encode('utf-8')).hexdigest()
     if current_user.password_hash == password_hash:
         token = jwt.encode({
@@ -111,7 +121,9 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
         }, SECRET_JWT_KEY)
         return {'token': token}, 200
     
-    return 'Login or password is incorrect', 401
+    return {
+        'error_message': 'Login or password is incorrect'
+        }, 401
 
 
 def token_required(f):
@@ -119,24 +131,29 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
 
-        print(args, kwargs)
-
         # jwt is passed in the request header
         if 'Authorization' in request.headers:
             token = request.headers['Authorization']
             token = token.replace('Bearer ', '').strip()
-            
+
         if not token:
-            return 'Token is missing', 401
+            return {
+                'error_message': 'Authorization token is missing'
+            }, 401
   
         try:
             jwt_data = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
             if datetime.utcnow().timestamp() > jwt_data['exp']:
-                return 'Expired token', 401
+                return {
+                    'error_message': 'Expired token'
+                }, 401
+            print(3, f(jwt_data, *args, **kwargs))
             return  f(jwt_data, *args, **kwargs)
         
         except Exception as e:
             print(e)
-            return 'Invalid token', 401        
+            return {
+                    'error_message': 'Invalid token'
+                }, 401       
   
     return decorated

@@ -16,7 +16,7 @@ cards_db:List[Card] = [
     Card("09090909-0909-0909-0909-090909090909", 'Тест файла', 'Описание', 'PREPARING', [], []),
 ]
 
-def get_cards(search_text:str, tags:List[str]) -> List[Card]:
+def get_cards(search_text:str, tags:List[str]) -> tuple[List[Card],int]:
     res = cards_db[:]
     if search_text is not None and search_text != '':
         search_text_lower = search_text.lower()
@@ -27,7 +27,7 @@ def get_cards(search_text:str, tags:List[str]) -> List[Card]:
     if tags is not None:
         res = [x for x in res if all([tag in x.tags for tag in tags])]
     
-    return res
+    return res, 200
 
 
 def __get_files_by_ids(ids:List[str]) -> List[FileInfo]:
@@ -42,7 +42,9 @@ def get_card_files(id:str) -> tuple[List[FileInfo],int]:
             file_ids:List[str] = c.files
             files = __get_files_by_ids(file_ids)
             return files, 200
-    return f'Not found entity with id: {id}', 400
+    return {
+        'error_message': f'Not found entity with id: {id}'
+    }, 400
 
 
 def upload_file_for_card(card_id:bytes,
@@ -58,10 +60,14 @@ def upload_file_for_card(card_id:bytes,
     for c in cards_db:
         if c.id != str(uuid_card):
             continue
+
         c.files.append(str(uuid_file))
         file_db.append(FileInfo(str(uuid_file), filename, filename_alias, None, None))
         return '', 200
-    return f'Not found entity with id: {str(uuid_card)}', 400
+    
+    return {
+        'error_message': f'Not found entity with id: {str(uuid_card)}'
+    }, 400
 
 
 def get_card(id:str) -> tuple[Card,int]:
@@ -69,17 +75,22 @@ def get_card(id:str) -> tuple[Card,int]:
     for c in cards_db:
         if c.id == id:
             return c, 200
-    return f'Card with id {id} not found', 400
+    return {
+        'error_message': f'Card with id {id} not found'
+    }, 400
 
 
 def add_card(title:str, description:str) -> tuple[str,int]:
-    global cards_db
     # TODO null checker
     if title is None or title == '':
-        return f'Title is null or empty', 400
+        return {
+            'error_message': f'Title is null or empty'
+        }, 400
+    
     if description is None:
         description = ''
     
+    global cards_db
     id = generate_id()
     c = Card(id, title, description, 'PREPARING', [], [])
     cards_db.append(c)
@@ -87,13 +98,17 @@ def add_card(title:str, description:str) -> tuple[str,int]:
 
 
 def remove_card(id:str) -> tuple[str,int]:
-    global cards_db
     if id is None or id == '':
-        return f'Wrong id: {id}', 400
+        return {
+            'error_message': f'Wrong id: {id}'
+        }, 400
     
+    global cards_db
     for elem in cards_db:
         if elem.id == id:
             cards_db.remove(elem)
             return '', 200  
         
-    return f'Not found entity with id: {id}', 400
+    return {
+        'error_message': f'Not found entity with id: {id}'
+    }, 400
