@@ -46,7 +46,7 @@ export const Header: FC<HeaderProps> = () => {
 			<Separator className="mx-1 hidden h-10 md:block" orientation="vertical" />
 			<div className="flex min-h-10 w-full flex-wrap items-center gap-2 md:w-1/2 lg:w-auto">
 				{data.map(({ label }, i) => (
-					<Badge key={i}>{label}</Badge>
+					<Badge key={i} className="cursor-pointer">{label}</Badge>
 				))}
 			</div>
 		</section>

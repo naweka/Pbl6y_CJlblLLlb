@@ -1,22 +1,23 @@
-import { EllipsisVertical } from 'lucide-react'
-import { FC } from 'react'
-import { Link } from 'react-router-dom'
+import { FC, Fragment, ReactNode } from 'react'
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-	Button,
 	CardContent,
 	CardFooter,
 	CardHeader,
 	Card as CardUI,
 } from '@/shared/ui'
+import { Link, To } from 'react-router-dom'
+import { isEmpty } from '@/shared/lib'
 
 interface CardProps {
 	title: string
 	avatarFallback: string
 	description?: string
 	avatarUrl?: string
+	action?: ReactNode
+	to?: To
 }
 
 export const Card: FC<CardProps> = ({
@@ -24,10 +25,13 @@ export const Card: FC<CardProps> = ({
 	description,
 	avatarFallback,
 	avatarUrl,
+	action,
+	to,
 }) => {
+	const IsLink = isEmpty(to) ? Fragment : Link
 	return (
-		<Link to="/" className="contents">
-			<CardUI className="flex flex-row transition-transform hover:scale-[1.01]">
+		<CardUI className="flex flex-row transition-transform hover:scale-[1.01]">
+			<IsLink className="contents" to={to!}>
 				<CardHeader className="pr-0">
 					<Avatar>
 						<AvatarImage src={avatarUrl} alt={avatarFallback} />
@@ -38,12 +42,10 @@ export const Card: FC<CardProps> = ({
 					<p>{title}</p>
 					<p>{description}</p>
 				</CardContent>
-				<CardFooter className="pb-0 pr-2">
-					<Button size="icon" variant="ghost">
-						<EllipsisVertical />
-					</Button>
-				</CardFooter>
-			</CardUI>
-		</Link>
+			</IsLink>
+			<CardFooter className="pb-0 pr-2">
+				{action}
+			</CardFooter>
+		</CardUI>
 	)
 }

@@ -8,6 +8,8 @@ import {
 	DropdownMenuTrigger,
 } from '@/shared/ui'
 
+// TODO Сделать адаптивный Drawer для mobile
+
 export function ModeToggle() {
 	const { setTheme } = useTheme()
 

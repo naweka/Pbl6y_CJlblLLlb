@@ -61,7 +61,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
 					{value
 						? data.find((framework) => framework.value === value)?.label
 						: 'Выбрать тег'}
-					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+					<ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-[150px] p-0">

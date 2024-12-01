@@ -7,6 +7,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage'
 import { ProtectedAuth, RedirectToMain } from '@/entities/Auth/ui'
 import { Loading } from '@/entities/Loading'
 import { UserPage } from '@/pages/UserPage'
+import { DetailPage } from '@/pages/DetailPage'
 
 const publicRouter = [{
 	children: [
@@ -38,6 +39,10 @@ const protectedRouter = [{
 		{
 			path: ROUTE_CONSTANTS.USER_PAGE,
 			lazy: UserPage,
+		},
+		{
+			path: ROUTE_CONSTANTS.DETAIL_CARD.URL,
+			lazy: DetailPage,
 		},
 	],
 }]

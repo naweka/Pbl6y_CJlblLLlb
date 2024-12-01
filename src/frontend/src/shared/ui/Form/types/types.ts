@@ -1,15 +1,16 @@
+import { InputHTMLAttributes } from 'react'
+
 export enum FieldTypes {
 	Input = 'Input',
 }
 
-export type BaseFieldProps = {
+export type BaseFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 	name: string
 	disabled?: boolean
 	label?: string
 	placeholder?: string
 	description?: string
 	required?: boolean
-	type?: 'password' | 'text'
 }
 
 export type FormSwitcherProps = BaseFieldProps & { component: FieldTypes }
