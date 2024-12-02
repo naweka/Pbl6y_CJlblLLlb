@@ -8,7 +8,8 @@ from services.CardService import (get_card,
                                   add_card,
                                   remove_card,
                                   upload_file_for_card,
-                                  get_card_files)
+                                  get_card_files,
+                                  update_card)
 from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id
 from services.IdkJsonHelper import endpoint_output_wrapper
@@ -16,6 +17,9 @@ from services.UserService import token_required, login_get_token, signup, get_cu
 
 
 main_page_blueprint = Blueprint('main_page_blueprint', __name__)
+
+
+# --- AUTH & USERS ---
 
 
 @main_page_blueprint.route('/api/v1/getCurrentUser', methods=['GET'])
@@ -42,6 +46,9 @@ def login() -> str:
     return res, code
 
 
+# --- CARDS ---
+
+
 @main_page_blueprint.route('/api/v1/getCards', methods=['POST'])
 @token_required
 @endpoint_output_wrapper
@@ -60,14 +67,6 @@ def getCard(jwt_data:dict) -> Card:
     return res, code
 
 
-@main_page_blueprint.route('/api/v1/getTags', methods=['GET'])
-@token_required
-@endpoint_output_wrapper
-def getTags(jwt_data:dict) -> List[str]:
-    res = get_all_tags()
-    return res
-
-
 @main_page_blueprint.route('/api/v1/deleteCard', methods=['POST'])
 @token_required
 @endpoint_output_wrapper
@@ -77,21 +76,44 @@ def deleteCard(jwt_data:dict) -> None:
     return res, code
 
 
+@main_page_blueprint.route('/api/v1/createCard', methods=['POST'])
+@token_required
+@endpoint_output_wrapper
+def createCard(jwt_data:dict) -> Card:
+    title, description, tags = get_json_parameters(request.json, 'title', 'description', 'tags')
+    res, code = add_card(title, description, tags)
+    return res, code
+
+
+@main_page_blueprint.route('/api/v1/updateCard', methods=['POST'])
+@token_required
+@endpoint_output_wrapper
+def updateCard(jwt_data:dict) -> Card:
+    id, title, description, tags = get_json_parameters(request.json, 'id', 'title', 'description', 'tags')
+    res, code = update_card(id, title, description, tags)
+    return res, code
+
+
+# --- TAGS ---
+
+
+@main_page_blueprint.route('/api/v1/getTags', methods=['GET'])
+@token_required
+@endpoint_output_wrapper
+def getTags(jwt_data:dict) -> List[str]:
+    res = get_all_tags()
+    return res
+
+
+# --- FILES ---
+
+
 @main_page_blueprint.route('/api/v1/getIdForNewFile', methods=['GET'])
 @token_required
 @endpoint_output_wrapper
 def getIdForNewFile(jwt_data:dict) -> str:
     res = generate_id()
     return res, 200
-
-
-@main_page_blueprint.route('/api/v1/createCard', methods=['POST'])
-@token_required
-@endpoint_output_wrapper
-def createCard(jwt_data:dict) -> Card:
-    title, description = get_json_parameters(request.json, 'title', 'description')
-    res, code = add_card(title, description)
-    return res, code
 
 
 @main_page_blueprint.route('/api/v1/uploadFile', methods=['POST'])
