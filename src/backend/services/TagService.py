@@ -1,21 +1,17 @@
 from typing import List
-
-# TODO
-tags_db:List[str] = ['tag1', 'tag2']
+from services.CardService import cards_db
 
 
 def get_all_tags() -> tuple[List[str], int]:
-    global tags_db
-    return tags_db, 200
+    res = set()
+    for c in cards_db:
+        for t in c.tags:
+            res.add(t)
+    return list(res), 200
 
 
-def add_tag(name:str):
-    global tags_db
-    tags_db.append(name)
-    return name
-
-
-def remove_tag(name:str):
-    for elem in tags_db:
-        if elem.name == name:
-            del(elem)
+def remove_tag(name:str) -> int:
+    for c in cards_db:
+        if name in c.tags:
+            c.tags.remove(name)
+    return 200

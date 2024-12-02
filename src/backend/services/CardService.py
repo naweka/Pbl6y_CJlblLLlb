@@ -7,6 +7,7 @@ from uuid import UUID
 
 # TODO
 file_db:List[FileInfo] = []
+
 cards_db:List[Card] = [
     Card(generate_id(), 'title1', 'description1', 'ANALYZING', ['tag1', 'tag2'], []),
     Card(generate_id(), 'title2', 'lol', 'READY', [], []),
@@ -80,7 +81,7 @@ def get_card(id:str) -> tuple[Card,int]:
     }, 400
 
 
-def add_card(title:str, description:str) -> tuple[str,int]:
+def add_card(title:str, description:str, tags:List[str]) -> tuple[Card,int]:
     # TODO null checker
     if title is None or title == '':
         return {
@@ -92,9 +93,33 @@ def add_card(title:str, description:str) -> tuple[str,int]:
     
     global cards_db
     id = generate_id()
-    c = Card(id, title, description, 'PREPARING', [], [])
+    c = Card(id, title, description, 'PREPARING', tags if tags else [], [])
     cards_db.append(c)
     return c, 200
+
+
+
+def update_card(id: str, title:str, description:str, tags:List[str]) -> tuple[Card,int]:    
+    # TODO null checker
+    if id is None or id == '':
+        return {
+            'error_message': f'Id is null or empty'
+        }, 400
+    
+    global cards_db
+    for card in cards_db:
+        if card.id == id:
+            if title is not None and title != '':
+                card.title = title
+            if description is not None and description != '':
+                card.description = description
+            if tags is not None:
+                card.tags = tags
+            return card, 200
+    
+    return {
+            'error_message': f'Карточка с Id {id} не найдена'
+        }, 400
 
 
 def remove_card(id:str) -> tuple[str,int]:
