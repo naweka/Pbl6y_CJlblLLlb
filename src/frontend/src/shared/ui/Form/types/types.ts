@@ -1,16 +1,24 @@
-import { InputHTMLAttributes } from 'react'
+import { HTMLAttributes, InputHTMLAttributes } from 'react'
 
 export enum FieldTypes {
 	Input = 'Input',
+	MultiSelect = 'MultiSelect',
+	Textarea = 'Textarea',
 }
 
-export type BaseFieldProps = InputHTMLAttributes<HTMLInputElement> & {
+export type BaseFieldProps = {
 	name: string
 	disabled?: boolean
 	label?: string
 	placeholder?: string
 	description?: string
 	required?: boolean
+	descriptionProps?: React.HTMLAttributes<HTMLParagraphElement>
+	messageProps?: React.HTMLAttributes<HTMLParagraphElement>
 }
 
-export type FormSwitcherProps = BaseFieldProps & { component: FieldTypes }
+export type FormSwitcherProps = BaseFieldProps &
+	Omit<Partial<HTMLAttributes<HTMLElement>>, 'defaultValue'> &
+	Pick<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
+		component: FieldTypes
+	}

@@ -5,19 +5,20 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { cn } from '@/shared/lib';
 import { BaseFieldProps } from '../../types';
 import { AssignComponent } from '@/shared/types';
-import { Input, InputProps } from '@/shared/ui/Input';
-import { InputHTMLAttributes } from 'react';
+import { Textarea, TextareaProps } from '@/shared/ui/Textarea';
 
-interface BaseFieldInputProps
-    extends Omit<InputProps, 'defaultValue' | 'name' | 'type'>,
-    BaseFieldProps, Omit<InputHTMLAttributes<HTMLInputElement>, 'name'>,
+interface BaseFieldTextareaProps
+    extends Omit<TextareaProps, 'name'>,
+    BaseFieldProps,
     UseControllerProps {
     labelProps?: LabelProps;
+    descriptionProps?: React.HTMLAttributes<HTMLParagraphElement>;
+    messageProps?: React.HTMLAttributes<HTMLParagraphElement>;
     defaultValue?: string;
 }
 
-export const BaseFieldInput: AssignComponent<'input', BaseFieldInputProps> = ({
-    as = Input,
+export const BaseFieldTextarea: AssignComponent<'input', BaseFieldTextareaProps> = ({
+    as = Textarea,
     label,
     description,
     name,

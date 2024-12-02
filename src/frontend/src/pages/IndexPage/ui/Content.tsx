@@ -1,6 +1,5 @@
 import { FC } from 'react'
 import { Card } from '@/entities/Card'
-import { Link } from 'react-router-dom'
 import { ROUTE_CONSTANTS } from '@/shared/config'
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui'
 import { EllipsisVertical, ExternalLink, Trash } from 'lucide-react'

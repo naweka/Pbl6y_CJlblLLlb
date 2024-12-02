@@ -2,8 +2,10 @@ import { FC } from 'react';
 import { FieldTypes, FormSwitcherProps } from '../types';
 import { BaseForm } from '.';
 
-const MapComponent: Record<FieldTypes, FC<FormSwitcherProps>> = {
+const MapComponent: Record<FieldTypes, FC<any>> = {
     [FieldTypes.Input]: (props) => <BaseForm.BaseFieldInput {...props} />,
+    [FieldTypes.MultiSelect]: (props) => <BaseForm.BaseFieldMultiSelect {...props} />,
+    [FieldTypes.Textarea]: (props) => <BaseForm.BaseFieldTextarea {...props} />
 };
 
 export const FormSwitcher: FC<FormSwitcherProps> = (field) => {
