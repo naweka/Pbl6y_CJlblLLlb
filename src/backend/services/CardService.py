@@ -14,7 +14,7 @@ cards_db:List[Card] = [
     Card(generate_id(), 'Это чё !"№;%:?*\'-+', 'cringe', 'PREPARING', [], []),
     Card(generate_id(), 'name in english', 'sus', 'UPLOADING', ['tag1'], []),
     Card(generate_id(), 'название на русском', 'amogus', '', ['tag2'], []),
-    Card("09090909-0909-0909-0909-090909090909", 'Тест файла', 'Описание', 'PREPARING', [], []),
+    Card("08080808-0909-0909-0909-090909090909", 'Тест файла', 'Описание', 'PREPARING', [], []),
 ]
 
 def get_cards(search_text:str, tags:List[str]) -> tuple[List[Card],int]:

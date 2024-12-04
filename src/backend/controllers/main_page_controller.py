@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 from typing import List
 from models.Card import Card
 from controllers.controller_utils import (get_json_parameters,
@@ -139,3 +139,9 @@ def getFiles(jwt_data:dict) -> str:
     id = get_json_parameter(request.json, 'id')
     res, code = get_card_files(id)
     return res, code
+
+import os
+@main_page_blueprint.route('/download', methods=['GET'])
+def downloadFile():
+    path = os.getcwd()+"/server_data/spectrograms/3ce34ce2b22b11efa7619588f9d53c51.png"
+    return send_file(path, as_attachment=False), 200

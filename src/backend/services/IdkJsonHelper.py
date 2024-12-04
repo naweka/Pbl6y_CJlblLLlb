@@ -1,4 +1,5 @@
 from functools import wraps
+import traceback 
 
 
 def obj_to_dict_simple(o):
@@ -144,7 +145,8 @@ def endpoint_output_wrapper(f):
             return res_dict, code
         
         except Exception as e:
-            print(e)
+            traceback.print_exc() 
+            # print(e)
             return obj_to_dict({
                 'error_message': str(e)
             }), 500

@@ -5,6 +5,7 @@ from hashlib import sha3_256
 from functools import wraps
 from flask import request
 from typing import List, Union
+import traceback
 import jwt
 import copy
 
@@ -147,11 +148,13 @@ def token_required(f):
                 return {
                     'error_message': 'Expired token'
                 }, 401
-            print(3, f(jwt_data, *args, **kwargs))
-            return  f(jwt_data, *args, **kwargs)
+            res = f(jwt_data, *args, **kwargs)
+            print(res)
+            return res
         
         except Exception as e:
-            print(e)
+            traceback.print_exc() 
+            # raise e
             return {
                     'error_message': 'Invalid token'
                 }, 401       
