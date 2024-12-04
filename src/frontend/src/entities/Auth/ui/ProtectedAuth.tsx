@@ -17,13 +17,13 @@ const MapComponentStatus = {
 
 const ProtectedAuthError = () => {
     const location = useLocation()
-    return <Navigate to={ROUTE_CONSTANTS.INDEX} state={{ from: location }} replace />
+    return <Navigate to={ROUTE_CONSTANTS.INDEX.URL} state={{ from: location }} replace />
 }
 
 const ProtectedAuthSuccess = observer(() => {
     const location = useLocation();
     if (!authStore.isAuth) {
-        return <Navigate to={ROUTE_CONSTANTS.AUTH} state={{ from: location }} replace />
+        return <Navigate to={ROUTE_CONSTANTS.AUTH.URL} state={{ from: location }} replace />
     }
     return (
         <Outlet />

@@ -18,7 +18,7 @@ const MapComponentStatus = {
 const RedirectToMainSuccess = observer(() => {
     const location = useLocation();
     if (authStore.isAuth) {
-        return <Navigate to={ROUTE_CONSTANTS.INDEX} state={{ from: location }} replace />
+        return <Navigate to={ROUTE_CONSTANTS.INDEX.URL} state={{ from: location }} replace />
     }
     return (
         <Outlet />

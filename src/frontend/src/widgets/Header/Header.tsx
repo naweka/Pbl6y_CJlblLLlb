@@ -12,7 +12,7 @@ export const Header: FC<HeaderProps> = () => {
 		<header className="flex h-header items-center justify-center rounded-b-md border border-t-0">
 			<div className="flex w-full max-w-layout justify-between px-5 py-2">
 				<div>
-					<Link to={ROUTE_CONSTANTS.INDEX}>
+					<Link to={ROUTE_CONSTANTS.INDEX.URL}>
 						<Logo className="h-16 w-28 text-foreground" />
 					</Link>
 				</div>

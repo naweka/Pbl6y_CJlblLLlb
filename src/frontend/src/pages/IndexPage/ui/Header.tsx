@@ -19,18 +19,6 @@ const data = [
 	{
 		label: 'Неизвестный',
 	},
-	{
-		label: 'Неизвестный',
-	},
-	{
-		label: 'Неизвестный',
-	},
-	{
-		label: 'Неизвестный',
-	},
-	{
-		label: 'Неизвестный',
-	},
 ]
 
 export const Header: FC<HeaderProps> = () => {

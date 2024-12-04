@@ -13,7 +13,7 @@ export const ProfileUserButton: FC<ProfileUserButtonProps> = observer(() => {
 
 	if (!authStore.isAuth) {
 		return (
-			<Button variant="ghost" onClick={() => navigate(ROUTE_CONSTANTS.AUTH)} className="[&_svg]:size-6" size="icon">
+			<Button variant="ghost" onClick={() => navigate(ROUTE_CONSTANTS.AUTH.URL)} className="[&_svg]:size-6" size="icon">
 				<User />
 			</Button>
 		)
@@ -29,7 +29,7 @@ export const ProfileUserButton: FC<ProfileUserButtonProps> = observer(() => {
 			<DropdownMenuContent>
 				<DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={() => navigate(ROUTE_CONSTANTS.USER_PAGE)}>
+				<DropdownMenuItem onClick={() => navigate(ROUTE_CONSTANTS.USER_PAGE.URL)}>
 					<User />
 					<span>Профиль</span>
 				</DropdownMenuItem>

@@ -14,7 +14,7 @@ export const NotFoundPage: FC<NotFoundPageProps> = () => {
             <div className='flex flex-grow flex-col justify-center items-center gap-5'>
                 <p className='text-9xl font-bold'>404</p>
                 <p className='text-2xl font-bold'>Страница не найдена</p>
-                <Button size="lg" onClick={() => navigate(ROUTE_CONSTANTS.INDEX)}>На главную страницу</Button>
+                <Button size="lg" onClick={() => navigate(ROUTE_CONSTANTS.INDEX.URL)}>На главную страницу</Button>
             </div>
         </main>
     )

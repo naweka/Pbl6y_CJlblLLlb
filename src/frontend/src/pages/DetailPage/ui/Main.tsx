@@ -4,6 +4,6 @@ interface MainProps { }
 
 export const Main: FC<MainProps> = () => {
     return (
-        <div>Main</div>
+        <div></div>
     )
 }

@@ -1,18 +1,37 @@
 import { Plus } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
-import { BaseForm, Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Form, FormSwitcher } from '@/shared/ui'
+import { BaseForm, Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Form, FormSwitcher, Spinner } from '@/shared/ui'
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FIELDS_CARD, formSchemaValidateCard as formSchema } from '../constant';
 import { tagsStore } from '@/entities/Tags';
 import { observer } from 'mobx-react-lite';
-import { sendCreateCard } from '../api';
+import { STATUS } from '@/shared/types';
+import { sendCreateCard } from '@/entities/Card';
 
 interface CreateCardButtonProps { }
 
-export const CreateCardButton: FC<CreateCardButtonProps> = observer(() => {
-	const [active, setActive] = useState(false)
+interface CreateCardProps {
+	setActive: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const MapComponent: Record<STATUS, FC<CreateCardProps>> = {
+	[STATUS.INITIAL]: (props) => <CreateCardLoading {...props} />,
+	[STATUS.LOADING]: (props) => <CreateCardLoading {...props} />,
+	[STATUS.SUCCESS]: (props) => <CreateCardSuccess {...props} />,
+	[STATUS.ERROR]: (props) => <CreateCardError {...props} />,
+}
+
+const CreateCardError: FC<CreateCardProps> = () => {
+	return <div className='flex justify-center items-center'>Что-то пошло не так...</div>
+}
+
+const CreateCardLoading: FC<CreateCardProps> = () => {
+	return <div className='flex justify-center items-center w-full'><Spinner /></div>
+}
+
+const CreateCardSuccess: FC<CreateCardProps> = observer(({ setActive }) => {
 	const { tags, ...otherField } = FIELDS_CARD
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -22,9 +41,37 @@ export const CreateCardButton: FC<CreateCardButtonProps> = observer(() => {
 		await sendCreateCard(payload).then(() => setActive(false))
 	};
 
+
+	return (
+		<Form {...form}>
+			<form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)}>
+				<DialogHeader>
+					<DialogTitle>Создание карточки</DialogTitle>
+				</DialogHeader>
+				<div onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+					{Object.values(otherField).map((field) => (
+						<FormSwitcher key={field.name} {...field} />
+					))}
+					<BaseForm.BaseFieldMultiSelect options={tagsStore.tags} {...tags} />
+				</div>
+				<DialogFooter>
+					<Button className='w-full' type="submit">Создать</Button>
+				</DialogFooter>
+			</form>
+		</Form>
+	)
+})
+
+export const CreateCardButton: FC<CreateCardButtonProps> = observer(() => {
+	const [active, setActive] = useState(false)
+
 	useEffect(() => {
-		tagsStore.fetchTags()
-	}, [])
+		if (active) {
+			tagsStore.fetchTags()
+		}
+	}, [active])
+
+	const Component = MapComponent[tagsStore.status] ?? null
 
 	return (
 		<Dialog open={active} onOpenChange={setActive}>
@@ -34,23 +81,8 @@ export const CreateCardButton: FC<CreateCardButtonProps> = observer(() => {
 					<span className="sr-only">Создать карточку</span>
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
-				<Form {...form}>
-					<form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)}>
-						<DialogHeader>
-							<DialogTitle>Создание карточки</DialogTitle>
-						</DialogHeader>
-						<div onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							{Object.values(otherField).map((field) => (
-								<FormSwitcher key={field.name} {...field} />
-							))}
-							<BaseForm.BaseFieldMultiSelect options={tagsStore.tags} {...tags} />
-						</div>
-						<DialogFooter>
-							<Button className='w-full' type="submit">Создать</Button>
-						</DialogFooter>
-					</form>
-				</Form>
+			<DialogContent className="sm:max-w-[425px] min-h-40">
+				{Component && <Component setActive={setActive} />}
 			</DialogContent>
 		</Dialog>
 	)

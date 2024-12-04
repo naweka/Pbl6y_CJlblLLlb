@@ -12,12 +12,12 @@ import { DetailPage } from '@/pages/DetailPage'
 const publicRouter = [{
 	children: [
 		{
-			path: ROUTE_CONSTANTS.INDEX,
+			path: ROUTE_CONSTANTS.INDEX.URL,
 			index: true,
 			lazy: IndexPage,
 		},
 		{
-			path: ROUTE_CONSTANTS.NOTFOUND,
+			path: ROUTE_CONSTANTS.NOTFOUND.URL,
 			element: <NotFoundPage />,
 		},
 	],
@@ -27,7 +27,7 @@ const authRouter = [{
 	element: <RedirectToMain />,
 	children: [
 		{
-			path: ROUTE_CONSTANTS.AUTH,
+			path: ROUTE_CONSTANTS.AUTH.URL,
 			lazy: AuthPage,
 		},
 	],
@@ -37,7 +37,7 @@ const protectedRouter = [{
 	element: <ProtectedAuth />,
 	children: [
 		{
-			path: ROUTE_CONSTANTS.USER_PAGE,
+			path: ROUTE_CONSTANTS.USER_PAGE.URL,
 			lazy: UserPage,
 		},
 		{
