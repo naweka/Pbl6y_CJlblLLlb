@@ -6,7 +6,7 @@ export interface SendCreateCardData {
 
 export interface GetAllCardData {
 	search_text?: string
-	tags?: string
+	tags?: string[]
 }
 
 export interface GetCardData {

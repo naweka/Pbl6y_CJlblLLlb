@@ -1,14 +1,13 @@
-import { AxiosResponse } from 'axios';
-import merge from 'lodash.merge';
-import { showToast } from '../hooks';
-
+import { AxiosResponse } from 'axios'
+import merge from 'lodash.merge'
+import { showToast } from '../hooks'
 
 const notificationsToast = (response: AxiosResponse) => {
 	if (response?.data?.error_message.length > 0) {
 		showToast({
 			variant: 'destructive',
-			description:response?.data?.error_message,
-			title: "Error",
+			description: response?.data?.error_message,
+			title: 'Error',
 			duration: 3000,
 		})
 	}

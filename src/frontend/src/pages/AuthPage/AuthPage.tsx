@@ -5,7 +5,7 @@ import { AuthTogglers } from './authConstants'
 
 const MapComponent = {
 	SignIn,
-	SignUp
+	SignUp,
 }
 
 export const Component: FC = () => {
@@ -14,7 +14,7 @@ export const Component: FC = () => {
 	if (!Component) return null
 
 	return (
-		<main className="flex-grow flex justify-center items-center my-5 px-2">
+		<main className="my-5 flex flex-grow items-center justify-center px-2">
 			<Component setActive={setActive} />
 		</main>
 	)

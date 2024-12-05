@@ -1,4 +1,6 @@
 import React, { FC, Fragment, FunctionComponent, ReactNode } from 'react'
+import { Link, To } from 'react-router-dom'
+import { firstChar, isEmpty } from '@/shared/lib'
 import {
 	Avatar,
 	AvatarFallback,
@@ -8,8 +10,6 @@ import {
 	CardHeader,
 	Card as CardUI,
 } from '@/shared/ui'
-import { Link, To } from 'react-router-dom'
-import { firstChar, isEmpty } from '@/shared/lib'
 import type { Card as ICard } from './types'
 
 export interface CardProps extends ICard {
@@ -42,7 +42,9 @@ export const Card: FC<CardProps> = (props) => {
 				</CardContent>
 			</IsLink>
 			<CardFooter className="pb-0 pr-2">
-				{action && React.isValidElement(action) ? action : React.createElement(action, props)}
+				{action && React.isValidElement(action)
+					? action
+					: React.createElement(action, props)}
 			</CardFooter>
 		</CardUI>
 	)

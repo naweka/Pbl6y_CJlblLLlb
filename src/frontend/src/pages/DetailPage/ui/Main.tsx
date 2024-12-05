@@ -1,9 +1,7 @@
 import { FC } from 'react'
 
-interface MainProps { }
+interface MainProps {}
 
 export const Main: FC<MainProps> = () => {
-    return (
-        <div></div>
-    )
+	return <div></div>
 }

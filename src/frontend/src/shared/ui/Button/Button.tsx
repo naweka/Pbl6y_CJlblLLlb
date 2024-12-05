@@ -35,13 +35,16 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-	VariantProps<typeof buttonVariants> {
+		VariantProps<typeof buttonVariants> {
 	asChild?: boolean
 	loading?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({ className, loading, children, variant, size, asChild = false, ...props }, ref) => {
+	(
+		{ className, loading, children, variant, size, asChild = false, ...props },
+		ref,
+	) => {
 		const Comp = asChild ? Slot : 'button'
 		return (
 			<Comp
@@ -50,11 +53,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				{...props}
 			>
 				{loading && (
-					<div className="absolute flex items-center justify-center -translate-x-2/4 -translate-y-2/4 top-2/4 left-2/4">
+					<div className="absolute left-2/4 top-2/4 flex -translate-x-2/4 -translate-y-2/4 items-center justify-center">
 						<Spinner size="sm" />
 					</div>
 				)}
-				<span className={cn(loading && 'opacity-0', 'flex items-center gap-2 w-full justify-center')}>
+				<span
+					className={cn(
+						loading && 'opacity-0',
+						'flex w-full items-center justify-center gap-2',
+					)}
+				>
 					{children}
 				</span>
 			</Comp>

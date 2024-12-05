@@ -1,2 +1,2 @@
 export * from './assignComponent'
-export * from "./types";
+export * from './types'

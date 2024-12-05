@@ -4,5 +4,7 @@ import { routes } from './routes'
 import { ApiGetCurrentUser } from './types'
 
 export const getCurrentUser = async () => {
-	return await http?.get<any, AxiosResponse<ApiGetCurrentUser>>(routes.getCurrentUser())
+	return await http?.get<any, AxiosResponse<ApiGetCurrentUser>>(
+		routes.getCurrentUser(),
+	)
 }

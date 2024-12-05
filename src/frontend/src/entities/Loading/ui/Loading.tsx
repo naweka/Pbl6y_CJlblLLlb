@@ -1,10 +1,12 @@
-import { Loading as LoadingUI } from '@/shared/ui'
 import { FC } from 'react'
+import { Loading as LoadingUI } from '@/shared/ui'
 
-interface LoadingProps { }
+interface LoadingProps {}
 
 export const Loading: FC<LoadingProps> = () => {
-    return (
-        <div className='flex flex-grow justify-center items-center h-full'><LoadingUI /></div>
-    )
+	return (
+		<div className="flex h-full flex-grow items-center justify-center">
+			<LoadingUI />
+		</div>
+	)
 }

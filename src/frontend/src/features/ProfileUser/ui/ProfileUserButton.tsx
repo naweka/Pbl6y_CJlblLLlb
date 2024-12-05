@@ -1,19 +1,32 @@
 import { LogOut, User } from 'lucide-react'
-import { FC } from 'react'
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/ui'
-import { useNavigate } from 'react-router-dom'
-import { ROUTE_CONSTANTS } from '@/shared/config'
-import { authStore } from '@/entities/Auth'
 import { observer } from 'mobx-react-lite'
+import { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { authStore } from '@/entities/Auth'
+import { ROUTE_CONSTANTS } from '@/shared/config'
+import {
+	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/shared/ui'
 
-interface ProfileUserButtonProps { }
+interface ProfileUserButtonProps {}
 
 export const ProfileUserButton: FC<ProfileUserButtonProps> = observer(() => {
 	const navigate = useNavigate()
 
 	if (!authStore.isAuth) {
 		return (
-			<Button variant="ghost" onClick={() => navigate(ROUTE_CONSTANTS.AUTH.URL)} className="[&_svg]:size-6" size="icon">
+			<Button
+				variant="ghost"
+				onClick={() => navigate(ROUTE_CONSTANTS.AUTH.URL)}
+				className="[&_svg]:size-6"
+				size="icon"
+			>
 				<User />
 			</Button>
 		)
@@ -29,7 +42,9 @@ export const ProfileUserButton: FC<ProfileUserButtonProps> = observer(() => {
 			<DropdownMenuContent>
 				<DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={() => navigate(ROUTE_CONSTANTS.USER_PAGE.URL)}>
+				<DropdownMenuItem
+					onClick={() => navigate(ROUTE_CONSTANTS.USER_PAGE.URL)}
+				>
 					<User />
 					<span>Профиль</span>
 				</DropdownMenuItem>
@@ -40,6 +55,5 @@ export const ProfileUserButton: FC<ProfileUserButtonProps> = observer(() => {
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
-
 	)
 })

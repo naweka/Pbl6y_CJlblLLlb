@@ -1,10 +1,9 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import { getCard } from '@/entities/Card';
-import { Card } from '@/entities/Card/types';
-import { getParams } from '@/shared/lib';
-import { STATUS } from '@/shared/types';
-import { IDetailPageStore } from './types';
-
+import { makeAutoObservable, runInAction } from 'mobx'
+import { getCard } from '@/entities/Card'
+import { Card } from '@/entities/Card/types'
+import { getParams } from '@/shared/lib'
+import { STATUS } from '@/shared/types'
+import { IDetailPageStore } from './types'
 
 class DetailPageStore implements IDetailPageStore {
 	_card: Card | null = null

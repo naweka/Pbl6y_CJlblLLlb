@@ -1,12 +1,21 @@
-import { FC, useEffect } from 'react'
-import { Card, CardProps } from '@/entities/Card'
-import { ROUTE_CONSTANTS } from '@/shared/config'
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger, Spinner } from '@/shared/ui'
 import { EllipsisVertical, ExternalLink } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
-import { STATUS } from '@/shared/types'
-import { cardsStore } from '@/entities/Card/model'
+import { FC, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Card, CardProps } from '@/entities/Card'
+import { ROUTE_CONSTANTS } from '@/shared/config'
+import { queryParamsStore } from '@/shared/model/queryParamsStore'
+import { STATUS } from '@/shared/types'
+import {
+	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+	Spinner,
+} from '@/shared/ui'
+import { indexPageStore } from '../model'
 
 const ActionMore = (props: CardProps) => {
 	const { id } = props
@@ -20,7 +29,11 @@ const ActionMore = (props: CardProps) => {
 			<DropdownMenuContent className="w-10">
 				<DropdownMenuGroup>
 					<DropdownMenuItem asChild>
-						<Link className='cursor-pointer' target="_blank" to={ROUTE_CONSTANTS.DETAIL_CARD.TO(id)}>
+						<Link
+							className="cursor-pointer"
+							target="_blank"
+							to={ROUTE_CONSTANTS.DETAIL_CARD.TO(id)}
+						>
 							<ExternalLink />
 							<span>Открыть</span>
 						</Link>
@@ -32,7 +45,6 @@ const ActionMore = (props: CardProps) => {
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
-
 	)
 }
 
@@ -46,7 +58,11 @@ const MapComponent: Record<STATUS, FC> = {
 const classes = 'flex justify-center items-center w-full flex-grow'
 
 const ContentLoading = () => {
-	return <div className={classes}><Spinner /></div>
+	return (
+		<div className={classes}>
+			<Spinner />
+		</div>
+	)
 }
 
 const ContentError = () => {
@@ -54,18 +70,30 @@ const ContentError = () => {
 }
 
 const ContentSuccess = observer(() => {
-	return (<div className="grid cursor-pointer gap-5 px-5 auto-fill-80">
-		{cardsStore.cards.map((data) => (
-			<Card {...data} key={data.id} to={ROUTE_CONSTANTS.DETAIL_CARD.TO(data.id)} action={ActionMore} />
-		))}
-	</div>)
+	return (
+		<div className="grid cursor-pointer gap-5 px-5 auto-fill-80">
+			{indexPageStore?.cards && indexPageStore.cards.length > 0 ? (
+				indexPageStore.cards.map((data) => (
+					<Card
+						{...data}
+						key={data.id}
+						to={ROUTE_CONSTANTS.DETAIL_CARD.TO(data.id)}
+						action={ActionMore}
+					/>
+				))
+			) : (
+				<div>Пусто</div>
+			)}
+		</div>
+	)
 })
 
 export const Content: FC = observer(() => {
 	useEffect(() => {
-		cardsStore.fetchAllCards({})
+		indexPageStore.fetchAllCards()
 	}, [])
-	const Component = MapComponent[cardsStore.status] ?? null
+
+	const Component = MapComponent[indexPageStore.statusCards] ?? null
 	if (!Component) return null
 	return <Component />
 })

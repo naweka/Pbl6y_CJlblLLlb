@@ -1,8 +1,7 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import { STATUS } from '@/shared/types';
-import { getTags } from '../api';
-import { ITagsStore } from './types';
-
+import { makeAutoObservable, runInAction } from 'mobx'
+import { STATUS } from '@/shared/types'
+import { getTags } from '../api'
+import { ITagsStore } from './types'
 
 export class TagsStore implements ITagsStore {
 	private _status = STATUS.INITIAL
@@ -28,7 +27,7 @@ export class TagsStore implements ITagsStore {
 				if (res?.data) {
 					this._tags = res.data
 				}
-                this._status = STATUS.SUCCESS
+				this._status = STATUS.SUCCESS
 			})
 		} catch (error) {
 			console.error(error)
