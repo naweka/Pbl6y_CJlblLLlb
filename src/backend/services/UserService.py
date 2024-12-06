@@ -118,7 +118,7 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
     if current_user.password_hash == password_hash:
         token = jwt.encode({
             'user_id': current_user.id,
-            'exp' : datetime.utcnow() + timedelta(hours=4)
+            'exp' : datetime.now() + timedelta(hours=4)
         }, SECRET_JWT_KEY)
         return {'token': token}, 200
     
@@ -144,7 +144,7 @@ def token_required(f):
   
         try:
             jwt_data = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
-            if datetime.utcnow().timestamp() > jwt_data['exp']:
+            if datetime.now().timestamp() > jwt_data['exp']:
                 return {
                     'error_message': 'Expired token'
                 }, 401

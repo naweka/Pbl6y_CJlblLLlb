@@ -3,7 +3,8 @@ from models.FileInfo import FileInfo
 from typing import List
 from services.IdGeneratorService import generate_id
 from services.FileInfoService import write_uploaded_file
-from uuid import UUID
+import os
+import shutil
 
 # TODO
 file_db:List[FileInfo] = []
@@ -14,7 +15,7 @@ cards_db:List[Card] = [
     Card(generate_id(), 'Это чё !"№;%:?*\'-+', 'cringe', 'PREPARING', [], []),
     Card(generate_id(), 'name in english', 'sus', 'UPLOADING', ['tag1'], []),
     Card(generate_id(), 'название на русском', 'amogus', '', ['tag2'], []),
-    Card("08080808-0909-0909-0909-090909090909", 'Тест файла', 'Описание', 'PREPARING', [], []),
+    Card("08080808-0909-0909-0909-090909090909", 'Тест файла', 'Описание', 'PREPARING', [], ['01010101-0909-0909-0909-090909090909']),
 ]
 
 def get_cards(search_text:str, tags:List[str]) -> tuple[List[Card],int]:
@@ -48,26 +49,28 @@ def get_card_files(id:str) -> tuple[List[FileInfo],int]:
     }, 400
 
 
-def upload_file_for_card(card_id:bytes,
-                         file_id:bytes,
+def upload_file_for_card(card_id:str,
+                         file_id:str,
                          filename:str,
                          file_bytes:bytes) -> tuple[str,int]:
     global cards_db
-    uuid_card = UUID(bytes=card_id)
-    uuid_file = UUID(bytes=file_id)
-    filename_alias = uuid_file.hex
+    filename_alias = file_id
     write_uploaded_file(filename_alias, file_bytes)
     
     for c in cards_db:
-        if c.id != str(uuid_card):
+        if c.id != card_id:
             continue
 
-        c.files.append(str(uuid_file))
-        file_db.append(FileInfo(str(uuid_file), filename, filename_alias, None, None))
+        c.files.append(str(file_id))
+        file_db.append(FileInfo(str(file_id), filename, filename_alias, None, None))
+        
+        path_to_fake = os.getcwd()+'/fake_spectro.png'
+        path_to_fake_new = os.getcwd()+f'/server_data/spectrograms/{filename_alias}.png'
+        shutil.copyfile(path_to_fake, path_to_fake_new)
         return '', 200
     
     return {
-        'error_message': f'Not found entity with id: {str(uuid_card)}'
+        'error_message': f'Not found entity with id: {card_id}'
     }, 400
 
 

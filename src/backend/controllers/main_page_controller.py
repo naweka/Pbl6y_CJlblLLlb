@@ -1,5 +1,6 @@
 from flask import Blueprint, request, send_file
 from typing import List
+import os
 from models.Card import Card
 from controllers.controller_utils import (get_json_parameters,
                                           get_json_parameter)
@@ -120,19 +121,19 @@ def getIdForNewFile(jwt_data:dict) -> str:
 @token_required
 @endpoint_output_wrapper
 def uploadFile(jwt_data:dict):
-    # print(request.files)
+    # print('files', request.files)
+    # print('data', request.form)
     fs = request.files[''] if 'file' not in request.files else request.files['file'] 
-    f = fs.read()
     filename = fs.filename
-    file_id = f[:16]
-    card_id = f[16:32]
-    data = f[32:]
+    file_id = request.form['fileId']
+    card_id = request.form['cardId']
+    data = fs.read()
     res, code = upload_file_for_card(card_id, file_id, filename, data)
     fs.close()
     return res, code
 
 
-@main_page_blueprint.route('/api/v1/getFiles', methods=['POST'])
+@main_page_blueprint.route('/api/v1/getFilesByCard', methods=['POST'])
 @token_required
 @endpoint_output_wrapper
 def getFiles(jwt_data:dict) -> str:
@@ -140,8 +141,10 @@ def getFiles(jwt_data:dict) -> str:
     res, code = get_card_files(id)
     return res, code
 
-import os
-@main_page_blueprint.route('/download', methods=['GET'])
-def downloadFile():
-    path = os.getcwd()+"/server_data/spectrograms/3ce34ce2b22b11efa7619588f9d53c51.png"
+
+@main_page_blueprint.route('/api/v1/downloadSpectrogram', methods=['POST'])
+@token_required
+def downloadFile(jwt_data:dict):
+    id = get_json_parameter(request.json, 'id')
+    path = os.getcwd()+f'/server_data/spectrograms/{id}.png'
     return send_file(path, as_attachment=False), 200
