@@ -146,5 +146,5 @@ def getFiles(jwt_data:dict) -> str:
 @token_required
 def downloadFile(jwt_data:dict):
     id = get_json_parameter(request.json, 'id')
-    path = os.getcwd()+f'/server_data/spectrograms/{id}.png'
+    path = os.path.dirname(__file__)+f'/../server_data/spectrograms/{id}.png'
     return send_file(path, as_attachment=False), 200
