@@ -8,6 +8,7 @@ from typing import List, Union
 import traceback
 import jwt
 import copy
+from appconfig import ADMIN_USER_ID, IS_DEV_MODE_ENABLED
 
 # TODO
 SECRET_JWT_KEY = '111'
@@ -15,7 +16,7 @@ PASSWORD_SALT = 'sample secret salt that can be stored on git'
 
 # TODO
 users_db:List[User] = [
-    User(generate_id(), 'name1', 'Облысеев Лыс Шампунович', sha3_256(f'{PASSWORD_SALT}pwd1'.encode('utf-8')).hexdigest()),
+    User('01010101-0808-0808-0808-080808080808', 'name1', 'Облысеев Лыс Шампунович', sha3_256(f'{PASSWORD_SALT}pwd1'.encode('utf-8')).hexdigest()),
     User(generate_id(), 'name2', 'Драйв Роман Гослирович', sha3_256(f'{PASSWORD_SALT}pwd2'.encode('utf-8')).hexdigest()),
 ]
 
@@ -143,6 +144,12 @@ def token_required(f):
             }, 401
   
         try:
+            if IS_DEV_MODE_ENABLED:
+                jwt_data = {'user_id': ADMIN_USER_ID}
+                res = f(jwt_data, *args, **kwargs)
+                print(res)
+                return res
+
             jwt_data = jwt.decode(token, SECRET_JWT_KEY, algorithms=['HS256'])
             if datetime.now().timestamp() > jwt_data['exp']:
                 return {
