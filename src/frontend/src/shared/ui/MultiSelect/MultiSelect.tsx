@@ -276,6 +276,7 @@ const MultiSelectorInput = forwardRef<
 			tabIndex={0}
 			ref={inputRef}
 			value={inputValue}
+			// onKeyDown={handleKeyDown}
 			onValueChange={activeIndex === -1 ? setInputValue : undefined}
 			onSelect={handleSelect}
 			onBlur={() => setOpen(false)}

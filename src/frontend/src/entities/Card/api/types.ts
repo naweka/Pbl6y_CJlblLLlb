@@ -12,3 +12,5 @@ export interface GetAllCardData {
 export interface GetCardData {
 	id: string
 }
+
+export interface GetFilesCardData extends GetCardData {}

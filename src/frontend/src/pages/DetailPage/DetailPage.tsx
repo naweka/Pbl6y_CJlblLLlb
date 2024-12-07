@@ -40,7 +40,11 @@ const ComponentSuccess: FC = () => {
 export const Component: FC = observer(() => {
 	useEffect(() => {
 		detailPageStore.fetchDetailPage()
+		return () => {
+			detailPageStore.reset()
+		}
 	}, [])
+
 	const Component = MapComponent[detailPageStore.status] || null
 	if (!Component) return null
 	return <Component />

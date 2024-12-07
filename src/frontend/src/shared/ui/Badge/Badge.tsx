@@ -17,6 +17,7 @@ const badgeVariants = cva(
 			},
 			size: {
 				default: 'px-2.5 py-0.5 text-xs',
+				sm: 'px-4 py-1 text-sm',
 				lg: 'px-5 py-1 text-lg',
 			},
 		},
@@ -29,11 +30,11 @@ const badgeVariants = cva(
 
 //TODO Сделать адаптивные expand-responsive https://github.com/chakra-ui/chakra-ui/blob/v2/packages/styled-system/src/utils/expand-responsive.ts
 
-export interface BadgeProps
+interface BadgeProps
 	extends React.HTMLAttributes<HTMLDivElement>,
 		VariantProps<typeof badgeVariants> {}
 
-function Badge({ className, variant, size, ...props }: BadgeProps) {
+const Badge = ({ className, variant, size, ...props }: BadgeProps) => {
 	return (
 		<div
 			className={cn(badgeVariants({ variant, size }), className)}
@@ -43,3 +44,4 @@ function Badge({ className, variant, size, ...props }: BadgeProps) {
 }
 
 export { Badge, badgeVariants }
+export type { BadgeProps }

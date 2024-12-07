@@ -36,12 +36,15 @@ class IndexPageStore implements IIndexPageStore {
 		return this._search
 	}
 
-	get activeTags() {
-		return this._activeTags
-	}
-
 	get tags() {
 		return this._tags
+	}
+
+	get tagsWithActive() {
+		return this._tags.map((string) => ({
+			title: string,
+			active: this._activeTags.includes(string),
+		}))
 	}
 
 	debounceSearch = debounce(() => {
@@ -49,8 +52,12 @@ class IndexPageStore implements IIndexPageStore {
 		this.fetchAllCards()
 	}, 250)
 
-	setActiveTags(value: string[]) {
-		this._activeTags = value
+	setActiveTags(value: string) {
+		if (this._activeTags.includes(value)) {
+			this._activeTags = this._activeTags.filter((tag) => tag !== value)
+		} else {
+			this._activeTags = [...this._activeTags, value]
+		}
 		queryParamsStore.setParam('tags', this._activeTags)
 		this.fetchAllCards()
 	}

@@ -1,5 +1,7 @@
-import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
-import { middlewaresCommon } from './middleware'
+import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios';
+import { isEmpty } from '../lib';
+import { middlewaresCommon } from './middleware';
+
 
 export let http: AxiosInstance | null = null
 
@@ -32,8 +34,10 @@ export const createAxios = (options: ConfigAxiosCreate) => {
 	http.interceptors.response.use(
 		(config) => {
 			middlewaresCommon(config)
-			const { result } = config.data
-			config.data = result
+			if (config.data?.result) {
+				const { result } = config.data
+				config.data = result
+			}
 			return config
 		},
 		(error) => {

@@ -4,6 +4,7 @@ export enum FieldTypes {
 	Input = 'Input',
 	MultiSelect = 'MultiSelect',
 	Textarea = 'Textarea',
+	TagsInput = 'TagsInput',
 }
 
 export type BaseFieldProps = {

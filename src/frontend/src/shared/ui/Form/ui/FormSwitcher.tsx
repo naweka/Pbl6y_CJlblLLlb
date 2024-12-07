@@ -8,6 +8,7 @@ const MapComponent: Record<FieldTypes, FC<any>> = {
 		<BaseForm.BaseFieldMultiSelect {...props} />
 	),
 	[FieldTypes.Textarea]: (props) => <BaseForm.BaseFieldTextarea {...props} />,
+	[FieldTypes.TagsInput]: (props) => <BaseForm.BaseFieldTagsInput {...props} />,
 }
 
 export const FormSwitcher: FC<FormSwitcherProps> = (field) => {

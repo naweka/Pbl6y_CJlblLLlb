@@ -1,9 +1,10 @@
 import { AxiosResponse } from 'axios'
 import merge from 'lodash.merge'
+import { authStore } from '@/entities/Auth'
 import { showToast } from '../hooks'
 
 const notificationsToast = (response: AxiosResponse) => {
-	if (response?.data?.error_message.length > 0) {
+	if (response?.data?.error_message?.length > 0) {
 		showToast({
 			variant: 'destructive',
 			description: response?.data?.error_message,
@@ -13,7 +14,20 @@ const notificationsToast = (response: AxiosResponse) => {
 	}
 }
 
+const mapStatus: Record<number, any> = {
+	401: async (response: AxiosResponse) => {
+		if (!(response.statusText === 'UNAUTHORIZED')) return
+		await authStore.logout()
+	},
+}
+
+const status = async (response: AxiosResponse) => {
+	const callback = mapStatus[response.status]
+	await callback?.(response)
+}
+
 const defaultMiddleware = {
+	status,
 	notificationsToast,
 }
 

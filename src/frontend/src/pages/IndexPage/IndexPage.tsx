@@ -4,7 +4,7 @@ import { Header } from './ui/Header'
 
 export const Component: FC = () => {
 	return (
-		<main className="mx-auto flex w-full max-w-layout flex-grow flex-col gap-10 pt-5">
+		<main className="mx-auto flex w-full max-w-layout flex-grow flex-col gap-5 pt-5">
 			<Header />
 			<Content />
 		</main>

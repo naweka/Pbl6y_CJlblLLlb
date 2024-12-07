@@ -2,7 +2,12 @@ import { AxiosResponse } from 'axios'
 import { http } from '@/shared/api'
 import { Card } from '../types'
 import { routes } from './routes'
-import { GetAllCardData, GetCardData, SendCreateCardData } from './types'
+import {
+	GetAllCardData,
+	GetCardData,
+	GetFilesCardData,
+	SendCreateCardData,
+} from './types'
 
 export const sendCreateCard = async (data: SendCreateCardData) => {
 	return await http?.post<any, AxiosResponse<Card>>(routes.create(), data)
@@ -14,4 +19,8 @@ export const getAllCard = async (data: GetAllCardData) => {
 
 export const getCard = async (data: GetCardData) => {
 	return await http?.post<any, AxiosResponse<Card>>(routes.get(), data)
+}
+
+export const getFilesCard = async (data: GetFilesCardData) => {
+	return await http?.post<any, AxiosResponse<Card>>(routes.getFiles(), data)
 }
