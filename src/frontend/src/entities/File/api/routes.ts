@@ -1,4 +1,6 @@
+import { GetFileIdData } from './types'
+
 export const routes = {
 	getFiles: () => '/getFilesByCard',
-	getSpectrogram: () => '/downloadSpectrogram'
+	getSpectrogram: ({ id }: GetFileIdData) => `/spectrogram/${id}`,
 }
