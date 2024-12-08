@@ -1,6 +1,6 @@
 from flask import Blueprint, request, send_file
 from typing import List
-import os
+from appconfig import WORKING_DIRECTORY
 from models.Card import Card
 from controllers.controller_utils import (get_json_parameters,
                                           get_json_parameter)
@@ -146,5 +146,5 @@ def getFiles(jwt_data:dict) -> str:
 @token_required
 def downloadFile(jwt_data:dict):
     id = get_json_parameter(request.json, 'id')
-    path = os.path.dirname(__file__)+f'/../server_data/spectrograms/{id}.png'
+    path = WORKING_DIRECTORY+f'/server_data/spectrograms/{id}.png'
     return send_file(path, as_attachment=False), 200
