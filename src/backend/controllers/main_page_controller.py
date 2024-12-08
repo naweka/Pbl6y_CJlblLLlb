@@ -142,17 +142,15 @@ def getFiles(jwt_data:dict) -> str:
     return res, code
 
 
-@main_page_blueprint.route('/api/v1/downloadSpectrogram', methods=['POST'])
+@main_page_blueprint.route('/spectrogram/<path:id>', methods=['GET'])
 @token_required
-def downloadFile(jwt_data:dict):
-    id = get_json_parameter(request.json, 'id')
+def downloadSpectrogram(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/spectrograms/{id}.png'
     return send_file(path, as_attachment=False), 200
 
 
-@main_page_blueprint.route('/api/v1/downloadPredictedData', methods=['POST'])
+@main_page_blueprint.route('/predictedData/<path:id>', methods=['GET'])
 @token_required
-def downloadPredictedData(jwt_data:dict):
-    id = get_json_parameter(request.json, 'id')
+def downloadPredictedData(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.txt'
     return send_file(path, as_attachment=False), 200
