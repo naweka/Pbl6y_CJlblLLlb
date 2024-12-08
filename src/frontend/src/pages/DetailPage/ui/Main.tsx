@@ -1,9 +1,10 @@
-import { Upload, X } from 'lucide-react'
+import { Download, FileDown, X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import { STATUS } from '@/shared/types'
-import { AspectRatio, Button, Spinner } from '@/shared/ui'
+import { Button, Spinner, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui'
 import { detailPageStore } from '../model'
+import { UploadFilesCard } from '@/widgets/UploadFilesCard'
 
 interface MainProps { }
 
@@ -44,15 +45,14 @@ const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
 }
 
 const MainSuccess = observer(() => {
-	if (!detailPageStore.files) return <EmptyFiles />
-	if (!(detailPageStore.files.length > 0)) return <EmptyFiles />
 	return (
 		<div className='px-5'>
-			<div>
-				<Button>Загрузить файл <Upload /></Button>
+			<div className='space-y-5'>
+				{detailPageStore.files && detailPageStore.files.length > 0 && <Button>Скачать всё файлы<Download /></Button>}
+				<UploadFilesCard />
 			</div>
 			<div className="flex flex-col gap-4 py-5">
-				{detailPageStore.files.map((file) => {
+				{detailPageStore.files && detailPageStore.files.length > 0 ? detailPageStore.files.map((file) => {
 					return (
 						<div key={file.id} className='space-y-5'>
 							<div className="flex flex-row gap-4">
@@ -61,16 +61,38 @@ const MainSuccess = observer(() => {
 										{file.name}
 									</p>
 								</div>
-								<Button variant="destructive" size="icon">
-									<X />
-								</Button>
+								<TooltipProvider delayDuration={0}>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button variant="default" size="icon">
+												<FileDown />
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Скачать файл.</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+								<TooltipProvider delayDuration={0}>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button variant="destructive" size="icon">
+												<X />
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Удалить файл.</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+
 							</div>
 							<div className='border h-[150px] w-full rounded-md overflow-x-auto'>
 								{file.url && <PanoramaImg src={URL.createObjectURL(file.url)} />}
 							</div>
 						</div>
 					)
-				})}
+				}) : <EmptyFiles />}
 			</div>
 		</div>
 	)

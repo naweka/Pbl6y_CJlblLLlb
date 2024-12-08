@@ -161,7 +161,7 @@ export const FileUploader = forwardRef<
                 if (!files) {
                     showToast({
                         variant: 'destructive',
-                        description: "file error , probably too big",
+                        description: "Ошибка файла, возможно слишком большой",
                         title: 'Error',
                         duration: 3000,
                     })
@@ -187,7 +187,7 @@ export const FileUploader = forwardRef<
                         if (rejectedFiles[i].errors[0]?.code === "file-too-large") {
                             showToast({
                                 variant: 'destructive',
-                                description: `File is too large. Max size is ${maxSize / 1024 / 1024}MB`,
+                                description: `Файл слишком большой. Максимальный размер ${maxSize / 1024 / 1024}MB`,
                                 title: 'Error',
                                 duration: 3000,
                             })

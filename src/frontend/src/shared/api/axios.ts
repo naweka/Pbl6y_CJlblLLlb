@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios';
-import { isEmpty } from '../lib';
 import { middlewaresCommon } from './middleware';
 
 

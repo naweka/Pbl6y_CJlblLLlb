@@ -4,7 +4,6 @@ import { FC, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardProps } from '@/entities/Card'
 import { ROUTE_CONSTANTS } from '@/shared/config'
-import { queryParamsStore } from '@/shared/model/queryParamsStore'
 import { STATUS } from '@/shared/types'
 import {
 	Button,

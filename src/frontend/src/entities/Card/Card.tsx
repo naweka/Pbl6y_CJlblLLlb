@@ -1,4 +1,4 @@
-import React, { FC, Fragment, FunctionComponent, ReactNode } from 'react'
+import React, { FC, Fragment } from 'react'
 import { Link, To } from 'react-router-dom'
 import { firstChar, isEmpty } from '@/shared/lib'
 import {
