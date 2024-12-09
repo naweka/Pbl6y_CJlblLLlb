@@ -18,6 +18,10 @@ import {
 	Form,
 	FormSwitcher,
 	Spinner,
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
 } from '@/shared/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FIELDS_CARD, formSchemaValidateCard as formSchema } from '../constant'
@@ -104,12 +108,22 @@ export const CreateCardButton: FC<CreateCardButtonProps> = observer(
 
 		return (
 			<Dialog open={active} onOpenChange={setActive}>
-				<DialogTrigger asChild>
-					<Button variant="outline" className="min-w-10" size="icon">
-						<Plus />
-						<span className="sr-only">Создать карточку</span>
-					</Button>
-				</DialogTrigger>
+				<TooltipProvider delayDuration={0}>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<DialogTrigger asChild>
+								<Button variant="outline" className="min-w-10" size="icon">
+									<Plus />
+									<span className="sr-only">Создать карточку</span>
+								</Button>
+							</DialogTrigger>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>Создать карточку</p>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+
 				<DialogContent className="min-h-40 sm:max-w-[425px]">
 					{Component && <Component setActive={setActive} action={action} />}
 				</DialogContent>
