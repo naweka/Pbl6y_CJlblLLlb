@@ -3,13 +3,12 @@ from models.FileInfo import FileInfo
 from typing import List
 from services.IdGeneratorService import generate_id
 from services.FileInfoService import write_uploaded_file
-import os
 import shutil
 
 # TODO
-file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Имя файла полученное при загрузке.wav', '01010101-0909-0909-0909-090909090909'),
-                          FileInfo('02020202-0909-0909-0909-090909090909', 'Имя второго файла.wav', '02020202-0909-0909-0909-090909090909'),
-                          FileInfo('03030303-0909-0909-0909-090909090909', 'У третьего файла имя оказалось каким то уже слишком длинным, поэтому было решено добить его часть точками.wav', '03030303-0909-0909-0909-090909090909'),
+file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909'),
+                          FileInfo('02020202-0909-0909-0909-090909090909', 'Запись 2.wav', '02020202-0909-0909-0909-090909090909'),
+                          FileInfo('03030303-0909-0909-0909-090909090909', 'Запись 3 ночью.wav', '03030303-0909-0909-0909-090909090909'),
                           FileInfo('04040404-0909-0909-0909-090909090909', 'Просто 4.wav', '04040404-0909-0909-0909-090909090909'),
                           FileInfo('05050505-0909-0909-0909-090909090909', 'English_record_20231107.wav', '05050505-0909-0909-0909-090909090909')]
 
@@ -19,7 +18,7 @@ cards_db:List[Card] = [
     Card(generate_id(), 'Это чё !"№;%:?*\'-+', 'cringe', 'PREPARING', [], []),
     Card(generate_id(), 'name in english', 'sus', 'UPLOADING', ['tag1'], []),
     Card(generate_id(), 'название на русском', 'amogus', '', ['tag2'], []),
-    Card("08080808-0909-0909-0909-090909090909", 'Тест файла', 'Описание', 'PREPARING', [], ['01010101-0909-0909-0909-090909090909',
+    Card("08080808-0909-0909-0909-090909090909", 'Записи с озера Белого', 'Здесь собраны все записи с 2027 года с озера Белое возле города Славноградска.', 'READY', [], ['01010101-0909-0909-0909-090909090909',
                                                                                              '02020202-0909-0909-0909-090909090909',
                                                                                              '03030303-0909-0909-0909-090909090909',
                                                                                              '04040404-0909-0909-0909-090909090909',
@@ -70,10 +69,10 @@ def upload_file_for_card(card_id:str,
             continue
 
         c.files.append(str(file_id))
-        file_db.append(FileInfo(str(file_id), filename, filename_alias, None, None))
+        file_db.append(FileInfo(str(file_id), filename, filename_alias))
         
-        path_to_fake = os.getcwd()+'/fake_spectro.png'
-        path_to_fake_new = os.getcwd()+f'/server_data/spectrograms/{filename_alias}.png'
+        path_to_fake = WORKING_DIRECTORY +'/fake_spectro.png'
+        path_to_fake_new = WORKING_DIRECTORY + f'/server_data/spectrograms/{filename_alias}.png'
         shutil.copyfile(path_to_fake, path_to_fake_new)
         return '', 200
     
@@ -81,7 +80,7 @@ def upload_file_for_card(card_id:str,
         'error_message': f'Not found entity with id: {card_id}'
     }, 400
 
-
+from appconfig import WORKING_DIRECTORY
 def get_card(id:str) -> tuple[Card,int]:
     global cards_db
     for c in cards_db:
