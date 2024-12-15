@@ -4,7 +4,9 @@ from typing import Optional
 @dataclass
 class FileInfo:
     id:str
+    # Реальное имя загружаемого файла
     name:str
+    # Имя файла в системе (его id)
     alias_name:str
-    # spectrogram_file:Optional[bytes]
-    # is_sounds_detected:Optional[bool]
+    audio_file_path:str
+    spectrogram_file_path:str

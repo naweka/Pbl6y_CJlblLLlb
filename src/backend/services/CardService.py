@@ -3,14 +3,14 @@ from models.FileInfo import FileInfo
 from typing import List
 from services.IdGeneratorService import generate_id
 from services.FileInfoService import write_uploaded_file
-import shutil
+from services.MlService import files_queue
 
 # TODO
-file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909'),
-                          FileInfo('02020202-0909-0909-0909-090909090909', 'Запись 2.wav', '02020202-0909-0909-0909-090909090909'),
-                          FileInfo('03030303-0909-0909-0909-090909090909', 'Запись 3 ночью.wav', '03030303-0909-0909-0909-090909090909'),
-                          FileInfo('04040404-0909-0909-0909-090909090909', 'Просто 4.wav', '04040404-0909-0909-0909-090909090909'),
-                          FileInfo('05050505-0909-0909-0909-090909090909', 'English_record_20231107.wav', '05050505-0909-0909-0909-090909090909')]
+file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909', None, None),
+                          FileInfo('02020202-0909-0909-0909-090909090909', 'Запись 2.wav', '02020202-0909-0909-0909-090909090909', None, None),
+                          FileInfo('03030303-0909-0909-0909-090909090909', 'Запись 3 ночью.wav', '03030303-0909-0909-0909-090909090909', None, None),
+                          FileInfo('04040404-0909-0909-0909-090909090909', 'Просто 4.wav', '04040404-0909-0909-0909-090909090909', None, None),
+                          FileInfo('05050505-0909-0909-0909-090909090909', 'English_record_20231107.wav', '05050505-0909-0909-0909-090909090909', None, None)]
 
 cards_db:List[Card] = [
     Card(generate_id(), 'title1', 'description1', 'ANALYZING', ['tag1', 'tag2'], []),
@@ -62,18 +62,20 @@ def upload_file_for_card(card_id:str,
                          file_bytes:bytes) -> tuple[str,int]:
     global cards_db
     filename_alias = file_id
-    write_uploaded_file(filename_alias, file_bytes)
+    path = write_uploaded_file(filename_alias, file_bytes)
     
     for c in cards_db:
         if c.id != card_id:
             continue
 
         c.files.append(str(file_id))
-        file_db.append(FileInfo(str(file_id), filename, filename_alias))
+        file_info = FileInfo(str(file_id), filename, filename_alias, path, None)
+        file_db.append(file_info)
         
-        path_to_fake = WORKING_DIRECTORY +'/fake_spectro.png'
-        path_to_fake_new = WORKING_DIRECTORY + f'/server_data/spectrograms/{filename_alias}.png'
-        shutil.copyfile(path_to_fake, path_to_fake_new)
+        files_queue.append(file_info)
+        # path_to_fake = WORKING_DIRECTORY +'/fake_spectro.png'
+        # path_to_fake_new = WORKING_DIRECTORY + f'/server_data/spectrograms/{filename_alias}.png'
+        # shutil.copyfile(path_to_fake, path_to_fake_new)
         return '', 200
     
     return {
