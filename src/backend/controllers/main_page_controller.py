@@ -12,7 +12,7 @@ from services.CardService import (get_card,
                                   get_card_files,
                                   update_card)
 from services.TagService import get_all_tags
-from services.IdGeneratorService import generate_id
+from services.IdGeneratorService import generate_id, generate_ids
 from services.IdkJsonHelper import endpoint_output_wrapper
 from services.UserService import token_required, login_get_token, signup, get_current_user
 
@@ -109,11 +109,20 @@ def getTags(jwt_data:dict) -> List[str]:
 # --- FILES ---
 
 
-@main_page_blueprint.route('/api/v1/getIdForNewFile', methods=['GET'])
+@main_page_blueprint.route('/api/v1/generateGuid', methods=['GET'])
 @token_required
 @endpoint_output_wrapper
-def getIdForNewFile(jwt_data:dict) -> str:
+def generateGuid(jwt_data:dict) -> str:
     res = generate_id()
+    return res, 200
+
+
+@main_page_blueprint.route('/api/v1/generateGuids', methods=['POST'])
+@token_required
+@endpoint_output_wrapper
+def generateGuids(jwt_data:dict) -> str:
+    number_of_guids = get_json_parameter(request.json, 'count')
+    res = generate_ids(number_of_guids)
     return res, 200
 
 
