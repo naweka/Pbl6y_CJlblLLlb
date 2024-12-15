@@ -153,6 +153,7 @@ def getFiles(jwt_data:dict) -> str:
 
 @main_page_blueprint.route('/spectrogram/<path:id>', methods=['GET'])
 @token_required
+@endpoint_output_wrapper
 def downloadSpectrogram(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/spectrograms/{id}.png'
     return send_file(path, as_attachment=False), 200
@@ -160,6 +161,7 @@ def downloadSpectrogram(jwt_data:dict, id):
 
 @main_page_blueprint.route('/predictedData/<path:id>', methods=['GET'])
 @token_required
+@endpoint_output_wrapper
 def downloadPredictedData(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.txt'
     return send_file(path, as_attachment=False), 200

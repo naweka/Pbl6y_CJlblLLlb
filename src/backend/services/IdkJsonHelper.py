@@ -1,5 +1,6 @@
 from functools import wraps
 import traceback 
+from flask.wrappers import Response
 
 
 def obj_to_dict_simple(o):
@@ -111,7 +112,13 @@ def endpoint_output_wrapper(f):
     def decorated(*args, **kwargs):
         try:
             res, code = f(*args, **kwargs)
-            res = obj_to_dict(res)
+            try:
+                if type(res) == Response:
+                    return res
+                res2 = obj_to_dict(res)
+                res = res2
+            except:
+                pass
 
             # Мы можем получить либо словарь объекта / ошибки,
             # либо лист с сериализованными объектами, либо
