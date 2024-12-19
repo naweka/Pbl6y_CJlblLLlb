@@ -3,7 +3,7 @@ from models.FileInfo import FileInfo
 from typing import List
 from services.IdGeneratorService import generate_id
 from services.FileInfoService import write_uploaded_file
-from services.MlService import files_queue
+from services.AiService import files_queue
 
 # TODO
 file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909', None, None),
