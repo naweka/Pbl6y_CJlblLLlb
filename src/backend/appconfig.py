@@ -3,11 +3,12 @@ import os
 # --- Important constants
 
 WORKING_DIRECTORY = os.path.dirname(__file__)
+PASSWORD_SALT = 'sample secret salt that can be stored on git'
 
 # --- Debug helpers ---
 
 IS_DEV_MODE_ENABLED = True
-ADMIN_USER_ID = '01010101-0808-0808-0808-080808080808'
+TEST_USER_ID = '01010101-0808-0808-0808-080808080808'
 
 # --- Database ---
 

@@ -1,24 +1,26 @@
 from services.IdGeneratorService import generate_id
+from repositories.user_repository import add_user, find_users_by_login, find_users_by_id
 from datetime import datetime, timedelta
 from models.User import User
-from hashlib import sha3_256
 from functools import wraps
 from flask import request
 from typing import List, Union
 import traceback
 import jwt
+from hashlib import sha3_256
+from appconfig import PASSWORD_SALT
 import copy
-from appconfig import ADMIN_USER_ID, IS_DEV_MODE_ENABLED
+from appconfig import TEST_USER_ID, IS_DEV_MODE_ENABLED
+
 
 # TODO
 SECRET_JWT_KEY = '111'
-PASSWORD_SALT = 'sample secret salt that can be stored on git'
 
 # TODO
-users_db:List[User] = [
-    User('01010101-0808-0808-0808-080808080808', 'name1', 'Облысеев Лыс Шампунович', sha3_256(f'{PASSWORD_SALT}pwd1'.encode('utf-8')).hexdigest()),
-    User(generate_id(), 'name2', 'Драйв Роман Гослирович', sha3_256(f'{PASSWORD_SALT}pwd2'.encode('utf-8')).hexdigest()),
-]
+# users_db:List[User] = [
+#     User('01010101-0808-0808-0808-080808080808', 'name1', 'Облысеев Лыс Шампунович', sha3_256(f'{PASSWORD_SALT}pwd1'.encode('utf-8')).hexdigest()),
+#     User(generate_id(), 'name2', 'Драйв Роман Гослирович', sha3_256(f'{PASSWORD_SALT}pwd2'.encode('utf-8')).hexdigest()),
+# ]
 
 
 def get_all_users() -> List[User]:
@@ -29,17 +31,14 @@ def get_all_users() -> List[User]:
 def get_current_user(jwt_data:dict) -> tuple[Union[User,str],int]:
     user_id = jwt_data['user_id']
 
-    current_user = None
-    for user in users_db:
-        if user.id == user_id:
-            current_user = user
-            break
+    user = find_users_by_id(user_id, use_contains=False)
 
-    if current_user is None:
+    if len(user) == 0:
         return {
             'error_message': f'Пользователь с ID "{user_id}" не найден'
         }, 400
-
+    
+    current_user = user[0]
 
     # TODO выпилить копирование объекта
     res = copy.copy(current_user.__dict__)
@@ -47,12 +46,12 @@ def get_current_user(jwt_data:dict) -> tuple[Union[User,str],int]:
     return res, 200
 
 
-def add_user(name:str):
-    global users_db
-    id = generate_id()
-    u = User(id, name)
-    users_db.append(u)
-    return u
+# def add_user(name:str):
+#     global users_db
+#     id = generate_id()
+#     u = User(id, name)
+#     users_db.append(u)
+#     return u
 
 
 def remove_user(id:str):
@@ -66,24 +65,13 @@ def signup(login:str, password:str, fullname:str) -> tuple[User,int]:
         return {
             'error_message': 'Provided information about user is incorrect'
         }, 401
-    
-    global users_db
-    current_user = None
-    
-    for user in users_db:
-        if user.login == login:
-            current_user = user
-            break
-    
-    if current_user:
+
+    if len(find_users_by_login(login, use_contains=False)) > 0:
         return {
             'error_message': 'This user already exist'
         }, 401
-    
-    password_hash = sha3_256(f'{PASSWORD_SALT}{password}'.encode('utf-8')).hexdigest()
 
-    new_user = User(generate_id(), login, fullname, password_hash)
-    users_db.append(new_user)
+    new_user = add_user(login, fullname, password)
 
     token = jwt.encode({
         'user_id': new_user.id,
@@ -102,18 +90,14 @@ def login_get_token(login:str, password:str) -> tuple[str,int]:
         return {
             'error_message': 'Login or password is incorrect'
         }, 401
-    global users_db
-    current_user = None
     
-    for user in users_db:
-        if user.login == login:
-            current_user = user
-            break
+    user = find_users_by_login(login, use_contains=False)
     
-    if not current_user:
+    if len(user) == 0:
         return {
-            'error_message': 'Login or password is incorrect'
-        }, 401
+            'error_message': f'Login or password is incorrect'
+        }, 400
+    current_user = user[0]
     
     password_hash = sha3_256(f'{PASSWORD_SALT}{password}'.encode('utf-8')).hexdigest()
     if current_user.password_hash == password_hash:
@@ -145,7 +129,7 @@ def token_required(f):
   
         try:
             if IS_DEV_MODE_ENABLED:
-                jwt_data = {'user_id': ADMIN_USER_ID}
+                jwt_data = {'user_id': TEST_USER_ID}
                 res = f(jwt_data, *args, **kwargs)
                 print(res)
                 return res
