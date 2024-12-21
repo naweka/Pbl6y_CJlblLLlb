@@ -113,8 +113,11 @@ def endpoint_output_wrapper(f):
         try:
             res, code = f(*args, **kwargs)
             try:
+                # Для случаев с send_file, когда Flask сам генерирует
+                # уже готовый ответ и нам не нужно его обрабатывать
                 if type(res) == Response:
                     return res
+
                 res2 = obj_to_dict(res)
                 res = res2
             except:

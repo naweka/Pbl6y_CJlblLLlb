@@ -3,7 +3,7 @@
 ## Установка
 
 1. Скачать Python
-2. Установить зависимости: `pip install pyjwt Flask Flask-CORS librosa pillow matplotlib`
+2. Установить зависимости: `python -m pip install pyjwt Flask Flask-CORS librosa pillow matplotlib pymongo`
 3. Запустить `python3 src/backend/main.py`
 4. Перейти в папку с фронтедом `cd src/frontend`
 5. Собрать фронтенд `npm i && npm run build`

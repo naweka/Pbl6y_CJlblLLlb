@@ -6,7 +6,7 @@ from controllers.controller_utils import (get_json_parameters,
                                           get_json_parameter)
 from services.CardService import (get_card,
                                   get_cards,
-                                  add_card,
+                                  create_card,
                                   remove_card,
                                   upload_file_for_card,
                                   get_card_files,
@@ -20,7 +20,7 @@ from services.UserService import token_required, login_get_token, signup, get_cu
 main_page_blueprint = Blueprint('main_page_blueprint', __name__)
 
 
-# --- AUTH & USERS ---
+#region --- AUTH & USERS ---
 
 
 @main_page_blueprint.route('/api/v1/getCurrentUser', methods=['GET'])
@@ -46,8 +46,9 @@ def login() -> str:
     res, code = login_get_token(login, password)
     return res, code
 
+#endregion --- AUTH & USERS ---
 
-# --- CARDS ---
+#region --- CARDS ---
 
 
 @main_page_blueprint.route('/api/v1/getCards', methods=['POST'])
@@ -82,7 +83,7 @@ def deleteCard(jwt_data:dict) -> None:
 @endpoint_output_wrapper
 def createCard(jwt_data:dict) -> Card:
     title, description, tags = get_json_parameters(request.json, 'title', 'description', 'tags')
-    res, code = add_card(title, description, tags)
+    res, code = create_card(title, description, tags)
     return res, code
 
 
@@ -95,7 +96,9 @@ def updateCard(jwt_data:dict) -> Card:
     return res, code
 
 
-# --- TAGS ---
+#endregion --- CARDS ---
+
+#region --- TAGS ---
 
 
 @main_page_blueprint.route('/api/v1/getTags', methods=['GET'])
@@ -105,8 +108,9 @@ def getTags(jwt_data:dict) -> List[str]:
     res = get_all_tags()
     return res
 
+#endregion --- TAGS ---
 
-# --- FILES ---
+#region --- FILES ---
 
 
 @main_page_blueprint.route('/api/v1/generateGuid', methods=['GET'])
@@ -165,3 +169,5 @@ def downloadSpectrogram(jwt_data:dict, id):
 def downloadPredictedData(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.txt'
     return send_file(path, as_attachment=False), 200
+
+#endregion --- FILES ---
