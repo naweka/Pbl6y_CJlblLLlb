@@ -17,9 +17,7 @@ if __name__ == '__main__':
 
     system_settings = list(system_db.find({}))
     if not system_settings:
-        system_db.insert_one({
-            'db_version': DB_VERSION
-        })
+        system_db.insert_one({ 'db_version': DB_VERSION })
     else:
         system_settings = system_settings[0]
         db_version = system_settings['db_version']
