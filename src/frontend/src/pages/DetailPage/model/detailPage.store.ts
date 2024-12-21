@@ -1,23 +1,29 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import { getCard } from '@/entities/Card';
-import { Card } from '@/entities/Card/types';
-import { File, GetFileIdData, getFiles, getFileSpectrogram } from '@/entities/File';
-import { getParams } from '@/shared/lib';
-import { STATUS } from '@/shared/types';
-import { IDetailPageStore } from './types';
-
+import { makeAutoObservable, runInAction } from 'mobx'
+import { getCard } from '@/entities/Card'
+import { Card } from '@/entities/Card/types'
+import {
+	File,
+	GetFileIdData,
+	getFiles,
+	getFileSpectrogram,
+} from '@/entities/File'
+import { getParams } from '@/shared/lib'
+import { STATUS } from '@/shared/types'
+import { IDetailPageStore } from './types'
 
 class DetailPageStore implements IDetailPageStore {
 	_card: Card | null = null
 	_status: STATUS = STATUS.INITIAL
 	_statusFiles: STATUS = STATUS.INITIAL
 	_files: File[] | null = null
+	edit = false
 
 	reset() {
 		this._card = null
 		this._status = STATUS.INITIAL
 		this._statusFiles = STATUS.INITIAL
 		this._files = null
+		this.edit = false
 	}
 
 	constructor() {
@@ -76,11 +82,12 @@ class DetailPageStore implements IDetailPageStore {
 			runInAction(async () => {
 				if (res?.data) {
 					const files = res.data
-					const fileWithBlob = []
-					for (const file of files) {
-						const blob = await this.fetchFileSpec({ id: file.id })
-						fileWithBlob.push({ ...file, url: blob })
-					}
+					const fileWithBlob = await Promise.all(
+						files.map(async (file) => {
+							const blob = await this.fetchFileSpec({ id: file.id })
+							return { ...file, url: blob }
+						}),
+					)
 					this._files = fileWithBlob
 				}
 				this._statusFiles = STATUS.SUCCESS
@@ -89,6 +96,10 @@ class DetailPageStore implements IDetailPageStore {
 			console.error(error)
 			this._statusFiles = STATUS.ERROR
 		}
+	}
+
+	setEdit(value: boolean) {
+		this.edit = value
 	}
 }
 

@@ -3,9 +3,9 @@ export function debounce(
 	wait: number = 250,
 	immediate?: boolean,
 ) {
-	var timeout: string | number | NodeJS.Timeout | null | undefined
+	let timeout: string | number | NodeJS.Timeout | null | undefined
 	return function (this: any) {
-		var context = this,
+		const context = this,
 			args = arguments
 		if (timeout !== null) clearTimeout(timeout)
 		if (immediate && !timeout) func.apply(context, args)

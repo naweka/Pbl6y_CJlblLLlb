@@ -51,6 +51,12 @@ module.exports = {
 			maxWidth: {
 				layout: '1400px',
 			},
+			zIndex: {
+				sticky: 1030,
+				popover: 1500,
+				toast: 1700,
+				tooltip: 1800,
+			},
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',

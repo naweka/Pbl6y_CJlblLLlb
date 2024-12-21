@@ -68,7 +68,7 @@ class QueryParamsStore {
 
 	// Приватный метод для обновления URL в браузере
 	private updateUrl() {
-		let newParams = createSearchParams(this.queryParams || '').toString()
+		const newParams = createSearchParams(this.queryParams || '').toString()
 		window.history.replaceState(null, '', `?${newParams}`)
 	}
 

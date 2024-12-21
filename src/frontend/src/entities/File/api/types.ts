@@ -5,3 +5,9 @@ export interface GetFilesCardData {
 export interface GetFileIdData {
 	id: string
 }
+
+export interface PostUploadFileData {
+	cardId: string
+	fileId: string
+	file: File
+}

@@ -1,6 +1,5 @@
-import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios';
-import { middlewaresCommon } from './middleware';
-
+import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
+import { middlewaresCommon } from './middleware'
 
 export let http: AxiosInstance | null = null
 

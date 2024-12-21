@@ -1,2 +1,7 @@
-export { getFiles, getFileSpectrogram } from './api'
+export {
+	getFiles,
+	getFileSpectrogram,
+	getIdForNewFile,
+	sendUploadFile,
+} from './api'
 export * from './types'

@@ -17,7 +17,7 @@ type ThemeProviderState = {
 const initialState: ThemeProviderState = {
 	theme: 'system',
 	setTheme: () => null,
-	toggleTheme: () => null
+	toggleTheme: () => null,
 }
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
@@ -70,7 +70,7 @@ export function ThemeProvider({
 			}
 			localStorage.setItem(storageKey, newTheme)
 			setTheme(newTheme)
-		}
+		},
 	}
 
 	return (

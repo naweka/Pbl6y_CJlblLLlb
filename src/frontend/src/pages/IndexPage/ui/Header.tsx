@@ -1,13 +1,13 @@
+import { X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import { Search } from '@/entities/Search'
 import { CreateCardButton } from '@/features/CreateCard'
+import { cn } from '@/shared/lib'
 import { Badge, Separator } from '@/shared/ui'
 import { indexPageStore } from '../model'
-import { X } from 'lucide-react'
-import { cn } from '@/shared/lib'
 
-interface HeaderProps { }
+interface HeaderProps {}
 
 export const Header: FC<HeaderProps> = observer(() => {
 	useEffect(() => {
@@ -39,10 +39,13 @@ export const Header: FC<HeaderProps> = observer(() => {
 								size="sm"
 								variant={active ? 'default' : 'outline'}
 								onClick={() => indexPageStore.setActiveTags(title)}
-								className={cn("cursor-pointer select-none gap-1", active ? "pr-1" : '')}
+								className={cn(
+									'cursor-pointer select-none gap-1',
+									active ? 'pr-1' : '',
+								)}
 							>
 								{title}
-								{active && <X className='w-4 h-4' />}
+								{active && <X className="h-4 w-4" />}
 							</Badge>
 						)
 					})}

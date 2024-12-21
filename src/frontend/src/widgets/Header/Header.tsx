@@ -9,7 +9,7 @@ interface HeaderProps {}
 
 export const Header: FC<HeaderProps> = () => {
 	return (
-		<header className="flex h-header items-center justify-center rounded-b-md border border-t-0">
+		<header className="sticky top-0 z-sticky flex h-header items-center justify-center rounded-b-md border border-t-0 bg-background">
 			<div className="flex w-full max-w-layout justify-between px-5 py-2">
 				<div>
 					<Link to={ROUTE_CONSTANTS.INDEX.URL}>

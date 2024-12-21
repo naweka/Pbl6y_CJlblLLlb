@@ -64,7 +64,16 @@ export const router = createBrowserRouter([
  * @hoc Инициализация роутера
  */
 const withRouter = () => () => {
-	return <RouterProvider router={router} fallbackElement={<Loading />} />
+	return (
+		<RouterProvider
+			router={router}
+			fallbackElement={
+				<div className="flex min-h-svh items-center justify-center">
+					<Loading />
+				</div>
+			}
+		/>
+	)
 }
 
 export default withRouter

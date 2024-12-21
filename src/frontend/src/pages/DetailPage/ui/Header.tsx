@@ -10,6 +10,7 @@ import {
 	Separator,
 } from '@/shared/ui'
 import { detailPageStore } from '../model'
+import { Edit } from './Edit'
 
 interface HeaderProps {}
 
@@ -32,20 +33,27 @@ export const Header: FC<HeaderProps> = observer(() => {
 	return (
 		<div className="px-5">
 			<div className="w-full">
-				<h1 className="mb-5 text-center text-3xl sm:text-4xl md:text-left md:text-5xl">
-					{card?.title}
-				</h1>
+				<div className="flex flex-col-reverse items-center justify-between gap-3 md:flex-row">
+					<h1 className="mb-5 text-center text-3xl sm:text-4xl md:text-left md:text-5xl">
+						{card?.title}
+					</h1>
+					<Edit />
+				</div>
 				<Separator />
 			</div>
 			<div className="mt-2 flex flex-col items-baseline gap-5 gap-y-0 md:flex-row">
-				{card?.status && card?.status?.length! > 0 && (
+				{card?.status && card?.status?.length > 0 && (
 					<TagsBlock title={'Статус'}>
 						<Status status={card?.status} />
 					</TagsBlock>
 				)}
 				{card?.tags?.length! > 0 && (
 					<TagsBlock title={'Теги'}>
-						{card?.tags.map((tag, i) => <Badge key={tag + i}>{tag}</Badge>)}
+						{card?.tags.map((tag, i) => (
+							<Badge className="font-bold uppercase" key={tag + i}>
+								{tag}
+							</Badge>
+						))}
 					</TagsBlock>
 				)}
 			</div>
