@@ -84,5 +84,13 @@ def get_all_tags_from_cards() -> list[str]:
     return res
 
 
+def append_file_to_card(card_id:str, file_id:str) -> Card:
+    x = cards_db.find_one_and_update({'id': card_id},
+                                 {'$push': {'files': file_id}},
+                                 return_document=True)
+    res = Card(x['id'], x['title'], x['description'], x['status'], x['tags'], x['files'])
+    return res
+
+
 def delete_card_by_id(card_id:str):
     cards_db.delete_one({'id': card_id})

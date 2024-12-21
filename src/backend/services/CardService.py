@@ -8,7 +8,9 @@ from repositories.card_repository import (add_card,
                                           find_cards_by_search_text_and_tags,
                                           find_card_by_id,
                                           delete_card_by_id,
-                                          update_card_by_id)
+                                          update_card_by_id,
+                                          append_file_to_card)
+from repositories.file_repository import add_file, get_files_by_ids
 
 # TODO
 # file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909', None, None),
@@ -35,43 +37,24 @@ def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
     return res, 200
 
 
-def __get_files_by_ids(ids:List[str]) -> List[FileInfo]:
-    global file_db
-    res = [f for f in file_db if f.id in ids]
-    return res
-
 
 def get_card_files(id:str) -> tuple[List[FileInfo],int]:
-    for c in cards_db:
-        if c.id == id:
-            file_ids:List[str] = c.files
-            files = __get_files_by_ids(file_ids)
-            return files, 200
-    return {
-        'error_message': f'Not found entity with id: {id}'
-    }, 400
+    file_ids = find_card_by_id(id).files
+    file_infos = get_files_by_ids(file_ids)
+    return file_infos, 200
 
 
 def upload_file_for_card(card_id:str,
                          file_id:str,
                          filename:str,
                          file_bytes:bytes) -> tuple[str,int]:
-    global cards_db
     filename_alias = file_id
     path = write_uploaded_file(filename_alias, file_bytes)
     
-    for c in cards_db:
-        if c.id != card_id:
-            continue
-
-        c.files.append(str(file_id))
-        file_info = FileInfo(str(file_id), filename, filename_alias, path, None)
-        file_db.append(file_info)
-        
+    card = append_file_to_card(card_id, file_id)
+    if card is not None:
+        file_info = add_file(file_id, filename, filename_alias, path, None)
         files_queue.append(file_info)
-        # path_to_fake = WORKING_DIRECTORY +'/fake_spectro.png'
-        # path_to_fake_new = WORKING_DIRECTORY + f'/server_data/spectrograms/{filename_alias}.png'
-        # shutil.copyfile(path_to_fake, path_to_fake_new)
         return '', 200
     
     return {
@@ -101,7 +84,6 @@ def create_card(title:str, description:str, tags:list[str]) -> tuple[Card,int]:
     
     c = add_card(title, description, tags if tags else [])
     return c, 200
-
 
 
 def update_card(id: str, title:str, description:str, tags:list[str]) -> tuple[Card,int]:    

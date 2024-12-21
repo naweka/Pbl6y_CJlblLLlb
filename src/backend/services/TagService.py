@@ -1,6 +1,5 @@
 from typing import List
 from repositories.card_repository import get_all_tags_from_cards
-# from services.CardService import cards_db
 
 
 def get_all_tags() -> tuple[List[str], int]:
