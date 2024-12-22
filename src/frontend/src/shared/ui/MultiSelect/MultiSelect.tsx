@@ -17,6 +17,7 @@ interface MultiSelectorProps
 	values: string[]
 	onValuesChange: (value: string[]) => void
 	loop?: boolean
+	isCreatable?: boolean
 }
 
 interface MultiSelectContextProps {
@@ -30,6 +31,7 @@ interface MultiSelectContextProps {
 	setActiveIndex: React.Dispatch<React.SetStateAction<number>>
 	ref: React.RefObject<HTMLInputElement>
 	handleSelect: (e: React.SyntheticEvent<HTMLInputElement>) => void
+	isCreatable?: boolean
 }
 
 const MultiSelectContext = createContext<MultiSelectContextProps | null>(null)
@@ -51,6 +53,7 @@ const MultiSelector = ({
 	className,
 	children,
 	dir,
+	isCreatable,
 	...props
 }: MultiSelectorProps) => {
 	const [inputValue, setInputValue] = useState('')
@@ -187,6 +190,7 @@ const MultiSelector = ({
 				setActiveIndex,
 				ref: inputRef,
 				handleSelect,
+				isCreatable,
 			}}
 		>
 			<Command
@@ -219,7 +223,7 @@ const MultiSelectorTrigger = forwardRef<
 		<div
 			ref={ref}
 			className={cn(
-				'flex flex-nowrap gap-1 overflow-hidden rounded-md bg-background p-1 py-2 ring-1 ring-muted',
+				'flex flex-wrap gap-1 overflow-hidden rounded-md bg-background p-1 py-2 ring-1 ring-muted',
 				{
 					'ring-1 focus-within:ring-ring': activeIndex === -1,
 				},
@@ -311,6 +315,8 @@ const MultiSelectorList = forwardRef<
 	React.ElementRef<typeof CommandPrimitive.List>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
 >(({ className, children }, ref) => {
+	const { isCreatable, inputValue } = useMultiSelect()
+
 	return (
 		<CommandList
 			ref={ref}
@@ -319,6 +325,11 @@ const MultiSelectorList = forwardRef<
 				className,
 			)}
 		>
+			{isCreatable && (
+				<MultiSelectCreatableItem className="text-muted-foreground">
+					Создать "{inputValue}"
+				</MultiSelectCreatableItem>
+			)}
 			{children}
 			<CommandEmpty>
 				<span className="text-muted-foreground">Результаты не найдены.</span>
@@ -328,6 +339,39 @@ const MultiSelectorList = forwardRef<
 })
 
 MultiSelectorList.displayName = 'MultiSelectorList'
+
+const MultiSelectCreatableItem = forwardRef<
+	React.ElementRef<typeof CommandPrimitive.Item>,
+	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
+>(({ className, children, ...props }, ref) => {
+	const { onValueChange, inputValue, setInputValue } = useMultiSelect()
+
+	const mousePreventDefault = useCallback((e: React.MouseEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
+	}, [])
+
+	if (!(inputValue.length > 0)) return null
+
+	return (
+		<CommandItem
+			ref={ref}
+			{...props}
+			onSelect={() => {
+				onValueChange(inputValue)
+				setInputValue('')
+			}}
+			className={cn(
+				'flex cursor-pointer justify-between rounded-md px-2 py-1 transition-colors',
+				className,
+				props.disabled && 'cursor-not-allowed opacity-50',
+			)}
+			onMouseDown={mousePreventDefault}
+		>
+			{children}
+		</CommandItem>
+	)
+})
 
 const MultiSelectorItem = forwardRef<
 	React.ElementRef<typeof CommandPrimitive.Item>,

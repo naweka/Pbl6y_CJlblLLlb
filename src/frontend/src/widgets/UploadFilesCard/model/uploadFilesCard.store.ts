@@ -1,5 +1,9 @@
 import { makeAutoObservable } from 'mobx'
 import { PostUploadFileData, sendUploadFile } from '@/entities/File'
+import {
+	getGenerateGuides,
+	GetGenerateGuidesData,
+} from '@/entities/GenerateGuid'
 import { IUploadFilesCard } from './types'
 
 class UploadFilesCard implements IUploadFilesCard {
@@ -16,10 +20,9 @@ class UploadFilesCard implements IUploadFilesCard {
 		}
 	}
 
-	// async uploadFiles(data) {
-	// 	try {
-	// 	} catch (error) {}
-	// }
+	async getGuides(data: GetGenerateGuidesData) {
+		return await getGenerateGuides(data)
+	}
 }
 
 export default new UploadFilesCard()

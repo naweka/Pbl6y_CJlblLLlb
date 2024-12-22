@@ -1,17 +1,21 @@
-import { X } from 'lucide-react'
+import { Fish, X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import { DownloadFile, DownloadFiles } from '@/features/Download'
 import { STATUS } from '@/shared/types'
 import {
 	Button,
+	For,
 	Spinner,
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/shared/ui'
-import { UploadFilesCard } from '@/widgets/UploadFilesCard'
+import {
+	UploadFilesCard,
+	uploadFilesCardStore,
+} from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
 
 interface MainProps {}
@@ -39,7 +43,18 @@ const MainError = () => {
 }
 
 const EmptyFiles = () => {
-	return <div className="px-5">Список пустой</div>
+	return (
+		<div className="flex flex-grow flex-col items-center justify-center gap-1 px-5">
+			<Fish className="h-12 w-12" />
+			<p className="mb-1 text-center text-base text-foreground">
+				<span>Список пустой </span>&nbsp;
+				<br />
+				<span>
+					Нажмите <strong>"Редактировать"</strong>, чтобы загрузить новый файл
+				</span>
+			</p>
+		</div>
+	)
 }
 
 interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
@@ -58,56 +73,61 @@ const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
 
 const MainSuccess = observer(() => {
 	return (
-		<div className="px-5">
+		<div className="flex flex-grow flex-col px-5">
 			<div className="space-y-5">
 				{detailPageStore.files && detailPageStore.files.length > 0 && (
 					<DownloadFiles />
 				)}
-				{detailPageStore.edit && <UploadFilesCard />}
-			</div>
-			<div className="flex flex-col gap-4 py-5">
-				{detailPageStore.files && detailPageStore.files.length > 0 ? (
-					detailPageStore.files.map((file) => {
-						return (
-							<div key={file.id} className="space-y-5">
-								<div className="flex flex-row gap-4">
-									<div
-										className="flex w-full items-center overflow-hidden rounded-md border p-3 py-1"
-										title={file.name}
-									>
-										<p className="overflow-hidden text-ellipsis whitespace-nowrap">
-											{file.name}
-										</p>
-									</div>
-									{file.id && <DownloadFile fileId={file.id} />}
-									<TooltipProvider delayDuration={0}>
-										<Tooltip>
-											<TooltipTrigger asChild>
-												<Button
-													variant="destructive"
-													className="min-w-10"
-													size="icon"
-												>
-													<X />
-												</Button>
-											</TooltipTrigger>
-											<TooltipContent>
-												<p>Удалить файл.</p>
-											</TooltipContent>
-										</Tooltip>
-									</TooltipProvider>
-								</div>
-								<div className="h-[150px] w-full overflow-x-auto rounded-md border">
-									{file.url && (
-										<PanoramaImg src={URL.createObjectURL(file.url)} />
-									)}
-								</div>
-							</div>
-						)
-					})
-				) : (
-					<EmptyFiles />
+				{detailPageStore.edit && detailPageStore.card?.id && (
+					<UploadFilesCard
+						onUploadFiles={(payload) => {
+							detailPageStore.uploadFiles(
+								detailPageStore.card?.id!,
+								payload,
+							)
+						}}
+					/>
 				)}
+			</div>
+			<div className="flex flex-grow flex-col gap-4 py-5">
+				<For each={detailPageStore.files} fallback={<EmptyFiles />}>
+					{(file) => (
+						<div key={file.id} className="space-y-5">
+							<div className="flex flex-row gap-4">
+								<div
+									className="flex w-full items-center overflow-hidden rounded-md border p-3 py-1"
+									title={file.name}
+								>
+									<p className="overflow-hidden text-ellipsis whitespace-nowrap">
+										{file.name}
+									</p>
+								</div>
+								{file.id && <DownloadFile fileId={file.id} />}
+								<TooltipProvider delayDuration={0}>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												variant="destructive"
+												className="min-w-10"
+												size="icon"
+											>
+												<X />
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Удалить файл.</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							</div>
+							<div className="h-[150px] w-full overflow-x-auto rounded-md border">
+								{file.url && (
+									<PanoramaImg src={URL.createObjectURL(file.url)} />
+								)}
+							</div>
+						</div>
+					)}
+				</For>
 			</div>
 		</div>
 	)

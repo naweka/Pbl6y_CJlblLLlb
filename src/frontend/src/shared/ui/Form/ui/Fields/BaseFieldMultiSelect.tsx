@@ -24,7 +24,10 @@ import {
 	useFormField,
 } from '../Form'
 
-interface BaseFieldMultiSelectProps extends UseControllerProps, BaseFieldProps {
+interface BaseFieldMultiSelectProps
+	extends UseControllerProps,
+		BaseFieldProps,
+		Partial<Omit<MultiSelectorProps, 'defaultValue'>> {
 	labelProps?: LabelProps
 	defaultValue?: string[]
 	options?: string[]

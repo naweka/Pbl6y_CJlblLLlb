@@ -16,7 +16,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 	Form,
-	FormSwitcher,
 	Spinner,
 	Tooltip,
 	TooltipContent,
@@ -59,7 +58,6 @@ const CreateCardLoading: FC<CreateCardProps> = () => {
 
 const CreateCardSuccess: FC<CreateCardProps> = observer(
 	({ setActive, action }) => {
-		const { tags, ...otherField } = FIELDS_CARD
 		const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
 		})
@@ -78,10 +76,13 @@ const CreateCardSuccess: FC<CreateCardProps> = observer(
 						<DialogTitle>Создание карточки</DialogTitle>
 					</DialogHeader>
 					<div onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-						{Object.values(otherField).map((field) => (
-							<FormSwitcher key={field.name} {...field} />
-						))}
-						<BaseForm.BaseFieldMultiSelect options={tagsStore.tags} {...tags} />
+						<BaseForm.BaseFieldInput {...FIELDS_CARD.title} />
+						<BaseForm.BaseFieldTextarea {...FIELDS_CARD.description} />
+						<BaseForm.BaseFieldMultiSelect
+							isCreatable
+							options={tagsStore.tags}
+							{...FIELDS_CARD.tags}
+						/>
 					</div>
 					<DialogFooter>
 						<Button className="w-full" type="submit">

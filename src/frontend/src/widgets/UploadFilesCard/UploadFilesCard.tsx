@@ -1,62 +1,56 @@
-import { CloudUpload, Paperclip } from 'lucide-react'
-import { FC, useState } from 'react'
+import { Upload } from 'lucide-react'
+import { observer } from 'mobx-react-lite'
+import { FC } from 'react'
 import { DropzoneOptions } from 'react-dropzone'
-import {
-	FileInput,
-	FileUploader,
-	FileUploaderContent,
-	FileUploaderItem,
-} from '@/shared/ui'
+import { useForm } from 'react-hook-form'
+import { BaseForm } from '@/entities/Form'
+import { Button, Form } from '@/shared/ui'
+import { UploadFiles } from './model'
 
-interface UploadFilesCardProps {}
-
-const FileSvgDraw = () => {
-	return (
-		<>
-			<CloudUpload className="h-8 w-8" />
-			<p className="mb-1 text-center text-sm text-foreground">
-				<span className="font-semibold">Нажмите, чтобы загрузить</span>
-				&nbsp;или перетащите и отпустите
-			</p>
-			<p className="text-xs text-foreground">WAV</p>
-		</>
-	)
+interface UploadFilesCardProps {
+	onUploadFiles?: (payload: UploadFiles) => void
 }
 
-export const UploadFilesCard: FC<UploadFilesCardProps> = () => {
-	const [files, setFiles] = useState<File[] | null>(null)
+const KEY_FIELD = 'files'
 
-	const dropZoneConfig: DropzoneOptions = {
-		maxFiles: 5,
-		maxSize: 1024 * 1024 * 500,
-		multiple: true,
-		accept: {
-			wav: ['.wav'],
-		},
-	}
+export const UploadFilesCard: FC<UploadFilesCardProps> = observer(
+	({ onUploadFiles }) => {
+		const form = useForm<UploadFiles>()
 
-	return (
-		<FileUploader
-			value={files}
-			onValueChange={setFiles}
-			dropzoneOptions={dropZoneConfig}
-			className="relative rounded-md bg-background p-1"
-		>
-			<FileInput className="rounded-md outline-dashed outline-2 outline-border">
-				<div className="flex w-full flex-col items-center justify-center px-5 pb-4 pt-3">
-					<FileSvgDraw />
-				</div>
-			</FileInput>
-			<FileUploaderContent>
-				{files &&
-					files.length > 0 &&
-					files.map((file, i) => (
-						<FileUploaderItem key={i} index={i}>
-							<Paperclip className="h-4 w-4 stroke-current" />
-							<span>{file.name}</span>
-						</FileUploaderItem>
-					))}
-			</FileUploaderContent>
-		</FileUploader>
-	)
-}
+		const dropZoneConfig: DropzoneOptions = {
+			maxFiles: 5,
+			maxSize: 1024 * 1024 * 500,
+			multiple: true,
+			accept: {
+				'audio/wav': ['.wav'],
+			},
+		}
+
+		const onSubmit = async (payload: UploadFiles) => {
+			onUploadFiles?.(payload)
+			form.reset({})
+		}
+
+		const isHaveFiles = form.watch(KEY_FIELD)
+
+		return (
+			<Form {...form}>
+				<form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+					<BaseForm.BaseFieldUpload
+						name={KEY_FIELD}
+						dropzoneOptions={dropZoneConfig}
+					/>
+					{isHaveFiles && isHaveFiles?.length > 0 && (
+						<Button
+							type="submit"
+							className="w-full"
+							loading={form.formState.isSubmitting}
+						>
+							<Upload /> Загрузить
+						</Button>
+					)}
+				</form>
+			</Form>
+		)
+	},
+)

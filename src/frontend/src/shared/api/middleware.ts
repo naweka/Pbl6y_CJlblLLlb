@@ -22,7 +22,7 @@ const mapStatus: Record<number, any> = {
 }
 
 const status = async (response: AxiosResponse) => {
-	const callback = mapStatus[response.status]
+	const callback = mapStatus[response?.status]
 	await callback?.(response)
 }
 

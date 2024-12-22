@@ -1,3 +1,3 @@
 export interface GetGenerateGuidesData {
-	count: string
+	count: number
 }

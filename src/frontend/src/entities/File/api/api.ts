@@ -21,7 +21,7 @@ export const getIdForNewFile = async () => {
 }
 export const sendUploadFile = async (data: PostUploadFileData) => {
 	return await http?.post<any, AxiosResponse<string>>(
-		routes.getIdForNewFile(),
+		routes.uploadFile(),
 		data,
 		{
 			headers: { 'Content-Type': 'multipart/form-data' },

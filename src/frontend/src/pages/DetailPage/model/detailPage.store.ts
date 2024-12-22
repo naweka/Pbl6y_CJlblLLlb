@@ -9,6 +9,7 @@ import {
 } from '@/entities/File'
 import { getParams } from '@/shared/lib'
 import { STATUS } from '@/shared/types'
+import { UploadFiles, uploadFilesCardStore } from '@/widgets/UploadFilesCard'
 import { IDetailPageStore } from './types'
 
 class DetailPageStore implements IDetailPageStore {
@@ -100,6 +101,25 @@ class DetailPageStore implements IDetailPageStore {
 
 	setEdit(value: boolean) {
 		this.edit = value
+	}
+
+	async uploadFiles(cardId: string, data: UploadFiles) {
+		try {
+			const response = await uploadFilesCardStore.getGuides({
+				count: data.files.length,
+			})
+			if (!response || !response.data) {
+				console.error('Failed to get response data')
+			}
+			const ids: string[] = response?.data || []
+			const uploadPromises = data.files.map((file, index) => {
+				const fileData = { file, cardId, fileId: ids[index] }
+				return uploadFilesCardStore.uploadFile(fileData)
+			})
+			await Promise.allSettled(uploadPromises)
+		} catch (error) {
+			console.error(error)
+		}
 	}
 }
 
