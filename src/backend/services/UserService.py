@@ -46,14 +46,6 @@ def get_current_user(jwt_data:dict) -> tuple[Union[User,str],int]:
     return res, 200
 
 
-# def add_user(name:str):
-#     global users_db
-#     id = generate_id()
-#     u = User(id, name)
-#     users_db.append(u)
-#     return u
-
-
 def remove_user(id:str):
     for elem in users_db:
         if elem.id == id:

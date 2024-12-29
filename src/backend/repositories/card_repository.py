@@ -99,3 +99,13 @@ def delete_card_by_id(card_id:str):
 def delete_file_from_cards(file_id:str):
     cards_db.update_many({'files': {'$in': [file_id]}},
                          {'$pull': {'files': file_id}})
+
+
+def delete_tag_from_card(card_id:str, tag:str):
+    cards_db.update_one({'id': card_id},
+                        {'$pull': {'tags': tag}})
+
+
+def delete_tag_from_cards(tag:str):
+    cards_db.update_many({'tags': {'$in': [tag]}},
+                         {'$pull': {'files': tag}})
