@@ -11,7 +11,8 @@ from services.CardService import (get_card,
                                   upload_file_for_card,
                                   get_card_files,
                                   update_card,
-                                  remove_file)
+                                  remove_file,
+                                  update_status_for_card)
 from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id, generate_ids
 from services.IdkJsonHelper import endpoint_output_wrapper
@@ -141,6 +142,7 @@ def uploadFile(jwt_data:dict):
     filename = fs.filename
     file_id = request.form['fileId']
     card_id = request.form['cardId']
+    update_status_for_card(card_id, 'PREPARING')
     data = fs.read()
     res, code = upload_file_for_card(card_id, file_id, filename, data)
     fs.close()
@@ -168,7 +170,7 @@ def downloadSpectrogram(jwt_data:dict, id):
 @token_required
 @endpoint_output_wrapper
 def downloadPredictedData(jwt_data:dict, id):
-    path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.txt'
+    path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.csv'
     return send_file(path, as_attachment=False), 200
 
 

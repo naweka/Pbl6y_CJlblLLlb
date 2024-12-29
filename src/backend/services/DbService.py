@@ -23,10 +23,6 @@ def initalize_normal_connection():
     files_db = __db__[DB_FILES_COLLECTION_NAME]
     users_db = __db__[DB_USERS_COLLECTION_NAME]
     system_db = __db__[DB_SYSTEM_COLLECTION_NAME]
-    print(cards_db)
-    print(files_db)
-    print(users_db)
-    print(system_db)
 
 
 def initalize_test_connection():

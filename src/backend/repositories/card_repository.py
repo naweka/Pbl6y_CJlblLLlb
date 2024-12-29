@@ -6,7 +6,7 @@ def add_card(title:str,
              description:str,
              tags:list[str],
              id:str=None,
-             status:str='PREPARING',
+             status:str='READY',
              files:list[str]=None) -> Card:
     id = id if id else generate_id()
     res = cards_db.insert_one({
@@ -79,6 +79,13 @@ def find_card_by_id(card_id:str) -> Card:
     return res[0] if res else None
 
 
+def find_card_by_file_id(file_id:str) -> Card:
+    res = list(cards_db.find({'files': {'$in': [file_id]}}))
+    res = [Card(x['id'], x['title'], x['description'],
+                x['status'], x['tags'], x['files']) for x in res]
+    return res[0] if res else None
+
+
 def get_all_tags_from_cards() -> list[str]:
     res = list(cards_db.distinct('tags'))
     return res
@@ -101,11 +108,17 @@ def delete_file_from_cards(file_id:str):
                          {'$pull': {'files': file_id}})
 
 
+# TODO
 def delete_tag_from_card(card_id:str, tag:str):
     cards_db.update_one({'id': card_id},
                         {'$pull': {'tags': tag}})
 
-
+# TODO
 def delete_tag_from_cards(tag:str):
     cards_db.update_many({'tags': {'$in': [tag]}},
                          {'$pull': {'files': tag}})
+
+
+def update_status_for_card(card_id:str, status:str):
+    cards_db.update_one({'id': card_id},
+                        {'$set': {'status': status}})

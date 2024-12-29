@@ -10,7 +10,8 @@ from repositories.card_repository import (add_card,
                                           delete_card_by_id,
                                           update_card_by_id,
                                           append_file_to_card,
-                                          delete_file_from_cards)
+                                          delete_file_from_cards,
+                                          update_status_for_card)
 from repositories.file_repository import add_file, get_files_by_ids, delete_file_by_id
 
 
