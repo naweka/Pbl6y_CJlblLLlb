@@ -1,13 +1,30 @@
-FROM node:18-alpine
-FROM node:18.13.0-alpine AS builder
+# Установка этапа сборки
+FROM node:20-alpine AS build
+
+# Устанавливаем рабочую директорию
 WORKDIR /app
+
+# Устанавливаем зависимости
 COPY package*.json ./
 RUN npm install
+
+# Копируем все файлы в контейнер
 COPY . .
+
+# Сборка приложения
 RUN npm run build
-EXPOSE 4173
-CMD ["npm", "run", "preview"]
-FROM nginx:1.21.0-alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Установка этапа выполнения
+FROM nginx:alpine
+
+# Копируем сгенерированные файлы из этапа сборки
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Копируем конфигурацию для Nginx
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+# Указываем порт, на котором работает Nginx
+EXPOSE 80
+
+# Запуск Nginx
 CMD ["nginx", "-g", "daemon off;"]
