@@ -1,10 +1,9 @@
-import { X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import { Search } from '@/entities/Search'
+import { Tags } from '@/entities/Tags'
 import { CreateCardButton } from '@/features/CreateCard'
-import { cn } from '@/shared/lib'
-import { Badge, Separator } from '@/shared/ui'
+import { Separator } from '@/shared/ui'
 import { indexPageStore } from '../model'
 
 interface HeaderProps {}
@@ -34,19 +33,14 @@ export const Header: FC<HeaderProps> = observer(() => {
 				<div className="flex min-h-10 w-full flex-wrap items-center gap-2 md:w-1/2 lg:w-auto">
 					{indexPageStore.tagsWithActive.map(({ title, active }) => {
 						return (
-							<Badge
+							<Tags
 								key={title}
+								active={active}
 								size="sm"
-								variant={active ? 'default' : 'outline'}
 								onClick={() => indexPageStore.setActiveTags(title)}
-								className={cn(
-									'cursor-pointer select-none gap-1',
-									active ? 'pr-1' : '',
-								)}
 							>
 								{title}
-								{active && <X className="h-4 w-4" />}
-							</Badge>
+							</Tags>
 						)
 					})}
 				</div>

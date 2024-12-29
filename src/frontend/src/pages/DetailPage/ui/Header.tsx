@@ -1,18 +1,20 @@
 import { observer } from 'mobx-react-lite'
 import { FC, ReactNode } from 'react'
 import { Status } from '@/entities/Status'
+import { Tags } from '@/entities/Tags'
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-	Badge,
 	Separator,
 } from '@/shared/ui'
 import { detailPageStore } from '../model'
+import { DescriptionEditable } from './DescriptionEditable'
 import { Edit } from './Edit'
+import { HeaderEditable } from './HeaderEditable'
 
-interface HeaderProps { }
+interface HeaderProps {}
 
 const TagsBlock: FC<{ title: string; children: ReactNode }> = ({
 	title,
@@ -34,10 +36,11 @@ export const Header: FC<HeaderProps> = observer(() => {
 		<div className="px-5">
 			<div className="w-full">
 				<div className="flex flex-col-reverse items-center justify-between gap-3 md:flex-row">
-					{/* <InputHeader /> */}
-					<h1 className="mb-5 text-center text-3xl sm:text-4xl md:text-left md:text-5xl">
-						{card?.title}
-					</h1>
+					<HeaderEditable
+						className="w-full justify-center md:w-[calc(100%-159px)] md:justify-start"
+						disabled={!detailPageStore.edit}
+						defaultValue={card?.title}
+					/>
 					<Edit />
 				</div>
 				<Separator />
@@ -51,9 +54,13 @@ export const Header: FC<HeaderProps> = observer(() => {
 				{card?.tags?.length! > 0 && (
 					<TagsBlock title={'Теги'}>
 						{card?.tags.map((tag, i) => (
-							<Badge className="font-bold uppercase" key={tag + i}>
+							<Tags
+								variant="default"
+								className="font-bold uppercase"
+								key={tag + i}
+							>
 								{tag}
-							</Badge>
+							</Tags>
 						))}
 					</TagsBlock>
 				)}
@@ -64,7 +71,10 @@ export const Header: FC<HeaderProps> = observer(() => {
 						Описание
 					</AccordionTrigger>
 					<AccordionContent className="text-base">
-						{card?.description}
+						<DescriptionEditable
+							disabled={!detailPageStore.edit}
+							defaultValue={card?.description || 'Введите описание карточки'}
+						/>
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>

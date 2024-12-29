@@ -7,6 +7,7 @@ import {
 	GetCardData,
 	GetFilesCardData,
 	SendCreateCardData,
+	SendUpdateCardData,
 } from './types'
 
 export const sendCreateCard = async (data: SendCreateCardData) => {
@@ -23,4 +24,7 @@ export const getCard = async (data: GetCardData) => {
 
 export const getFilesCard = async (data: GetFilesCardData) => {
 	return await http?.post<any, AxiosResponse<Card>>(routes.getFiles(), data)
+}
+export const sendUpdateCard = async (data: SendUpdateCardData) => {
+	return await http?.post<any, AxiosResponse<Card>>(routes.update(), data)
 }

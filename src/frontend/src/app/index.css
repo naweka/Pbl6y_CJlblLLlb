@@ -65,4 +65,12 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	[hidden] {
+		display: none !important;
+	}
+
+	[hidden='until-found'] {
+		display: none !important;
+	}
 }

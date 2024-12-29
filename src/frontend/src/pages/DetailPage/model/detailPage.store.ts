@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { getCard } from '@/entities/Card'
+import { getCard, SendUpdateCardData } from '@/entities/Card'
 import { Card } from '@/entities/Card/types'
 import {
 	File,
@@ -120,6 +120,12 @@ class DetailPageStore implements IDetailPageStore {
 		} catch (error) {
 			console.error(error)
 		}
+	}
+
+	async updateCard(data: SendUpdateCardData) {
+		try {
+			console.log(data)
+		} catch (error) {}
 	}
 }
 

@@ -12,12 +12,10 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/shared/ui'
-import {
-	UploadFilesCard,
-} from '@/widgets/UploadFilesCard'
+import { UploadFilesCard } from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
 
-interface MainProps { }
+interface MainProps {}
 
 const MapComponent: Record<STATUS, FC> = {
 	[STATUS.INITIAL]: () => <MainLoading />,
@@ -56,7 +54,7 @@ const EmptyFiles = () => {
 	)
 }
 
-interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> { }
+interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
 const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
 	return (
@@ -80,10 +78,7 @@ const MainSuccess = observer(() => {
 				{detailPageStore.edit && detailPageStore.card?.id && (
 					<UploadFilesCard
 						onUploadFiles={(payload) => {
-							detailPageStore.uploadFiles(
-								detailPageStore.card?.id!,
-								payload,
-							)
+							detailPageStore.uploadFiles(detailPageStore.card?.id!, payload)
 						}}
 					/>
 				)}

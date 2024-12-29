@@ -14,3 +14,7 @@ export interface GetCardData {
 }
 
 export interface GetFilesCardData extends GetCardData {}
+
+export interface SendUpdateCardData
+	extends GetCardData,
+		Partial<SendCreateCardData> {}

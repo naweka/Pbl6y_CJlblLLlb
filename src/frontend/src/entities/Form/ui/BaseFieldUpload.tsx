@@ -24,9 +24,9 @@ import { LabelProps } from '@radix-ui/react-label'
 
 interface BaseFieldUploadProps
 	extends Omit<InputProps, 'defaultValue' | 'name' | 'type' | 'value'>,
-	BaseFieldProps,
-	Partial<UploadProps>,
-	UseControllerProps {
+		BaseFieldProps,
+		Partial<UploadProps>,
+		UseControllerProps {
 	labelProps?: LabelProps
 	defaultValue?: string
 }
@@ -49,7 +49,7 @@ const FileSvgDraw = ({ format }: { format: string[] }) => {
 	)
 }
 
-interface UploadProps extends Partial<FileUploaderProps> { }
+interface UploadProps extends Partial<FileUploaderProps> {}
 
 const Upload = forwardRef<HTMLDivElement, UploadProps>(
 	({ dropzoneOptions, value, onValueChange, ...props }, ref) => {
@@ -61,7 +61,7 @@ const Upload = forwardRef<HTMLDivElement, UploadProps>(
 				value={value || null}
 				dropzoneOptions={_dropZoneConfig}
 				className="relative rounded-md bg-background p-1"
-				onValueChange={onValueChange || (() => { })}
+				onValueChange={onValueChange || (() => {})}
 				ref={ref}
 				{...props}
 			>
@@ -102,43 +102,43 @@ export const BaseFieldUpload: AssignComponent<
 	messageProps,
 	...inputProps
 }) => {
-		const form = useFormField()
-		const Comp = as
-		return (
-			<FormField
-				control={form.control}
-				name={name}
-				defaultValue={defaultValue}
-				disabled={disabled}
-				rules={rules}
-				shouldUnregister={shouldUnregister}
-				render={({ field }) => {
-					const { value, onChange, ..._field } = field
-					return (
-						<FormItem>
-							{label && (
-								<FormLabel {...labelProps} className={cn(labelProps?.className)}>
-									{label}
-								</FormLabel>
-							)}
-							<FormControl>
-								<Comp
-									disabled={disabled}
-									{...inputProps}
-									value={value}
-									onValueChange={onChange}
-									{..._field}
-								/>
-							</FormControl>
-							{description && (
-								<FormDescription {...descriptionProps}>
-									{description}
-								</FormDescription>
-							)}
-							<FormMessage {...messageProps} />
-						</FormItem>
-					)
-				}}
-			/>
-		)
-	}
+	const form = useFormField()
+	const Comp = as
+	return (
+		<FormField
+			control={form.control}
+			name={name}
+			defaultValue={defaultValue}
+			disabled={disabled}
+			rules={rules}
+			shouldUnregister={shouldUnregister}
+			render={({ field }) => {
+				const { value, onChange, ..._field } = field
+				return (
+					<FormItem>
+						{label && (
+							<FormLabel {...labelProps} className={cn(labelProps?.className)}>
+								{label}
+							</FormLabel>
+						)}
+						<FormControl>
+							<Comp
+								disabled={disabled}
+								{...inputProps}
+								value={value}
+								onValueChange={onChange}
+								{..._field}
+							/>
+						</FormControl>
+						{description && (
+							<FormDescription {...descriptionProps}>
+								{description}
+							</FormDescription>
+						)}
+						<FormMessage {...messageProps} />
+					</FormItem>
+				)
+			}}
+		/>
+	)
+}
