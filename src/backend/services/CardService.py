@@ -13,25 +13,6 @@ from repositories.card_repository import (add_card,
                                           delete_file_from_cards)
 from repositories.file_repository import add_file, get_files_by_ids, delete_file_by_id
 
-# TODO
-# file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909', None, None),
-#                           FileInfo('02020202-0909-0909-0909-090909090909', 'Запись 2.wav', '02020202-0909-0909-0909-090909090909', None, None),
-#                           FileInfo('03030303-0909-0909-0909-090909090909', 'Запись 3 ночью.wav', '03030303-0909-0909-0909-090909090909', None, None),
-#                           FileInfo('04040404-0909-0909-0909-090909090909', 'Просто 4.wav', '04040404-0909-0909-0909-090909090909', None, None),
-#                           FileInfo('05050505-0909-0909-0909-090909090909', 'English_record_20231107.wav', '05050505-0909-0909-0909-090909090909', None, None)]
-
-# cards_db:List[Card] = [
-#     Card(generate_id(), 'title1', 'description1', 'ANALYZING', ['tag1', 'tag2'], []),
-#     Card(generate_id(), 'title2', 'lol', 'READY', [], []),
-#     Card(generate_id(), 'Это чё !"№;%:?*\'-+', 'cringe', 'PREPARING', [], []),
-#     Card(generate_id(), 'name in english', 'sus', 'UPLOADING', ['tag1'], []),
-#     Card(generate_id(), 'название на русском', 'amogus', '', ['tag2'], []),
-#     Card("08080808-0909-0909-0909-090909090909", 'Записи с озера Белого', 'Здесь собраны все записи с 2027 года с озера Белое возле города Славноградска.', 'READY', [], ['01010101-0909-0909-0909-090909090909',
-#                                                                                              '02020202-0909-0909-0909-090909090909',
-#                                                                                              '03030303-0909-0909-0909-090909090909',
-#                                                                                              '04040404-0909-0909-0909-090909090909',
-#                                                                                              '05050505-0909-0909-0909-090909090909',]),
-# ]
 
 def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
     res = find_cards_by_search_text_and_tags(search_text, tags)    
@@ -79,7 +60,7 @@ def get_card(id:str) -> tuple[Card,int]:
     return res, 200
 
 
-def create_card(title:str, description:str, tags:list[str]) -> tuple[Card,int]:
+def create_card(title:str, description:str=None, tags:list[str]=None) -> tuple[Card,int]:
     # TODO null checker
     if title is None or title == '':
         return {

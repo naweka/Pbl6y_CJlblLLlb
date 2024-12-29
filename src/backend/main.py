@@ -1,4 +1,6 @@
-from flask import Flask, jsonify, request, render_template
+from services.DbService import initalize_normal_connection
+initalize_normal_connection()
+from flask import Flask
 from flask_cors import CORS
 from controllers.main_page_controller import main_page_blueprint
 from threading import Thread
@@ -8,6 +10,8 @@ from services.DbService import system_db
 from repositories.user_repository import find_users_by_id, add_user
 
 if __name__ == '__main__':
+    initalize_normal_connection()
+
     app = Flask(__name__)
     cors = CORS(app,
                 resources={r'*': {'origins': '*'}},
