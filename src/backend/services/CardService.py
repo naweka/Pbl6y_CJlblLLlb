@@ -2,15 +2,16 @@ from models.Card import Card
 from models.FileInfo import FileInfo
 from typing import List
 from services.IdGeneratorService import generate_id
-from services.FileInfoService import write_uploaded_file
+from services.FileInfoService import write_uploaded_file, delete_uploaded_file
 from services.AiService import files_queue
 from repositories.card_repository import (add_card,
                                           find_cards_by_search_text_and_tags,
                                           find_card_by_id,
                                           delete_card_by_id,
                                           update_card_by_id,
-                                          append_file_to_card)
-from repositories.file_repository import add_file, get_files_by_ids
+                                          append_file_to_card,
+                                          delete_file_from_cards)
+from repositories.file_repository import add_file, get_files_by_ids, delete_file_by_id
 
 # TODO
 # file_db:List[FileInfo] = [FileInfo('01010101-0909-0909-0909-090909090909', 'Запись 1.wav', '01010101-0909-0909-0909-090909090909', None, None),
@@ -37,7 +38,6 @@ def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
     return res, 200
 
 
-
 def get_card_files(id:str) -> tuple[List[FileInfo],int]:
     file_ids = find_card_by_id(id).files
     file_infos = get_files_by_ids(file_ids)
@@ -60,6 +60,13 @@ def upload_file_for_card(card_id:str,
     return {
         'error_message': f'Not found entity with id: {card_id}'
     }, 400
+
+
+def remove_file(id:str) -> tuple[str,int]:
+    delete_uploaded_file(id)
+    delete_file_from_cards(id)
+    delete_file_by_id(id)
+    return '', 200
 
 
 def get_card(id:str) -> tuple[Card,int]:

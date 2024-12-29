@@ -27,3 +27,7 @@ def get_files_by_ids(file_ids:list[str]) -> list[FileInfo]:
     
     print(3, res)
     return res
+
+
+def delete_file_by_id(id:str) -> None:
+    files_db.delete_one({'id': id})

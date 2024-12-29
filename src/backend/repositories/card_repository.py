@@ -94,3 +94,8 @@ def append_file_to_card(card_id:str, file_id:str) -> Card:
 
 def delete_card_by_id(card_id:str):
     cards_db.delete_one({'id': card_id})
+
+
+def delete_file_from_cards(file_id:str):
+    cards_db.update_many({'files': {'$in': [file_id]}},
+                         {'$pull': {'files': file_id}})

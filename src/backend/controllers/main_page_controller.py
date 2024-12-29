@@ -10,7 +10,8 @@ from services.CardService import (get_card,
                                   remove_card,
                                   upload_file_for_card,
                                   get_card_files,
-                                  update_card)
+                                  update_card,
+                                  remove_file)
 from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id, generate_ids
 from services.IdkJsonHelper import endpoint_output_wrapper
@@ -169,5 +170,14 @@ def downloadSpectrogram(jwt_data:dict, id):
 def downloadPredictedData(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.txt'
     return send_file(path, as_attachment=False), 200
+
+
+@main_page_blueprint.route('/api/v1/deleteFile', methods=['POST'])
+@token_required
+@endpoint_output_wrapper
+def deleteFile(jwt_data:dict) -> str:
+    file_id = get_json_parameter(request.json, 'id')
+    res = remove_file(file_id)
+    return res, 200
 
 #endregion --- FILES ---
