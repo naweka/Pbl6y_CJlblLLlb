@@ -13,7 +13,7 @@ import tensorflow as tf
 from matplotlib.patches import Rectangle
 from repositories.card_repository import find_card_by_file_id, update_status_for_card
 
-model = tf.keras.models.load_model(WORKING_DIRECTORY + "\\marine_sound_classifier_v2.h5")
+model = tf.keras.models.load_model(WORKING_DIRECTORY + "/marine_sound_classifier_v2.h5")
 
 # Параметры
 segment_duration = 1.0  # Длительность сегмента в секундах
