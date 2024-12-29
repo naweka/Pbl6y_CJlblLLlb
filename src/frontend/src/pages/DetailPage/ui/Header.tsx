@@ -12,7 +12,7 @@ import {
 import { detailPageStore } from '../model'
 import { Edit } from './Edit'
 
-interface HeaderProps {}
+interface HeaderProps { }
 
 const TagsBlock: FC<{ title: string; children: ReactNode }> = ({
 	title,
@@ -34,6 +34,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 		<div className="px-5">
 			<div className="w-full">
 				<div className="flex flex-col-reverse items-center justify-between gap-3 md:flex-row">
+					{/* <InputHeader /> */}
 					<h1 className="mb-5 text-center text-3xl sm:text-4xl md:text-left md:text-5xl">
 						{card?.title}
 					</h1>

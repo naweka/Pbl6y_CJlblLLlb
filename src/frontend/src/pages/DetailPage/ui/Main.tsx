@@ -14,11 +14,10 @@ import {
 } from '@/shared/ui'
 import {
 	UploadFilesCard,
-	uploadFilesCardStore,
 } from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
 
-interface MainProps {}
+interface MainProps { }
 
 const MapComponent: Record<STATUS, FC> = {
 	[STATUS.INITIAL]: () => <MainLoading />,
@@ -57,7 +56,7 @@ const EmptyFiles = () => {
 	)
 }
 
-interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> { }
 
 const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
 	return (

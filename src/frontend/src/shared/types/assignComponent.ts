@@ -1,4 +1,5 @@
 import { ElementType } from 'react'
+import { Assign } from './types'
 
 export type PropsOf<T extends ElementType> = React.ComponentPropsWithoutRef<T> &
 	AsProps
@@ -48,8 +49,6 @@ export type ComponentWithAs<
 	defaultProps?: Partial<unknown>
 	id?: string
 }
-
-type Assign<T, U> = Omit<T, keyof U> & U
 
 export interface AssignComponent<T extends ElementType, P extends object = {}>
 	extends ComponentWithAs<T, Assign<{}, P>> {}
