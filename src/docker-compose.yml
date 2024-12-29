@@ -1,5 +1,23 @@
 version: "3"
 services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb_container
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongodb
   frontend:
     build:
       context: ./frontend
@@ -7,3 +25,8 @@ services:
         VITE_API_URL: http://127.0.0.1:5000
     ports:
       - '80:80'
+    depends_on:
+      - backend
+volumes:
+  mongo_data:
+    driver: local
