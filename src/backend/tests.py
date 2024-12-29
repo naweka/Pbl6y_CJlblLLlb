@@ -2,9 +2,13 @@ import pytest
 from functools import wraps
 from services.DbService import initalize_test_connection
 initalize_test_connection()
+
 from services.DbService import client, cards_db, users_db, files_db
-from services.CardService import create_card, get_card
+from services.CardService import create_card, get_card, get_cards, remove_card
+from services.IdGeneratorService import generate_ids
+from services.TagService import get_all_tags
 from appconfig import DB_TEST_NAME
+from collections import Counter
 
 def not_a_test(f):
     f.__test__ = False
@@ -20,7 +24,11 @@ def test_wrapper(f):
     return decorated
 
 
-TEST_CARD_NAME = 'test_card'
+TEST_CARD_NAME = 'test card'
+TEST_CARD_NAME2 = 'another card'
+TEST_TAG = 'tag'
+TEST_TAG2 = 'another tag'
+TEST_NOT_EXISTED_TAG = 'not existed tag'
 TEST_NOT_EXISTED_ID = 'this id does not exist because its not a GUID'
 
 
@@ -72,3 +80,75 @@ def test_get_card_should_return_400_when_card_not_exist():
 
     # Assert
     assert res[1] == 400
+
+
+@test_wrapper
+def test_get_cards_should_filter_cards_when_tag():
+    # Arrange
+    create_card(TEST_CARD_NAME, tags=[TEST_TAG, TEST_TAG2])
+    create_card(TEST_CARD_NAME2)
+
+    # Act
+    res = get_cards('', [TEST_TAG])
+    res2 = get_cards('', [TEST_NOT_EXISTED_TAG])
+
+    # Assert
+    assert res[1] == 200
+    assert res2[1] == 200
+    assert len(res[0]) == 1
+    assert len(res2[0]) == 0
+
+
+@test_wrapper
+def test_get_cards_should_filter_cards_when_search_text():
+    # Arrange
+    create_card(TEST_CARD_NAME, tags=[TEST_TAG, TEST_TAG2])
+    create_card(TEST_CARD_NAME2)
+
+    # Act
+    res = get_cards('another', [])
+
+    # Assert
+    assert res[1] == 200
+    assert len(res[0]) == 1
+
+
+@test_wrapper
+def test_remove_card_should_delete_card_when_id_is_correct():
+    # Arrange
+    create_card(TEST_CARD_NAME)
+    id = create_card(TEST_CARD_NAME2)[0].id
+
+    # Act
+    res = remove_card(id)
+    cards_count = len(get_cards(None, None)[0])
+
+    # Assert
+    assert res[1] == 200
+    assert cards_count == 1 # 1 Т.к. создали две карточки, одну удалили
+
+
+@test_wrapper
+def test_generate_ids_should_generate_unique_ids():
+    # Arrange
+
+    # Act
+    data = generate_ids(50)
+    res = Counter(data)
+
+    # Assert
+    assert len(res.keys()) == 50
+
+
+@test_wrapper
+def test_get_all_tags_should_return_all_tags_when_several_cards_exist():
+    # Arrange
+    create_card(TEST_CARD_NAME, tags=[TEST_TAG])
+    create_card(TEST_CARD_NAME2, tags=[TEST_TAG, TEST_TAG2])
+
+    # Act
+    res = get_all_tags()
+
+    # Assert
+    assert res[1] == 200
+    assert len(res[0]) == 2
