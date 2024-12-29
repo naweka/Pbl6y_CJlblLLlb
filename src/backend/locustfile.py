@@ -8,7 +8,7 @@ class UserBehavior(TaskSet):
         headers = {'Content-Type': 'application/json'}
         payload = {
             'search_text': '',
-            'tags': ['hui']
+            'tags': ['qwerty']
         }
         self.client.post("/api/v1/getCards", data=json.dumps(payload), headers=headers)
 
