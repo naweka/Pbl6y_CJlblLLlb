@@ -26,7 +26,7 @@ export const UploadFilesCard: FC<UploadFilesCardProps> = observer(
 			},
 		}
 
-		const onSubmit = async (payload: UploadFiles) => {
+		const onSubmit = (payload: UploadFiles) => {
 			onUploadFiles?.(payload)
 			form.reset({})
 		}

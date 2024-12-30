@@ -13,7 +13,7 @@ interface SwitchProps
 const Switch = React.forwardRef<
 	React.ElementRef<typeof SwitchPrimitives.Root>,
 	SwitchProps
->(({ className, thumbLabel, ...props }, ref) => {
+>(({ className, ...props }, ref) => {
 	// const { on, off } = thumbLabel
 	return (
 		<SwitchPrimitives.Root

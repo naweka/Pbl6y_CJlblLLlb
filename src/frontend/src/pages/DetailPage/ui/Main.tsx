@@ -1,18 +1,10 @@
-import { Fish, X } from 'lucide-react'
+import { Fish } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import { DeleteFile } from '@/entities/DeleteFile'
 import { DownloadFile, DownloadFiles } from '@/features/Download'
 import { STATUS } from '@/shared/types'
-import {
-	Button,
-	For,
-	Spinner,
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/shared/ui'
+import { For, Spinner } from '@/shared/ui'
 import { UploadFilesCard } from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
 

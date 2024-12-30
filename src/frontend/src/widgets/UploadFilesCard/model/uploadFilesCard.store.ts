@@ -16,7 +16,7 @@ class UploadFilesCard implements IUploadFilesCard {
 			const file = sendUploadFile(data)
 			return file
 		} catch (error) {
-			console.error()
+			console.error(error)
 		}
 	}
 

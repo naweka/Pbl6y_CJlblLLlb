@@ -1,9 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { ElementSize, trackElementSize } from '@zag-js/element-size'
 
-const useSafeLayoutEffect = Boolean(globalThis?.document)
-	? useLayoutEffect
-	: useEffect
+const useSafeLayoutEffect = globalThis?.document ? useLayoutEffect : useEffect
 
 function trackMutation(el: HTMLElement | null, cb: () => void) {
 	if (!el || !el.parentElement) return
@@ -99,5 +97,5 @@ export function useSize<T extends HTMLElement | null>(
 		},
 	})
 
-	return size as ElementSize | undefined
+	return size
 }
