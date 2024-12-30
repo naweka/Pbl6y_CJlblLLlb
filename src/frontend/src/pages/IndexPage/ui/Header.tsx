@@ -6,7 +6,7 @@ import { CreateCardButton } from '@/features/CreateCard'
 import { Separator } from '@/shared/ui'
 import { indexPageStore } from '../model'
 
-interface HeaderProps { }
+interface HeaderProps {}
 
 export const Header: FC<HeaderProps> = observer(() => {
 	useEffect(() => {
@@ -24,7 +24,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 						}}
 					/>
 					<Search
-						className="max-w-none md:max-w-80 w-full"
+						className="w-full max-w-none md:max-w-80"
 						onActon={indexPageStore.fetchAllCards}
 						inputProps={{
 							onChange: indexPageStore.setSearch,
