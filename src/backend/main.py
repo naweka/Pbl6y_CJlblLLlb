@@ -10,6 +10,7 @@ from services.DbService import system_db
 from repositories.user_repository import find_users_by_id, add_user
 
 if __name__ == '__main__':
+    can_run_app = True
     initalize_normal_connection()
 
     app = Flask(__name__)
@@ -21,20 +22,29 @@ if __name__ == '__main__':
 
     system_settings = list(system_db.find({}))
     if not system_settings:
-        system_db.insert_one({ 'db_version': DB_VERSION })
+        system_db.insert_one({'db_version': DB_VERSION})
     else:
         system_settings = system_settings[0]
         db_version = system_settings['db_version']
         if db_version != DB_VERSION:
             if db_version > DB_VERSION:
                 raise Exception(f'Даунгрейд с {db_version} на {DB_VERSION} не поддерживается')
-            # TODO Upgrade service
+
+            from services.UpgradeService import start_upgrade
+            upgrade_res = start_upgrade(db_version)
+            if not upgrade_res:
+                can_run_app = False
+            else:
+                system_db.update_one({}, {'$set': {'db_version': DB_VERSION}})
             pass
 
-    if IS_DEV_MODE_ENABLED and len(find_users_by_id(TEST_USER_ID, use_contains=False)) == 0:
-        add_user('test', 'Дебаг Админович', 'test', id=TEST_USER_ID)
-    
-    ml_event_loop_thread = Thread(target=ml_event_loop, daemon=True, name='ml_event_loop')
-    ml_event_loop_thread.start()
+    if can_run_app:
+        if IS_DEV_MODE_ENABLED and len(find_users_by_id(TEST_USER_ID, use_contains=False)) == 0:
+            add_user('test', 'Дебаг Админович', 'test', id=TEST_USER_ID)
+        
+        ml_event_loop_thread = Thread(target=ml_event_loop, daemon=True, name='ml_event_loop')
+        ml_event_loop_thread.start()
 
-    app.run(debug=True)
+        app.run(debug=True)
+    else:
+        print(f'[ERROR] CANNOT RUN APP')

@@ -17,7 +17,8 @@ from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id, generate_ids
 from services.IdkJsonHelper import endpoint_output_wrapper
 from services.UserService import token_required, login_get_token, signup, get_current_user
-
+from zipfile import ZipFile
+import os
 
 main_page_blueprint = Blueprint('main_page_blueprint', __name__)
 
@@ -172,6 +173,25 @@ def downloadSpectrogram(jwt_data:dict, id):
 def downloadPredictedData(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.csv'
     return send_file(path, as_attachment=False), 200
+
+
+@main_page_blueprint.route('/allPredictedDataForCard/<path:id>', methods=['GET'])
+@token_required
+@endpoint_output_wrapper
+def allPredictedDataForCard(jwt_data:dict, id):
+    files = get_card_files(id)
+    file_ids:list[str] = [x.id for x in files[0]]
+
+    zipfile_path = WORKING_DIRECTORY+f'/server_data/temp/{id}.zip'
+    with ZipFile(zipfile_path,'w') as zip: 
+        for file_id in file_ids:
+            try:
+                path = WORKING_DIRECTORY+f'/server_data/predicted_data/{file_id}.csv'
+                zip.write(path, f'{file_id}.csv')
+            except:
+                continue
+
+    return send_file(zipfile_path, as_attachment=False), 200
 
 
 @main_page_blueprint.route('/api/v1/deleteFile', methods=['POST'])
