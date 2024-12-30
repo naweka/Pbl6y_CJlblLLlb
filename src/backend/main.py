@@ -45,6 +45,6 @@ if __name__ == '__main__':
         ml_event_loop_thread = Thread(target=ml_event_loop, daemon=True, name='ml_event_loop')
         ml_event_loop_thread.start()
 
-        app.run(debug=True)
+        app.run(debug=True, host='0.0.0.0')
     else:
         print(f'[ERROR] CANNOT RUN APP')
