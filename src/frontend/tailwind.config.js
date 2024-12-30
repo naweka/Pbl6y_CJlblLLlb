@@ -53,6 +53,8 @@ module.exports = {
 			},
 			zIndex: {
 				sticky: 1030,
+				overlay: 1300,
+				modal: 1400,
 				popover: 1500,
 				toast: 1700,
 				tooltip: 1800,

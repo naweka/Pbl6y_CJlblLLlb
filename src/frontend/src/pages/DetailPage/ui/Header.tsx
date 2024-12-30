@@ -66,7 +66,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 					<AccordionTrigger className="justify-start gap-2 text-lg [&_svg]:mt-1">
 						Описание
 					</AccordionTrigger>
-					<AccordionContent className="text-base p-1">
+					<AccordionContent className="text-base p-1 mb-2 ">
 						<DescriptionEditable />
 					</AccordionContent>
 				</AccordionItem>

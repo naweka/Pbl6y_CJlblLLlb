@@ -34,7 +34,7 @@ export const DescriptionEditable: FC<DescriptionEditableProps> = observer(({
 			<EditablePreview className="min-h-8 w-full text-base" />
 			<EditableTextarea className="h-36 text-base md:text-base" />
 			{!disabled && (
-				<EditableControl className='w-full justify-end'>
+				<EditableControl className='w-full justify-end gap-0'>
 					<EditableEditTrigger size='default'>
 						Редактировать <LucidePencilLine />
 					</EditableEditTrigger>

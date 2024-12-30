@@ -73,8 +73,8 @@ const MainSuccess = observer(() => {
 	return (
 		<div className="flex flex-grow flex-col px-5">
 			<div className="space-y-5">
-				{detailPageStore.files && detailPageStore.files.length > 0 && (
-					<DownloadFiles />
+				{detailPageStore.card?.id && detailPageStore.files && detailPageStore.files.length > 0 && (
+					<DownloadFiles cardId={detailPageStore.card?.id} />
 				)}
 				{detailPageStore.edit && detailPageStore.card?.id && (
 					<UploadFilesCard

@@ -17,7 +17,7 @@ export const fileDownloadByUrl = async (url: string) => {
 		baseURL: config.baseApiUrl,
 		method: 'get',
 		headers: { 'Cache-Control': 'no-cache' },
-		responseType: 'blob' as const,
+		// responseType: 'blob' as const,
 	}
 
 	const response = await http?.(requestConfig)
