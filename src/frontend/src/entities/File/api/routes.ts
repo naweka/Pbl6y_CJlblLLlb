@@ -5,4 +5,5 @@ export const routes = {
 	getSpectrogram: ({ id }: GetFileIdData) => `/spectrogram/${id}`,
 	getIdForNewFile: () => `/getIdForNewFile`,
 	uploadFile: () => '/uploadFile',
+	deleteFile: () => '/deleteFile',
 }

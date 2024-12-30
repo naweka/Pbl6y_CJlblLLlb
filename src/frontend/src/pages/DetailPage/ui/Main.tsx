@@ -14,8 +14,9 @@ import {
 } from '@/shared/ui'
 import { UploadFilesCard } from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
+import { DeleteFile } from '@/entities/DeleteFile'
 
-interface MainProps {}
+interface MainProps { }
 
 const MapComponent: Record<STATUS, FC> = {
 	[STATUS.INITIAL]: () => <MainLoading />,
@@ -54,7 +55,7 @@ const EmptyFiles = () => {
 	)
 }
 
-interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> { }
 
 const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
 	return (
@@ -97,22 +98,8 @@ const MainSuccess = observer(() => {
 									</p>
 								</div>
 								{file.id && <DownloadFile fileId={file.id} />}
-								<TooltipProvider delayDuration={0}>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												variant="destructive"
-												className="min-w-10"
-												size="icon"
-											>
-												<X />
-											</Button>
-										</TooltipTrigger>
-										<TooltipContent>
-											<p>Удалить файл.</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
+								{file.id && <DeleteFile onClick={() => detailPageStore.deleteFile(file.id)} />}
+
 							</div>
 							<div className="h-[150px] w-full overflow-x-auto rounded-md border">
 								{file.url && (
