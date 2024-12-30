@@ -1,6 +1,7 @@
 import { Fish, X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
+import { DeleteFile } from '@/entities/DeleteFile'
 import { DownloadFile, DownloadFiles } from '@/features/Download'
 import { STATUS } from '@/shared/types'
 import {
@@ -72,9 +73,11 @@ const MainSuccess = observer(() => {
 	return (
 		<div className="flex flex-grow flex-col px-5">
 			<div className="space-y-5">
-				{detailPageStore.files && detailPageStore.files.length > 0 && (
-					<DownloadFiles />
-				)}
+				{detailPageStore.card?.id &&
+					detailPageStore.files &&
+					detailPageStore.files.length > 0 && (
+						<DownloadFiles cardId={detailPageStore.card?.id} />
+					)}
 				{detailPageStore.edit && detailPageStore.card?.id && (
 					<UploadFilesCard
 						onUploadFiles={(payload) => {
@@ -97,22 +100,11 @@ const MainSuccess = observer(() => {
 									</p>
 								</div>
 								{file.id && <DownloadFile fileId={file.id} />}
-								<TooltipProvider delayDuration={0}>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												variant="destructive"
-												className="min-w-10"
-												size="icon"
-											>
-												<X />
-											</Button>
-										</TooltipTrigger>
-										<TooltipContent>
-											<p>Удалить файл.</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
+								{file.id && (
+									<DeleteFile
+										onClick={() => detailPageStore.deleteFile(file.id)}
+									/>
+								)}
 							</div>
 							<div className="h-[150px] w-full overflow-x-auto rounded-md border">
 								{file.url && (

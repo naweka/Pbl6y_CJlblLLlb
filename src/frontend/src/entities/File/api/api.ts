@@ -3,7 +3,12 @@ import { http } from '@/shared/api'
 import { config } from '@/shared/config'
 import { File } from '../types'
 import { routes } from './routes'
-import { GetFileIdData, GetFilesCardData, PostUploadFileData } from './types'
+import {
+	GetFileIdData,
+	GetFilesCardData,
+	PostDeleteFileData,
+	PostUploadFileData,
+} from './types'
 
 export const getFiles = async (data: GetFilesCardData) => {
 	return await http?.post<any, AxiosResponse<File[]>>(routes.getFiles(), data)
@@ -19,6 +24,7 @@ export const getFileSpectrogram = async (data: GetFileIdData) => {
 export const getIdForNewFile = async () => {
 	return await http?.get<any, AxiosResponse<string>>(routes.getIdForNewFile())
 }
+
 export const sendUploadFile = async (data: PostUploadFileData) => {
 	return await http?.post<any, AxiosResponse<string>>(
 		routes.uploadFile(),
@@ -27,4 +33,8 @@ export const sendUploadFile = async (data: PostUploadFileData) => {
 			headers: { 'Content-Type': 'multipart/form-data' },
 		},
 	)
+}
+
+export const deleteFile = async (data: PostDeleteFileData) => {
+	return await http?.post<any, AxiosResponse<string>>(routes.deleteFile(), data)
 }

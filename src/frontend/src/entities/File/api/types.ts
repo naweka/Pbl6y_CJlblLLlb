@@ -11,3 +11,7 @@ export interface PostUploadFileData {
 	fileId: string
 	file: File
 }
+
+export interface PostDeleteFileData {
+	id: string
+}

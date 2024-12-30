@@ -1,7 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { getCard, SendUpdateCardData } from '@/entities/Card'
+import { getCard, sendUpdateCard, SendUpdateCardData } from '@/entities/Card'
 import { Card } from '@/entities/Card/types'
 import {
+	deleteFile,
 	File,
 	GetFileIdData,
 	getFiles,
@@ -124,8 +125,42 @@ class DetailPageStore implements IDetailPageStore {
 
 	async updateCard(data: SendUpdateCardData) {
 		try {
-			console.log(data)
-		} catch (error) {}
+			await sendUpdateCard(data)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async onSaveEditable(name: keyof Card) {
+		if (!this._card) return
+		const data = { id: this._card.id, [name]: this._card[name] }
+		await this.updateCard(data)
+	}
+
+	onChange(name: keyof Card, value: any) {
+		if (this._card) {
+			this._card[name] = value
+		}
+		this.onSaveEditable(name)
+	}
+
+	async deleteFile(idFile: string) {
+		this.filterDeleteFile(idFile)
+		await this.fetchDeleteFile(idFile)
+	}
+
+	filterDeleteFile(idFile: string) {
+		this._files = this._files
+			? this._files.filter(({ id }) => id !== idFile)
+			: null
+	}
+
+	async fetchDeleteFile(idFile: string) {
+		try {
+			await deleteFile({ id: idFile })
+		} catch (error) {
+			console.error(error)
+		}
 	}
 }
 

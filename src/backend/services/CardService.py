@@ -35,7 +35,7 @@ def upload_file_for_card(card_id:str,
     
     card = append_file_to_card(card_id, file_id)
     if card is not None:
-        file_info = add_file(file_id, filename, filename_alias, path, None)
+        file_info = add_file(file_id, filename, filename_alias, path)
         files_queue.append(file_info)
         return '', 200
     

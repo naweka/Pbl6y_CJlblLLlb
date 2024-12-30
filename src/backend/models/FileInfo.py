@@ -9,4 +9,5 @@ class FileInfo:
     # Имя файла в системе (его id)
     alias_name:str
     audio_file_path:str
-    spectrogram_file_path:str
+    # spectrogram_file_path:str
+    # predicted_data_file_path:str

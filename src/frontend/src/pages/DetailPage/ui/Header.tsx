@@ -36,11 +36,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 		<div className="px-5">
 			<div className="w-full">
 				<div className="flex flex-col-reverse items-center justify-between gap-3 md:flex-row">
-					<HeaderEditable
-						className="w-full justify-center md:w-[calc(100%-159px)] md:justify-start"
-						disabled={!detailPageStore.edit}
-						defaultValue={card?.title}
-					/>
+					<HeaderEditable />
 					<Edit />
 				</div>
 				<Separator />
@@ -70,11 +66,8 @@ export const Header: FC<HeaderProps> = observer(() => {
 					<AccordionTrigger className="justify-start gap-2 text-lg [&_svg]:mt-1">
 						Описание
 					</AccordionTrigger>
-					<AccordionContent className="text-base">
-						<DescriptionEditable
-							disabled={!detailPageStore.edit}
-							defaultValue={card?.description || 'Введите описание карточки'}
-						/>
+					<AccordionContent className="mb-2 p-1 text-base">
+						<DescriptionEditable />
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>

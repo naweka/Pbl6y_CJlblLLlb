@@ -101,65 +101,66 @@ def ml_event_loop():
 
         #region Генерируем спектрограмму
         
-        if current_file.spectrogram_file_path is None:
-            print_log(f'Создание спектрограммы для файла {current_file.alias_name}...')
-            y, sr = librosa.load(current_file.audio_file_path, sr=16000)
-            duration_sec = int(librosa.get_duration(y=y, sr=sr))
-            D = librosa.stft(y, hop_length=64, win_length=256)
-            S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+        print_log(f'Создание спектрограммы для файла {current_file.alias_name}...')
+        y, sr = librosa.load(current_file.audio_file_path, sr=16000)
+        duration_sec = int(librosa.get_duration(y=y, sr=sr))
+        D = librosa.stft(y, hop_length=64, win_length=256)
+        S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
 
-            fig, ax = plt.subplots(nrows=1)
-            plt.margins(0)
-            fig.set_figwidth(duration_sec // 4)
-            fig.set_figheight(2)
-            ax.axis('off')
+        fig, ax = plt.subplots(nrows=1)
+        plt.margins(0)
+        fig.set_figwidth(duration_sec // 4)
+        fig.set_figheight(2)
+        ax.axis('off')
 
-            img = librosa.display.specshow(S_db,
-                                     sr=sr,
-                                     hop_length=64,
-                                     x_axis='time',
-                                     y_axis='linear',
-                                     ax=ax)
+        img = librosa.display.specshow(S_db,
+                                    sr=sr,
+                                    hop_length=64,
+                                    x_axis='time',
+                                    y_axis='linear',
+                                    ax=ax)
 
-            # fig.colorbar(img, ax=ax, format="%+2.f dB")
-            # fig.tight_layout()
+        # fig.colorbar(img, ax=ax, format="%+2.f dB")
+        # fig.tight_layout()
 
-            # Добавление полупрозрачных прямоугольников
-            for start, end in merged_detections:
-                # Прямоугольник: начало, длина по оси x (временной масштаб), высота по оси y
-                rect = Rectangle(
-                    (start, 0),  # Координаты левого нижнего угла
-                    end - start,  # Ширина
-                    ax.get_ylim()[1],  # Высота (заполняет весь спектр)
-                    linewidth=0,
-                    edgecolor=None,
-                    facecolor='white',
-                    alpha=0.46  # Полупрозрачность
-                )
-                ax.add_patch(rect)
+        # Добавление полупрозрачных прямоугольников
+        for start, end in merged_detections:
+            # Прямоугольник: начало, длина по оси x (временной масштаб), высота по оси y
+            rect = Rectangle(
+                (start, 0),  # Координаты левого нижнего угла
+                end - start,  # Ширина
+                ax.get_ylim()[1],  # Высота (заполняет весь спектр)
+                linewidth=0,
+                edgecolor=None,
+                facecolor='white',
+                alpha=0.46  # Полупрозрачность
+            )
+            ax.add_patch(rect)
 
-            fig.tight_layout()
+        fig.tight_layout()
 
-            print_log(f'Сохранение спектрограммы для файла {current_file.alias_name}...')
-            filepath = WORKING_DIRECTORY+f'/server_data/spectrograms/{current_file.alias_name}.png'
-            ram = BytesIO()
-            plt.savefig(ram, format='png', bbox_inches='tight', dpi=300, pad_inches=0)
-            ram.seek(0)
-            im = Image.open(ram)
-            im2 = im.convert('P', palette=Image.ADAPTIVE)
-            im2.save(filepath, format='PNG')
-            print_log(f'Успешно создана спектрограмма для файла {current_file.alias_name}!')
-            current_file.audio_file_path = filepath
+        print_log(f'Сохранение спектрограммы для файла {current_file.alias_name}...')
+        filepath = WORKING_DIRECTORY+f'/server_data/spectrograms/{current_file.alias_name}.png'
+        ram = BytesIO()
+        plt.savefig(ram, format='png', bbox_inches='tight', dpi=300, pad_inches=0)
+        ram.seek(0)
+        im = Image.open(ram)
+        im2 = im.convert('P', palette=Image.ADAPTIVE)
+        im2.save(filepath, format='PNG')
+        print_log(f'Успешно создана спектрограмма для файла {current_file.alias_name}!')
+
 
         #endregion Генерируем спектрограмму
 
         #region Создание csv с предиктом
+
         csv_text = 'start_second,end_second'
         for pair in merged_detections:
             csv_text += f'{pair[0]},{pair[1]}\n'
         filepath = WORKING_DIRECTORY+f'/server_data/predicted_data/{current_file.alias_name}.csv'
         open(filepath, 'w').write(csv_text)
         print_log(f'Успешно создан CSV файл для {current_file.alias_name}!')
+
         #endregion Создание csv с предиктом
 
         update_status_for_card(card_id, 'READY')
