@@ -1,5 +1,5 @@
 # Указываем базовый образ Python
-FROM python:3.10-slim
+FROM --platform=linux/amd64 python:3.10
 
 # Устанавливаем переменную окружения для предотвращения буферизации вывода Python
 ENV PYTHONUNBUFFERED=1
