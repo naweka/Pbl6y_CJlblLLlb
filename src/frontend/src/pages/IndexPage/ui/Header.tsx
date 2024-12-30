@@ -6,7 +6,7 @@ import { CreateCardButton } from '@/features/CreateCard'
 import { Separator } from '@/shared/ui'
 import { indexPageStore } from '../model'
 
-interface HeaderProps {}
+interface HeaderProps { }
 
 export const Header: FC<HeaderProps> = observer(() => {
 	useEffect(() => {
@@ -15,11 +15,16 @@ export const Header: FC<HeaderProps> = observer(() => {
 
 	return (
 		<section className="flex flex-row flex-wrap items-start gap-2 px-5 md:flex-nowrap">
-			<div className="flex w-full flex-wrap gap-2 sm:w-auto md:flex-nowrap">
-				<div className="flex w-full gap-2 sm:w-auto">
-					<CreateCardButton action={indexPageStore.fetchAllCards} />
+			<div className="flex w-full flex-wrap gap-2 md:w-80 md:flex-nowrap">
+				<div className="flex w-full gap-2">
+					<CreateCardButton
+						action={() => {
+							indexPageStore.fetchAllCards()
+							indexPageStore.fetchAllTags()
+						}}
+					/>
 					<Search
-						className="max-w-none sm:max-w-80"
+						className="max-w-none md:max-w-80 w-full"
 						onActon={indexPageStore.fetchAllCards}
 						inputProps={{
 							onChange: indexPageStore.setSearch,
@@ -30,7 +35,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 			</div>
 			<Separator className="mx-1 hidden h-10 md:block" orientation="vertical" />
 			{indexPageStore.tags.length > 0 && (
-				<div className="flex min-h-10 w-full flex-wrap items-center gap-2 md:w-1/2 lg:w-auto">
+				<div className="flex min-h-10 w-full flex-wrap items-center gap-2 lg:w-auto">
 					{indexPageStore.tagsWithActive.map(({ title, active }) => {
 						return (
 							<Tags

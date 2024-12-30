@@ -1,6 +1,7 @@
 import { Fish, X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
+import { DeleteFile } from '@/entities/DeleteFile'
 import { DownloadFile, DownloadFiles } from '@/features/Download'
 import { STATUS } from '@/shared/types'
 import {
@@ -14,9 +15,8 @@ import {
 } from '@/shared/ui'
 import { UploadFilesCard } from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
-import { DeleteFile } from '@/entities/DeleteFile'
 
-interface MainProps { }
+interface MainProps {}
 
 const MapComponent: Record<STATUS, FC> = {
 	[STATUS.INITIAL]: () => <MainLoading />,
@@ -55,7 +55,7 @@ const EmptyFiles = () => {
 	)
 }
 
-interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> { }
+interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
 const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
 	return (
@@ -73,9 +73,11 @@ const MainSuccess = observer(() => {
 	return (
 		<div className="flex flex-grow flex-col px-5">
 			<div className="space-y-5">
-				{detailPageStore.card?.id && detailPageStore.files && detailPageStore.files.length > 0 && (
-					<DownloadFiles cardId={detailPageStore.card?.id} />
-				)}
+				{detailPageStore.card?.id &&
+					detailPageStore.files &&
+					detailPageStore.files.length > 0 && (
+						<DownloadFiles cardId={detailPageStore.card?.id} />
+					)}
 				{detailPageStore.edit && detailPageStore.card?.id && (
 					<UploadFilesCard
 						onUploadFiles={(payload) => {
@@ -98,8 +100,11 @@ const MainSuccess = observer(() => {
 									</p>
 								</div>
 								{file.id && <DownloadFile fileId={file.id} />}
-								{file.id && <DeleteFile onClick={() => detailPageStore.deleteFile(file.id)} />}
-
+								{file.id && (
+									<DeleteFile
+										onClick={() => detailPageStore.deleteFile(file.id)}
+									/>
+								)}
 							</div>
 							<div className="h-[150px] w-full overflow-x-auto rounded-md border">
 								{file.url && (

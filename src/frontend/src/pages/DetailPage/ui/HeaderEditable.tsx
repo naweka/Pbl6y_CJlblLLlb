@@ -24,8 +24,8 @@ export const HeaderEditable: FC<HeaderEditableProps> = observer(
 				disabled={disabled}
 				defaultValue={detailPageStore.card?.title}
 				onValueCommit={({ value }) => detailPageStore.onChange('title', value)}
-				submitMode='enter'
-				activationMode='dblclick'
+				submitMode="enter"
+				activationMode="dblclick"
 				{...props}
 			>
 				<EditablePreview className="mb-2 inline-block overflow-hidden text-ellipsis whitespace-nowrap text-3xl sm:text-4xl md:text-left md:text-5xl" />
