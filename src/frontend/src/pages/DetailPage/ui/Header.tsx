@@ -1,7 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { FC, ReactNode } from 'react'
+
 import { Status } from '@/entities/Status'
 import { Tags } from '@/entities/Tags'
+import { Edit } from '@/entities/Edit'
 import {
 	Accordion,
 	AccordionContent,
@@ -9,12 +11,12 @@ import {
 	AccordionTrigger,
 	Separator,
 } from '@/shared/ui'
+
 import { detailPageStore } from '../model'
 import { DescriptionEditable } from './DescriptionEditable'
-import { Edit } from './Edit'
 import { HeaderEditable } from './HeaderEditable'
 
-interface HeaderProps {}
+interface HeaderProps { }
 
 const TagsBlock: FC<{ title: string; children: ReactNode }> = ({
 	title,
@@ -37,7 +39,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 			<div className="w-full">
 				<div className="flex flex-col-reverse items-center justify-between gap-3 md:flex-row">
 					<HeaderEditable />
-					<Edit />
+					<Edit checked={detailPageStore.edit} onCheckedChange={detailPageStore.setEdit} />
 				</div>
 				<Separator />
 			</div>

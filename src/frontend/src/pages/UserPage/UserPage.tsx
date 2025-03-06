@@ -1,12 +1,21 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
+
 import { Loading } from '@/entities/Loading'
 import { userStore } from '@/entities/User'
 import { STATUS } from '@/shared/types'
 
+import { Header } from './ui/Header'
+import { Content } from './ui/Content'
+import userPageStore from './model/userPage.store'
+
 export const Component: FC = observer(() => {
 	useEffect(() => {
 		userStore.fetchCurrentUser()
+
+		return () => {
+			userPageStore.reset()
+		}
 	}, [])
 
 	if (userStore.status === STATUS.LOADING) {
@@ -14,9 +23,9 @@ export const Component: FC = observer(() => {
 	}
 
 	return (
-		<main className="my-5 flex flex-grow flex-col items-center justify-center px-2">
-			<div>{JSON.stringify(userStore.currentUser)}</div>
-			<div>Профиль пользователя</div>
-		</main>
+		<main className="mx-auto w-full max-w-layout  gap-5 pt-5 flex flex-grow flex-col px-2">
+			<Header />
+			<Content />
+		</main >
 	)
 })

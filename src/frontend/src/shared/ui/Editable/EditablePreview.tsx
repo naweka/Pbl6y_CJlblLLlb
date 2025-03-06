@@ -4,10 +4,10 @@ import { PolymorphicProps } from '@/shared/types'
 import { mergeProps } from '@zag-js/react'
 import { useEditableContext } from './use-editable-context'
 
-export interface EditablePreviewBaseProps extends PolymorphicProps {}
+export interface EditablePreviewBaseProps extends PolymorphicProps { }
 export interface EditablePreviewProps
 	extends React.HTMLAttributes<HTMLSpanElement>,
-		EditablePreviewBaseProps {}
+	EditablePreviewBaseProps { }
 
 export const EditablePreview = forwardRef<
 	HTMLSpanElement,
@@ -21,7 +21,7 @@ export const EditablePreview = forwardRef<
 	return (
 		<span
 			className={cn(
-				'inline-flex cursor-text items-center rounded-md px-1 py-1 transition hover:bg-muted data-[disabled]:pointer-events-none data-[disabled]:bg-transparent',
+				'inline-flex cursor-text items-center rounded-md px-1 py-1 text-sm h-10 transition hover:bg-muted data-[disabled]:pointer-events-none data-[disabled]:bg-transparent',
 				className,
 			)}
 			{...mergedProps}

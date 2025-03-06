@@ -1,0 +1,1 @@
+export { generateColor } from './generateColor'
