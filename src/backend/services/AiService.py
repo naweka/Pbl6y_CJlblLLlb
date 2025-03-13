@@ -12,6 +12,7 @@ from appconfig import WORKING_DIRECTORY
 import tensorflow as tf
 from matplotlib.patches import Rectangle
 from repositories.card_repository import find_card_by_file_id, update_status_for_card
+from multiprocessing import Process
 
 model = tf.keras.models.load_model(WORKING_DIRECTORY + "/marine_sound_classifier_v2.h5")
 
@@ -39,6 +40,17 @@ files_queue:List[FileInfo] = []
 
 def print_log(*a):
     print(*a)
+
+
+def process_file(ram: BytesIO, filepath: str):
+    # так как pyplot.savefig полностью занимает вычислительные можности и GIL
+    # не дает нам возможности что-то с этим сделать, для сохранения файла было
+    # принято решение выполнять сохранение в дочернем процессе
+    plt.savefig(ram, format='png', bbox_inches='tight', dpi=300, pad_inches=0)
+    ram.seek(0)
+    im = Image.open(ram)
+    im2 = im.convert('P', palette=Image.ADAPTIVE)
+    im2.save(filepath, format='PNG')
 
 
 def ml_event_loop():
@@ -142,11 +154,12 @@ def ml_event_loop():
         print_log(f'Сохранение спектрограммы для файла {current_file.alias_name}...')
         filepath = WORKING_DIRECTORY+f'/server_data/spectrograms/{current_file.alias_name}.png'
         ram = BytesIO()
-        plt.savefig(ram, format='png', bbox_inches='tight', dpi=300, pad_inches=0)
-        ram.seek(0)
-        im = Image.open(ram)
-        im2 = im.convert('P', palette=Image.ADAPTIVE)
-        im2.save(filepath, format='PNG')
+        # так как pyplot.savefig полностью занимает вычислительные можности и GIL
+        # не дает нам возможности что-то с этим сделать, для сохранения файла было
+        # принято решение выполнять сохранение в дочернем процессе
+        p = Process(target=process_file, args=(ram, filepath,))
+        p.start()
+        p.join()
         print_log(f'Успешно создана спектрограмма для файла {current_file.alias_name}!')
 
 
