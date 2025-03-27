@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import type { AxiosProgressEvent, AxiosResponse } from 'axios'
 import { http } from '@/shared/api'
 import { config } from '@/shared/config'
 import { File } from '../types'
@@ -25,12 +25,14 @@ export const getIdForNewFile = async () => {
 	return await http?.get<any, AxiosResponse<string>>(routes.getIdForNewFile())
 }
 
-export const sendUploadFile = async (data: PostUploadFileData) => {
+export const sendUploadFile = async (data: PostUploadFileData, { onProgress, controller }: { onProgress?: (progressEvent: AxiosProgressEvent) => void, controller?: AbortController }) => {
 	return await http?.post<any, AxiosResponse<string>>(
 		routes.uploadFile(),
 		data,
 		{
+			onUploadProgress: onProgress,
 			headers: { 'Content-Type': 'multipart/form-data' },
+			signal: controller?.signal,
 		},
 	)
 }

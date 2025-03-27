@@ -12,8 +12,8 @@ interface ContentProps { }
 
 export const Content: FC<ContentProps> = observer(() => {
   return (
-    <div className='flex flex-col gap-1 w-full'>
-      <Card className='p-4 max-w-[420px]'>
+    <div className='flex flex-col gap-1 w-full items-center sm:items-start'>
+      <Card className='p-4 w-full sm:max-w-[420px] max-w-full'>
         <div className='flex justify-center sm:justify-start'>
           <AvatarUser id={userStore.currentUser?.id || ""} name={userStore.currentUser?.fullname || userStore.currentUser?.login || ""} />
         </div>

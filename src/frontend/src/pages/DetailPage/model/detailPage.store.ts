@@ -1,9 +1,9 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction, set } from 'mobx'
 import { getCard, sendUpdateCard, SendUpdateCardData } from '@/entities/Card'
 import { Card } from '@/entities/Card/types'
 import {
 	deleteFile,
-	File,
+	File as FileCard,
 	GetFileIdData,
 	getFiles,
 	getFileSpectrogram,
@@ -11,13 +11,17 @@ import {
 import { getParams } from '@/shared/lib'
 import { STATUS } from '@/shared/types'
 import { UploadFiles, uploadFilesCardStore } from '@/widgets/UploadFilesCard'
-import { IDetailPageStore } from './types'
+import { FileUploadProgress, FileUploadsProgress, IDetailPageStore } from './types'
 
 class DetailPageStore implements IDetailPageStore {
 	_card: Card | null = null
 	_status: STATUS = STATUS.INITIAL
 	_statusFiles: STATUS = STATUS.INITIAL
-	_files: File[] | null = null
+	_files: FileCard[] | null = null
+	loadingFile: Record<string, boolean> = {}
+	currentUploads: FileUploadsProgress = {};
+	currentUploadsProgress: Record<string, number> = {}
+	currentError: FileUploadsProgress = {}
 	edit = false
 
 	reset() {
@@ -29,7 +33,7 @@ class DetailPageStore implements IDetailPageStore {
 	}
 
 	constructor() {
-		makeAutoObservable(this, undefined, { autoBind: true, deep: false })
+		makeAutoObservable(this, undefined, { autoBind: true })
 	}
 
 	get status() {
@@ -67,9 +71,42 @@ class DetailPageStore implements IDetailPageStore {
 	}
 
 	async fetchFileSpec(data: GetFileIdData) {
+		this.setLoadingFile(data.id, true)
 		try {
 			const res = await getFileSpectrogram(data)
+			this.setLoadingFile(data.id, false)
 			return res?.data
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async fetchSeamlessFilesCard(ids: string[]) {
+		const id = this._card?.id
+
+		if (!id) return
+
+		try {
+			const res = await getFiles({ id })
+			runInAction(async () => {
+				if (res?.data) {
+					const files = res.data.filter((value) => ids.includes(value.id))
+					const fileWithBlob = await Promise.all(
+						files.map(async (file) => {
+							while (true) {
+								try {
+									const blob = await this.fetchFileSpec({ id: file.id });
+									if (blob) return { ...file, url: blob };
+								} catch (error) {
+									console.error(`Retrying for file id: ${file.id}`, error);
+								}
+								await new Promise((resolve) => setTimeout(resolve, 5000));
+							}
+						}),
+					);
+					this._files = fileWithBlob
+				}
+			})
 		} catch (error) {
 			console.error(error)
 		}
@@ -84,6 +121,9 @@ class DetailPageStore implements IDetailPageStore {
 			runInAction(async () => {
 				if (res?.data) {
 					const files = res.data
+
+					const ids = files.map(({ id }) => id)
+
 					const fileWithBlob = await Promise.all(
 						files.map(async (file) => {
 							const blob = await this.fetchFileSpec({ id: file.id })
@@ -104,22 +144,98 @@ class DetailPageStore implements IDetailPageStore {
 		this.edit = value
 	}
 
+	convertFileToCardFile(ids: string[]) {
+		return (file: File, index: number) => {
+			return {
+				alias_name: file.name,
+				id: ids[index],
+				name: file.name
+			}
+		}
+	}
+
+	setUpload(id: string, data: FileUploadProgress) {
+		this.currentUploads[id] = data
+	}
+
+	setUploadProgress(id: string, progress: number) {
+		this.currentUploadsProgress[id] = progress
+	}
+
+	setLoadingFile(id: string, value: boolean) {
+		this.loadingFile[id] = value
+	}
+
+	getLoadingFile(id: string) {
+		return this.loadingFile[id] || false
+	}
+
+	getUpload(id: string) {
+		const upload = this.currentUploads[id] || {}
+		return upload
+	}
+
+	getUploadProgress(id: string) {
+		const progress = this.currentUploadsProgress[id]
+		return progress || 0
+	}
+
 	async uploadFiles(cardId: string, data: UploadFiles) {
 		try {
 			const response = await uploadFilesCardStore.getGuides({
 				count: data.files.length,
-			})
+			});
+
 			if (!response || !response.data) {
-				console.error('Failed to get response data')
+				throw new Error('Failed to get ids');
 			}
-			const ids: string[] = response?.data || []
+
+			const ids: string[] = response?.data || [];
+
+			const localFile = data.files.map(this.convertFileToCardFile(ids));
+			runInAction(() => {
+				this._files = localFile;
+			});
+
 			const uploadPromises = data.files.map((file, index) => {
-				const fileData = { file, cardId, fileId: ids[index] }
-				return uploadFilesCardStore.uploadFile(fileData)
-			})
-			await Promise.allSettled(uploadPromises)
+				const fileData = { file, cardId, fileId: ids[index] };
+				const controller = new AbortController();
+				const id = localFile[index].id;
+
+				this.setUpload(id, {
+					isCompleted: false,
+					controller,
+				});
+
+				return uploadFilesCardStore.uploadFile(fileData, {
+					onProgress: (progressEvent) => {
+						const progress = Math.round(
+							(progressEvent.loaded * 100) / progressEvent.total!
+						);
+
+						runInAction(() => {
+							this.setUploadProgress(id, progress);
+						});
+					},
+					controller,
+				})
+					// .catch(() => {
+					// })
+					.finally(() => {
+						delete this.currentUploads[id];
+						delete this.currentUploadsProgress[id];
+					}).then(() => {
+						return id
+					})
+			});
+
+			const res = await Promise.allSettled(uploadPromises);
+
+			const idsCompleted = res.filter(Boolean).filter((item) => item.status === 'fulfilled').map(({ value }) => value)
+
+			this.fetchSeamlessFilesCard(idsCompleted)
 		} catch (error) {
-			console.error(error)
+			console.error(error);
 		}
 	}
 
@@ -145,8 +261,16 @@ class DetailPageStore implements IDetailPageStore {
 	}
 
 	async deleteFile(idFile: string) {
+		this.abortUpload(idFile)
 		this.filterDeleteFile(idFile)
 		await this.fetchDeleteFile(idFile)
+	}
+
+	abortUpload(id: string) {
+		const controller = this.currentUploads[id]?.controller
+		if (controller) {
+			controller.abort()
+		}
 	}
 
 	filterDeleteFile(idFile: string) {

@@ -60,8 +60,7 @@ class AuthStore implements IAuthStore {
 		this._status = STATUS.LOADING
 		try {
 			const token = this.getToken()
-			//TODO Задержка Убрать
-			await new Promise((resolve) => setTimeout(resolve, 1000))
+
 			runInAction(() => {
 				if (token) {
 					this._isAuth = true

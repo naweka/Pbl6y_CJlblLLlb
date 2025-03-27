@@ -1,12 +1,12 @@
 import { Fish } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
-import { DeleteFile } from '@/entities/DeleteFile'
-import { DownloadFile, DownloadFiles } from '@/features/Download'
+import { DownloadFiles } from '@/features/Download'
 import { STATUS } from '@/shared/types'
 import { For, Spinner } from '@/shared/ui'
 import { UploadFilesCard } from '@/widgets/UploadFilesCard'
 import { detailPageStore } from '../model'
+import { CardFile } from './CardFile'
 
 interface MainProps {}
 
@@ -47,20 +47,6 @@ const EmptyFiles = () => {
 	)
 }
 
-interface PanoramaImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
-
-const PanoramaImg: FC<PanoramaImgProps> = ({ src, ...props }) => {
-	return (
-		<div className="h-full overflow-x-auto" {...props}>
-			<img
-				loading="lazy"
-				className="inline-block h-full max-w-none object-contain"
-				src={src}
-			/>
-		</div>
-	)
-}
-
 const MainSuccess = observer(() => {
 	return (
 		<div className="flex flex-grow flex-col px-5">
@@ -81,29 +67,10 @@ const MainSuccess = observer(() => {
 			<div className="flex flex-grow flex-col gap-4 py-5">
 				<For each={detailPageStore.files} fallback={<EmptyFiles />}>
 					{(file) => (
-						<div key={file.id} className="space-y-5">
-							<div className="flex flex-row gap-4">
-								<div
-									className="flex w-full items-center overflow-hidden rounded-md border p-3 py-1"
-									title={file.name}
-								>
-									<p className="overflow-hidden text-ellipsis whitespace-nowrap">
-										{file.name}
-									</p>
-								</div>
-								{file.id && <DownloadFile fileId={file.id} />}
-								{file.id && (
-									<DeleteFile
-										onClick={() => detailPageStore.deleteFile(file.id)}
-									/>
-								)}
-							</div>
-							<div className="h-[150px] w-full overflow-x-auto rounded-md border">
-								{file.url && (
-									<PanoramaImg src={URL.createObjectURL(file.url)} />
-								)}
-							</div>
-						</div>
+						<CardFile
+							file={file}
+							key={file.id}
+						/>
 					)}
 				</For>
 			</div>
