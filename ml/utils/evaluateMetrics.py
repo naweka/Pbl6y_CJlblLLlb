@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 def calculate_iou(interval_a, interval_b):
     start_a, end_a = interval_a
@@ -41,4 +42,48 @@ def evaluate_metrics(true_segments, pred_segments, iou_threshold=0.5): #Важн
         'Precision': precision,
         'Recall': recall,
         'F1-score': f1_score,
+    }
+
+def bootstrap_confidence_intervals(true_segments, pred_segments, iou_threshold=0.5, 
+                                 n_bootstrap=1000, confidence_level=0.95):
+    """Вычисляет доверительные интервалы метрик с помощью бутстрепа.
+        true_segments: Эталонные интервалы
+        pred_segments: Предсказанные интервалы
+        iou_threshold: Порог IoU
+        n_bootstrap: Количество бутстреп-выборок (ставьте поменьше для большой выборки)
+        confidence_level: Уровень доверия (0.95 для 95%)
+    """
+    # Исходные метрики
+
+    # Бутстреп-выборки
+    n_true = len(true_segments)
+    n_pred = len(pred_segments)
+    
+    precision_samples = []
+    recall_samples = []
+    f1_samples = []
+    
+    for _ in tqdm(range(n_bootstrap), desc="Bootstrapping"):
+        # Генерация бутстреп-выборок с повторением
+        true_bootstrap = [true_segments[i] for i in np.random.choice(n_true, n_true, replace=True)]
+        pred_bootstrap = [pred_segments[i] for i in np.random.choice(n_pred, n_pred, replace=True)]
+        
+        # Вычисление метрик для выборки
+        metrics = evaluate_metrics(true_bootstrap, pred_bootstrap, iou_threshold)
+        precision_samples.append(metrics['Precision'])
+        recall_samples.append(metrics['Recall'])
+        f1_samples.append(metrics['F1-score'])
+    
+    # Вычисление квантилей
+    alpha = (1 - confidence_level) / 2
+    ci_low = alpha * 100
+    ci_high = (1 - alpha) * 100
+    
+    def get_ci(samples):
+        return np.percentile(samples, [ci_low, ci_high])
+    
+    return {
+        'Precision_CI': get_ci(precision_samples),
+        'Recall_CI': get_ci(recall_samples),
+        'F1_CI': get_ci(f1_samples),
     }
