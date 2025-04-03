@@ -9,6 +9,50 @@ def calculate_iou(interval_a, interval_b):
     union = (end_a - start_a) + (end_b - start_b) - intersection
     return intersection / union if union > 0 else 0.0
     
+def calculate_ap(true_segments, pred_segments, iou_thresholds):
+    aps = []
+    
+    for thresh in iou_thresholds:
+        # Сопоставление предсказаний с истинными интервалами
+        matched_true = set()
+        tp = np.zeros(len(pred_segments))
+        fp = np.zeros(len(pred_segments))
+        
+        for i, pred in enumerate(pred_segments):
+            best_iou = 0.0
+            best_idx = -1
+            for j, true in enumerate(true_segments):
+                if j in matched_true:
+                    continue
+                iou = calculate_iou(pred, true)
+                if iou > best_iou:
+                    best_iou = iou
+                    best_idx = j
+            
+            if best_iou >= thresh:
+                matched_true.add(best_idx)
+                tp[i] = 1
+            else:
+                fp[i] = 1
+
+        # Рассчитываем precision-recall кривую
+        tp_cumsum = np.cumsum(tp)
+        fp_cumsum = np.cumsum(fp)
+        
+        recalls = tp_cumsum / len(true_segments)
+        precisions = tp_cumsum / (tp_cumsum + fp_cumsum + 1e-12)
+        
+        # Интерполяция precision для 101 точки
+        interp_precision = np.zeros(101)
+        for r in range(101):
+            precision_vals = precisions[recalls >= r/100]
+            interp_precision[r] = max(precision_vals) if len(precision_vals) > 0 else 0
+        
+        # Вычисляем AP как среднее значение precision
+        ap = np.mean(interp_precision)
+        aps.append(ap)
+    
+    return aps
 
 def evaluate_metrics(true_segments, pred_segments, iou_threshold=0.5): #Важный коэф надо покрутить
     true_positives = 0
@@ -42,48 +86,39 @@ def evaluate_metrics(true_segments, pred_segments, iou_threshold=0.5): #Важн
         'Precision': precision,
         'Recall': recall,
         'F1-score': f1_score,
+        'AP50': calculate_ap(true_segments, pred_segments, [0.5])[0],
+        'AP75': calculate_ap(true_segments, pred_segments, [0.75])[0],
+        'AP50-95': np.mean(calculate_ap(true_segments, pred_segments, np.arange(0.5, 1.0, 0.05)))
     }
 
-def bootstrap_confidence_intervals(true_segments, pred_segments, iou_threshold=0.5, 
-                                 n_bootstrap=1000, confidence_level=0.95):
-    """Вычисляет доверительные интервалы метрик с помощью бутстрепа.
-        true_segments: Эталонные интервалы
-        pred_segments: Предсказанные интервалы
-        iou_threshold: Порог IoU
-        n_bootstrap: Количество бутстреп-выборок (ставьте поменьше для большой выборки)
-        confidence_level: Уровень доверия (0.95 для 95%)
-    """
-    # Исходные метрики
-
-    # Бутстреп-выборки
+def bootstrap_confidence_intervals(true_segments, pred_segments, iou_threshold=0.5,
+                                  n_bootstrap=1000, confidence_level=0.95):
+    # Модифицируем для новых метрик
     n_true = len(true_segments)
     n_pred = len(pred_segments)
     
-    precision_samples = []
-    recall_samples = []
-    f1_samples = []
+    metrics_samples = {
+        'Precision': [],
+        'Recall': [],
+        'F1-score': [],
+        'AP50': [],
+        'AP75': [],
+        'AP50-95': []
+    }
     
     for _ in tqdm(range(n_bootstrap), desc="Bootstrapping"):
-        # Генерация бутстреп-выборок с повторением
         true_bootstrap = [true_segments[i] for i in np.random.choice(n_true, n_true, replace=True)]
         pred_bootstrap = [pred_segments[i] for i in np.random.choice(n_pred, n_pred, replace=True)]
         
-        # Вычисление метрик для выборки
         metrics = evaluate_metrics(true_bootstrap, pred_bootstrap, iou_threshold)
-        precision_samples.append(metrics['Precision'])
-        recall_samples.append(metrics['Recall'])
-        f1_samples.append(metrics['F1-score'])
+        for k in metrics_samples:
+            metrics_samples[k].append(metrics[k])
     
-    # Вычисление квантилей
+    # Вычисление квантилей для всех метрик
     alpha = (1 - confidence_level) / 2
-    ci_low = alpha * 100
-    ci_high = (1 - alpha) * 100
+    ci = {}
     
-    def get_ci(samples):
-        return np.percentile(samples, [ci_low, ci_high])
+    for metric, samples in metrics_samples.items():
+        ci[metric + "_CI"] = np.percentile(samples, [alpha*100, (1-alpha)*100])
     
-    return {
-        'Precision_CI': get_ci(precision_samples),
-        'Recall_CI': get_ci(recall_samples),
-        'F1_CI': get_ci(f1_samples),
-    }
+    return ci
