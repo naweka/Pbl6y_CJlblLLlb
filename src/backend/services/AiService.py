@@ -14,6 +14,8 @@ from matplotlib.patches import Rectangle
 from repositories.card_repository import find_card_by_file_id, update_status_for_card
 from multiprocessing import Process
 
+processing_files = set()
+
 model = tf.keras.models.load_model(WORKING_DIRECTORY + "/marine_sound_classifier_v2.h5")
 
 # Параметры
@@ -63,6 +65,8 @@ def ml_event_loop():
 
         current_file:FileInfo = files_queue.pop(0)
         print_log(f'Найден файл {current_file.alias_name}...')
+
+        processing_files.add(current_file.id)
 
 
         card_id = find_card_by_file_id(current_file.id).id
@@ -173,6 +177,8 @@ def ml_event_loop():
         filepath = WORKING_DIRECTORY+f'/server_data/predicted_data/{current_file.alias_name}.csv'
         open(filepath, 'w').write(csv_text)
         print_log(f'Успешно создан CSV файл для {current_file.alias_name}!')
+
+        processing_files.remove(current_file.id)
 
         #endregion Создание csv с предиктом
 
