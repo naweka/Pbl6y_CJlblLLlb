@@ -66,9 +66,6 @@ def ml_event_loop():
         current_file:FileInfo = files_queue.pop(0)
         print_log(f'Найден файл {current_file.alias_name}...')
 
-        processing_files.add(current_file.id)
-
-
         card_id = find_card_by_file_id(current_file.id).id
         update_status_for_card(card_id, 'ANALYZING')
 
