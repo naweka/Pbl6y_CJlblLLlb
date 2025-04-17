@@ -1,3 +1,4 @@
+import { AxiosProgressEvent } from 'axios'
 import { makeAutoObservable } from 'mobx'
 import { PostUploadFileData, sendUploadFile } from '@/entities/File'
 import {
@@ -5,14 +6,22 @@ import {
 	GetGenerateGuidesData,
 } from '@/entities/GenerateGuid'
 import { IUploadFilesCard } from './types'
-import { AxiosProgressEvent } from 'axios'
 
 class UploadFilesCard implements IUploadFilesCard {
 	constructor() {
 		makeAutoObservable(this, undefined, { autoBind: true, deep: false })
 	}
 
-	async uploadFile(data: PostUploadFileData, { onProgress, controller }: { onProgress?: (progressEvent: AxiosProgressEvent) => void; controller?: AbortController }) {
+	async uploadFile(
+		data: PostUploadFileData,
+		{
+			onProgress,
+			controller,
+		}: {
+			onProgress?: (progressEvent: AxiosProgressEvent) => void
+			controller?: AbortController
+		},
+	) {
 		try {
 			const file = sendUploadFile(data, { onProgress, controller })
 			return file
