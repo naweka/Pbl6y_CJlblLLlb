@@ -9,6 +9,12 @@
 5. Собрать фронтенд `npm i && npm run build`
 6. Запустить `npm run preview`
 
-
 ## Запуск тестов (backend)
+
 Для запуска тестов необходимо запустить скрипт `src/backend/tests.py` с помощью `pytest`: `pytest -v src/backend/tests.py`
+
+## Запуск docker compose.yml
+
+```
+docker compose -f src/docker-compose.yml up --build
+```
