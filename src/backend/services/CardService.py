@@ -1,9 +1,10 @@
 from models.Card import Card
 from models.FileInfo import FileInfo
 from typing import List
+from appconfig import WORKING_DIRECTORY
 from services.IdGeneratorService import generate_id
 from services.FileInfoService import write_uploaded_file, delete_uploaded_file
-from services.AiService import files_queue
+from services.AiService import files_queue, processing_files
 from repositories.card_repository import (add_card,
                                           find_cards_by_search_text_and_tags,
                                           find_card_by_id,
@@ -13,6 +14,8 @@ from repositories.card_repository import (add_card,
                                           delete_file_from_cards,
                                           update_status_for_card)
 from repositories.file_repository import add_file, get_files_by_ids, delete_file_by_id
+import os
+
 
 
 def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
@@ -37,6 +40,7 @@ def upload_file_for_card(card_id:str,
     if card is not None:
         file_info = add_file(file_id, filename, filename_alias, path)
         files_queue.append(file_info)
+        processing_files.add(file_id)
         return '', 200
     
     return {
@@ -48,7 +52,7 @@ def remove_file(id:str) -> tuple[str,int]:
     delete_uploaded_file(id)
     delete_file_from_cards(id)
     delete_file_by_id(id)
-    return '', 200
+    return ''
 
 
 def get_card(id:str) -> tuple[Card,int]:

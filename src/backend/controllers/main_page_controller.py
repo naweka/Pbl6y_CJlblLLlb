@@ -17,6 +17,7 @@ from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id, generate_ids
 from services.IdkJsonHelper import endpoint_output_wrapper
 from services.UserService import token_required, login_get_token, signup, get_current_user
+from services.AiService import processing_files
 from zipfile import ZipFile
 import os
 
@@ -164,6 +165,8 @@ def getFiles(jwt_data:dict) -> str:
 @endpoint_output_wrapper
 def downloadSpectrogram(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/spectrograms/{id}.png'
+    if not os.path.exists(path):
+        return {'error_message': f'Not found file {id}.png'}, 404
     return send_file(path, as_attachment=False), 200
 
 
@@ -172,6 +175,8 @@ def downloadSpectrogram(jwt_data:dict, id):
 @endpoint_output_wrapper
 def downloadPredictedData(jwt_data:dict, id):
     path = WORKING_DIRECTORY+f'/server_data/predicted_data/{id}.csv'
+    if not os.path.exists(path):
+        return {'error_message': f'Not found file {id}.png'}, 404
     return send_file(path, as_attachment=False), 200
 
 
@@ -199,6 +204,10 @@ def allPredictedDataForCard(jwt_data:dict, id):
 @endpoint_output_wrapper
 def deleteFile(jwt_data:dict) -> str:
     file_id = get_json_parameter(request.json, 'id')
+    if file_id in processing_files:
+        return {'error_message': f'Вы не можете удалить этот файл, так как он в процессе обработки. \
+Пожалуйста, попробуйте позже'}, 400
+ 
     res = remove_file(file_id)
     return res, 200
 

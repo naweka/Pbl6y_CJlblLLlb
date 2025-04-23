@@ -25,7 +25,16 @@ export const getIdForNewFile = async () => {
 	return await http?.get<any, AxiosResponse<string>>(routes.getIdForNewFile())
 }
 
-export const sendUploadFile = async (data: PostUploadFileData, { onProgress, controller }: { onProgress?: (progressEvent: AxiosProgressEvent) => void, controller?: AbortController }) => {
+export const sendUploadFile = async (
+	data: PostUploadFileData,
+	{
+		onProgress,
+		controller,
+	}: {
+		onProgress?: (progressEvent: AxiosProgressEvent) => void
+		controller?: AbortController
+	},
+) => {
 	return await http?.post<any, AxiosResponse<string>>(
 		routes.uploadFile(),
 		data,

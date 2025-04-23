@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import type { FC } from 'react'
-import { useMemo } from 'react'
 import { DeleteFile } from '@/entities/DeleteFile'
 import { File } from '@/entities/File'
 import { DownloadFile } from '@/features/Download'

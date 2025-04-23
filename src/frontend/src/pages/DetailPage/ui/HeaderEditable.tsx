@@ -28,7 +28,7 @@ export const HeaderEditable: FC<HeaderEditableProps> = observer(
 				activationMode="dblclick"
 				{...props}
 			>
-				<EditablePreview className="mb-2 inline-block overflow-hidden h-auto text-ellipsis whitespace-nowrap text-3xl sm:text-4xl md:text-left md:text-5xl" />
+				<EditablePreview className="mb-2 inline-block h-auto overflow-hidden text-ellipsis whitespace-nowrap text-3xl sm:text-4xl md:text-left md:text-5xl" />
 				<EditableInput className="mb-2 h-[44px] text-3xl sm:h-[48px] sm:text-4xl md:h-[56px] md:text-left md:text-5xl" />
 				{!disabled && (
 					<EditableControl>

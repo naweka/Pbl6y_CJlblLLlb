@@ -2,19 +2,19 @@ import { makeAutoObservable } from 'mobx'
 import { IUserPageStore } from './types'
 
 class UserPageStore implements IUserPageStore {
-  editedUser = false
+	editedUser = false
 
-  constructor() {
-    makeAutoObservable(this, undefined, { autoBind: true, deep: false })
-  }
+	constructor() {
+		makeAutoObservable(this, undefined, { autoBind: true, deep: false })
+	}
 
-  reset() {
-    this.editedUser = false
-  }
+	reset() {
+		this.editedUser = false
+	}
 
-  setEditedUser(value: boolean) {
-    this.editedUser = value
-  }
+	setEditedUser(value: boolean) {
+		this.editedUser = value
+	}
 }
 
 export default new UserPageStore()

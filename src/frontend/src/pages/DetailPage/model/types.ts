@@ -5,8 +5,8 @@ export interface IDetailPageStore {
 }
 
 export interface FileUploadProgress {
-	isCompleted: boolean;
-	controller: AbortController;
+	isCompleted: boolean
+	controller: AbortController
 }
 
 export type FileUploadsProgress = Record<string, FileUploadProgress>

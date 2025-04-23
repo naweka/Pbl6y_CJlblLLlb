@@ -43,10 +43,11 @@ export const UploadFilesCard: FC<UploadFilesCardProps> = observer(
 					{isHaveFiles && isHaveFiles?.length > 0 && (
 						<Button
 							type="submit"
-							className="w-full"
+							className=""
 							loading={form.formState.isSubmitting}
 						>
-							<Upload /> Загрузить
+							<Upload />
+							Загрузить
 						</Button>
 					)}
 				</form>

@@ -66,12 +66,7 @@ const MainSuccess = observer(() => {
 			</div>
 			<div className="flex flex-grow flex-col gap-4 py-5">
 				<For each={detailPageStore.files} fallback={<EmptyFiles />}>
-					{(file) => (
-						<CardFile
-							file={file}
-							key={file.id}
-						/>
-					)}
+					{(file) => <CardFile file={file} key={file.id} />}
 				</For>
 			</div>
 		</div>

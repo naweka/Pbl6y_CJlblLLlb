@@ -1,5 +1,27 @@
-version: "3"
+version: "3.8"
+name: Pbl6y_CJlblLLlb
 services:
+  mongodb:
+    image: mongo
+    container_name: mongodb_container
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - node-network
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
   frontend:
     build:
       context: ./frontend
@@ -7,3 +29,13 @@ services:
         VITE_API_URL: http://0.0.0.0:5000
     ports:
       - '80:80'
+    depends_on:
+      - backend
+    networks:
+      - node-network
+volumes:
+  mongo_data:
+    driver: local
+networks:
+  node-network:
+    driver: bridge

@@ -30,7 +30,7 @@ export const DescriptionEditable: FC<DescriptionEditableProps> = observer(
 				activationMode="dblclick"
 				{...props}
 			>
-				<EditablePreview className="min-h-8 h-auto w-full text-base" />
+				<EditablePreview className="h-auto min-h-8 w-full text-base" />
 				<EditableTextarea className="h-36 text-base md:text-base" />
 				{!disabled && (
 					<EditableControl className="w-full justify-end gap-0">
