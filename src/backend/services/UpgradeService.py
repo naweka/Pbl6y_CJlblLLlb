@@ -1,12 +1,26 @@
 import traceback
-from services.DbService import cards_db, files_db, users_db, system_db
+from services.DbService import cards_db, model_settings_db, files_db, users_db, system_db
 
 
 def remove_audio_spectrogram_action():
     files_db.update_many({}, {'$unset': {'spectrogram_file_path': ''}})
 
 
-upgrade_actions = [(2, remove_audio_spectrogram_action)]
+def create_default_model_settings():
+    model_settings_db.insert_one({
+        'file_id': 'None',
+        'window_size': 0.5,
+        'window_step': 0.1,
+        'min_sound_length': 0.33,
+        'ignore_noise_outliers': 'cut_when_at_least_one',
+        'ignore_sound_outliers': 'insert_when_more_than_one',
+        'confidence_limit': 0.8,
+        'offset_bounds': 0.1
+    })
+
+
+upgrade_actions = [(2, remove_audio_spectrogram_action),
+                   (3, create_default_model_settings)]
 
 
 def start_upgrade(from_ver:int) -> bool:

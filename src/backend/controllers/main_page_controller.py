@@ -2,8 +2,13 @@ from flask import Blueprint, request, send_file
 from typing import List
 from appconfig import WORKING_DIRECTORY
 from models.Card import Card
+from models.ModelSettings import ModelSettings
 from controllers.controller_utils import (get_json_parameters,
                                           get_json_parameter)
+from services.ModelSettingsService import (update_default_model_settings_handler,
+                                           update_model_settings_handler,
+                                           get_model_settings_handler,
+                                           get_default_model_settings_handler)
 from services.CardService import (get_card,
                                   get_cards,
                                   create_card,
@@ -112,6 +117,7 @@ def getTags(jwt_data:dict) -> List[str]:
     res = get_all_tags()
     return res
 
+
 #endregion --- TAGS ---
 
 #region --- FILES ---
@@ -211,4 +217,52 @@ def deleteFile(jwt_data:dict) -> str:
     res = remove_file(file_id)
     return res, 200
 
+
 #endregion --- FILES ---
+
+#region --- MODEL SETTINGS ---
+
+
+@main_page_blueprint.route('/api/v1/overrideModelSettingsForFile', methods=['POST'])
+@token_required
+@endpoint_output_wrapper
+def updateModelSettingsForFile(jwt_data:dict) -> ModelSettings:
+    file_id, window_size, window_step, min_sound_length, ignore_noise_outliers, \
+    ignore_sound_outliers, confidence_limit, \
+        offset_bounds = get_json_parameters(request.json, 'file_id', 'window_size', \
+        'window_step', 'min_sound_length', 'ignore_noise_outliers', 'ignore_sound_outliers', \
+        'confidence_limit', 'offset_bounds')
+    res, code = update_model_settings_handler(file_id, window_size, window_step, min_sound_length, ignore_noise_outliers, ignore_sound_outliers, confidence_limit, offset_bounds)
+    return res, code
+
+
+@main_page_blueprint.route('/api/v1/overrideDefaultModelSettingsForFile', methods=['POST'])
+@token_required
+@endpoint_output_wrapper
+def updateDefaultModelSettingsForFile(jwt_data:dict) -> ModelSettings:
+    window_size, window_step, min_sound_length, ignore_noise_outliers, \
+    ignore_sound_outliers, confidence_limit, \
+        offset_bounds = get_json_parameters(request.json, 'window_size', \
+        'window_step', 'min_sound_length', 'ignore_noise_outliers', 'ignore_sound_outliers', \
+        'confidence_limit', 'offset_bounds')
+    res, code = update_default_model_settings_handler(window_size, window_step, min_sound_length, ignore_noise_outliers, ignore_sound_outliers, confidence_limit, offset_bounds)
+    return res, code
+
+
+@main_page_blueprint.route('/api/v1/getModelSettingsForFile/<path:id>', methods=['GET'])
+@token_required
+@endpoint_output_wrapper
+def getModelSettingsForFile(jwt_data:dict, id) -> ModelSettings:
+    res, code = get_model_settings_handler(id)
+    return res, code
+
+
+@main_page_blueprint.route('/api/v1/getDefaultModelSettingsForFile', methods=['GET'])
+@token_required
+@endpoint_output_wrapper
+def getDefaultModelSettingsForFile(jwt_data:dict) -> ModelSettings:
+    res, code = get_default_model_settings_handler()
+    return res, code
+
+
+#endregion --- MODEL SETTINGS ---

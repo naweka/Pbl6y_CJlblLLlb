@@ -5,7 +5,7 @@ from flask_cors import CORS
 from controllers.main_page_controller import main_page_blueprint
 from threading import Thread
 from services.AiService import ml_event_loop
-from appconfig import TEST_USER_ID, IS_DEV_MODE_ENABLED, DB_VERSION
+from appconfig import TEST_USER_ID, IS_DEV_MODE_ENABLED, DB_VERSION, PASSWORD_SALT
 from services.DbService import system_db
 from repositories.user_repository import find_users_by_id, add_user
 
@@ -39,6 +39,9 @@ if __name__ == '__main__':
             pass
 
     if can_run_app:
+        if PASSWORD_SALT == 'sample secret salt that can be stored on git':
+            print('WARNING Вы используете стандартную соль для паролей. Не используйте её в продакшене! Для изменения зайдите в appconfig.py')
+        
         if IS_DEV_MODE_ENABLED and len(find_users_by_id(TEST_USER_ID, use_contains=False)) == 0:
             add_user('test', 'Дебаг Админович', 'test', id=TEST_USER_ID)
         

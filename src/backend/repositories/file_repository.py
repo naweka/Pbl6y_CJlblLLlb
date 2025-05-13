@@ -19,10 +19,7 @@ def add_file(id:str,
 
 def get_files_by_ids(file_ids:list[str]) -> list[FileInfo]:
     res = list(files_db.find({'id': {'$in': file_ids}}))
-    print(3, res)
     res = [FileInfo(x['id'], x['name'], x['alias_name'], x['audio_file_path']) for x in res]
-    
-    print(3, res)
     return res
 
 
