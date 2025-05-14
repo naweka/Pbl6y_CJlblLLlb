@@ -6,6 +6,7 @@ import { DownloadFile } from '@/features/Download'
 import { isEmpty } from '@/shared/lib'
 import { FishLoader, Progress } from '@/shared/ui'
 import { detailPageStore } from '../model'
+import { FileSettings, ToggleFileSettings } from './FileSettings'
 import { PanoramaImg } from './PanoramaImg'
 
 interface CardFileProps {
@@ -68,6 +69,7 @@ const FileActions = observer(({ fileId }: { fileId: string }) => {
 	const upload = detailPageStore.getUpload(fileId)
 	return (
 		<>
+			<ToggleFileSettings fileId={fileId} />
 			<DownloadFile fileId={fileId} disabled={!isEmpty(upload)} />
 			<DeleteFile onClick={() => detailPageStore.deleteFile(fileId)} />
 		</>
@@ -88,6 +90,7 @@ export const CardFile: FC<CardFileProps> = observer(({ file }) => {
 				</div>
 				<FileActions fileId={file.id} />
 			</div>
+			<FileSettings fileId={file.id} />
 			<FilePreview file={file} />
 		</div>
 	)

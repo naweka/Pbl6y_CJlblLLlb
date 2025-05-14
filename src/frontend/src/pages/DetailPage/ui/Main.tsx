@@ -40,7 +40,8 @@ const EmptyFiles = () => {
 				<span>Список пустой </span>&nbsp;
 				<br />
 				<span>
-					Нажмите <strong>"Редактировать"</strong>, чтобы загрузить новый файл
+					Нажмите <strong>&quot;Редактировать&quot;</strong>, чтобы загрузить
+					новый файл
 				</span>
 			</p>
 		</div>

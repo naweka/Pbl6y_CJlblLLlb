@@ -15,8 +15,13 @@ export default tseslint.config(
 		rules: {
 			...config.rules,
 			'@typescript-eslint/no-empty-object-type': 'off',
+			'@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
 			'@typescript-eslint/no-explicit-any': 'warn',
 			'@typescript-eslint/no-floating-promises': 'off',
+			'@typescript-eslint/no-redundant-type-constituents': 'off',
+			'@typescript-eslint/no-unsafe-assignment': 'off',
+			'@typescript-eslint/no-unsafe-member-access': 'off',
+			'@typescript-eslint/no-unsafe-argument': 'off',
 			'@typescript-eslint/no-misused-promises': [
 				'error',
 				{

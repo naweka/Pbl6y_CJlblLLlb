@@ -1,6 +1,12 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { getCard, sendUpdateCard, SendUpdateCardData } from '@/entities/Card'
-import { Card } from '@/entities/Card/types'
+import {
+	getCard,
+	getModelSettigsFile,
+	sendUpdateCard,
+	SendUpdateCardData,
+	sendUpdateModelSettingsFile,
+} from '@/entities/Card'
+import { Card, ModelSetting } from '@/entities/Card/types'
 import {
 	deleteFile,
 	File as FileCard,
@@ -22,6 +28,8 @@ class DetailPageStore implements IDetailPageStore {
 	_status: STATUS = STATUS.INITIAL
 	_statusFiles: STATUS = STATUS.INITIAL
 	_files: FileCard[] | null = null
+	_settingFileToggle: Record<string, boolean> = {}
+	_settingFiles: Record<string, ModelSetting> = {}
 	loadingFile: Record<string, boolean> = {}
 	currentUploads: FileUploadsProgress = {}
 	currentUploadsProgress: Record<string, number> = {}
@@ -34,6 +42,8 @@ class DetailPageStore implements IDetailPageStore {
 		this._statusFiles = STATUS.INITIAL
 		this._files = null
 		this.edit = false
+		this._settingFileToggle = {}
+		this._settingFiles = {}
 	}
 
 	constructor() {
@@ -85,6 +95,15 @@ class DetailPageStore implements IDetailPageStore {
 		}
 	}
 
+	async fetchFileSetting(fileId: string) {
+		try {
+			const res = await getModelSettigsFile(fileId)
+			this.setSettingFile(fileId, res?.data!)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
 	async fetchSeamlessFilesCard(ids: string[]) {
 		const id = this._card?.id
 
@@ -129,6 +148,7 @@ class DetailPageStore implements IDetailPageStore {
 					const fileWithBlob = await Promise.all(
 						files.map(async (file) => {
 							const blob = await this.fetchFileSpec({ id: file.id })
+							await this.fetchFileSetting(file.id)
 							return { ...file, url: blob }
 						}),
 					)
@@ -140,6 +160,22 @@ class DetailPageStore implements IDetailPageStore {
 			console.error(error)
 			this._statusFiles = STATUS.ERROR
 		}
+	}
+
+	getToggleSetting(id: string) {
+		return this._settingFileToggle[id]
+	}
+
+	getSetting(id: string) {
+		return this._settingFiles[id]
+	}
+
+	setToggleSettings(id: string, value: boolean) {
+		this._settingFileToggle[id] = value
+	}
+
+	setSettingFile(id: string, data: ModelSetting) {
+		this._settingFiles[id] = data
 	}
 
 	setEdit(value: boolean) {
@@ -180,6 +216,18 @@ class DetailPageStore implements IDetailPageStore {
 	getUploadProgress(id: string) {
 		const progress = this.currentUploadsProgress[id]
 		return progress || 0
+	}
+
+	async updateFileSetting(fileId: string, data: ModelSetting) {
+		try {
+			await sendUpdateModelSettingsFile({
+				file_id: fileId,
+				...data,
+			})
+			this.setSettingFile(fileId, data)
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
 	async uploadFiles(cardId: string, data: UploadFiles) {

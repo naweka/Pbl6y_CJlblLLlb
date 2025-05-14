@@ -4,4 +4,6 @@ export const routes = {
 	getAll: () => '/getCards',
 	get: () => '/getCard',
 	getFiles: () => '/getFilesByCard',
+	getSettingsFile: (fileId: string) => `/getModelSettingsForFile/${fileId}`,
+	updateSettingsFile: () => '/overrideModelSettingsForFile',
 }
