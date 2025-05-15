@@ -40,7 +40,7 @@ def update_model_settings_handler(file_id,
         return {
         'error_message': f'Not found entity with id: {file_id}'
     }, 400
-    
+
     x = find_model_settings_by_file_id(file_id)
     if x is None:
         res = add_model_settings(file_id,

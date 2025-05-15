@@ -71,9 +71,9 @@ def update_model_settings(file_id:str,
         'confidence_limit': confidence_limit,
         'offset_bounds': offset_bounds
     }
-    x = model_settings_db.find_one_and_update({'id': file_id}, {'$set': update_dict}, return_document=True)
-    res = ModelSettings(window_size, window_step, min_sound_length, ignore_noise_outliers, \
-                        ignore_sound_outliers, confidence_limit, offset_bounds)
+    x = model_settings_db.find_one_and_update({'file_id': file_id}, {'$set': update_dict}, return_document=True)
+    res = ModelSettings(x['window_size'], x['window_step'], x['min_sound_length'], x['ignore_noise_outliers'], \
+                        x['ignore_sound_outliers'], x['confidence_limit'], x['offset_bounds'])
     return res
 
 
