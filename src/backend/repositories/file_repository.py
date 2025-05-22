@@ -11,7 +11,8 @@ def add_file(id:str,
         'id': id,
         'name': name,
         'alias_name': alias_name,
-        'audio_file_path': audio_file_path
+        'audio_file_path': audio_file_path,
+        'file_status': 'PREPARING'
     })
     res = FileInfo(id, name, alias_name, audio_file_path)
     return res
@@ -19,7 +20,7 @@ def add_file(id:str,
 
 def get_files_by_ids(file_ids:list[str]) -> list[FileInfo]:
     res = list(files_db.find({'id': {'$in': file_ids}}))
-    res = [FileInfo(x['id'], x['name'], x['alias_name'], x['audio_file_path']) for x in res]
+    res = [FileInfo(x['id'], x['name'], x['alias_name'], x['audio_file_path', x['file_status']]) for x in res]
     return res
 
 

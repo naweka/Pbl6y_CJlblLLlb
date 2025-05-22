@@ -19,8 +19,13 @@ def create_default_model_settings():
     })
 
 
+def add_file_status_to_all_file_info():
+    files_db.update_many({}, {'$set': {'file_status': 'DONE'}})
+
+
 upgrade_actions = [(2, remove_audio_spectrogram_action),
-                   (3, create_default_model_settings)]
+                   (3, create_default_model_settings),
+                   (4, add_file_status_to_all_file_info)]
 
 
 def start_upgrade(from_ver:int) -> bool:

@@ -12,7 +12,7 @@ TEST_USER_ID = '01010101-0808-0808-0808-080808080808'
 
 # --- Database ---
 
-DB_VERSION = 3
+DB_VERSION = 4
 DB_CONNECTION_STRING = 'mongodb://localhost:27017/'
 # Docker
 # DB_CONNECTION_STRING = 'mongodb://admin:password@mongodb:27017/'

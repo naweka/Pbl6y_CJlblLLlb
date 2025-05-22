@@ -1,10 +1,10 @@
 from appconfig import WORKING_DIRECTORY
+from repositories.file_repository import get_files_by_ids
 import os
 
 REL_PATH_TO_WAV_FILES = '/server_data/uploaded_files/'
 REL_PATH_TO_SPECTROGRAM_FILES = '/server_data/spectrograms/'
 REL_PATH_TO_PREDICTED_FILES = '/server_data/predicted_data/'
-
 
 def write_uploaded_file(filename:str, file_bytes:bytes) -> str:
     path = WORKING_DIRECTORY + f'{REL_PATH_TO_WAV_FILES}{filename}.wav'
