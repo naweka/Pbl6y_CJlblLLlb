@@ -14,7 +14,7 @@ def add_file(id:str,
         'audio_file_path': audio_file_path,
         'file_status': 'PREPARING'
     })
-    res = FileInfo(id, name, alias_name, audio_file_path)
+    res = FileInfo(id, name, alias_name, audio_file_path, 'PREPARING')
     return res
 
 
