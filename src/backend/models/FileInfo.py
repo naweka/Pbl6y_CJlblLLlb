@@ -11,3 +11,4 @@ class FileInfo:
     audio_file_path:str
     # spectrogram_file_path:str
     # predicted_data_file_path:str
+    file_status:str
