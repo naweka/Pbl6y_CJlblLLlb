@@ -117,8 +117,3 @@ def delete_tag_from_card(card_id:str, tag:str):
 def delete_tag_from_cards(tag:str):
     cards_db.update_many({'tags': {'$in': [tag]}},
                          {'$pull': {'files': tag}})
-
-
-def update_status_for_card(card_id:str, status:str):
-    cards_db.update_one({'id': card_id},
-                        {'$set': {'status': status}})

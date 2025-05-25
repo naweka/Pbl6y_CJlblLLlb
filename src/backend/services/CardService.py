@@ -11,15 +11,24 @@ from repositories.card_repository import (add_card,
                                           delete_card_by_id,
                                           update_card_by_id,
                                           append_file_to_card,
-                                          delete_file_from_cards,
-                                          update_status_for_card)
+                                          delete_file_from_cards)
 from repositories.file_repository import add_file, get_files_by_ids, delete_file_by_id
 import os
 
 
 
 def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
-    res = find_cards_by_search_text_and_tags(search_text, tags)    
+    res = find_cards_by_search_text_and_tags(search_text, tags)
+    for i, card in enumerate(res):
+        files = get_files_by_ids(card.files)
+        if any([x.file_status == 'ERROR' for x in files]):
+            res[i].status = 'ERROR'
+        if any([x.file_status == 'PREPARING' for x in files]):
+            res[i].status = 'PREPARING'
+        elif any([x.file_status == 'ANALYZING' for x in files]):
+            res[i].status = 'ANALYZING'
+        else:
+            res[i].status = 'READY'
     return res, 200
 
 
@@ -57,6 +66,15 @@ def remove_file(id:str) -> tuple[str,int]:
 
 def get_card(id:str) -> tuple[Card,int]:
     res = find_card_by_id(id)
+    files = get_files_by_ids(res.files)
+    if any([x.file_status == 'ERROR' for x in files]):
+        res.status = 'ERROR'
+    if any([x.file_status == 'PREPARING' for x in files]):
+        res.status = 'PREPARING'
+    elif any([x.file_status == 'ANALYZING' for x in files]):
+        res.status = 'ANALYZING'
+    else:
+        res.status = 'DONE'
     if not res:
         return {
             'error_message': f'Card with id {id} not found'

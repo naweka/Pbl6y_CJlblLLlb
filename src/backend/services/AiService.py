@@ -11,7 +11,8 @@ from PIL import Image
 from appconfig import WORKING_DIRECTORY
 import tensorflow as tf
 from matplotlib.patches import Rectangle
-from repositories.card_repository import find_card_by_file_id, update_status_for_card
+from repositories.card_repository import find_card_by_file_id
+from repositories.file_repository import update_status_for_file
 from multiprocessing import Process
 
 processing_files = set()
@@ -103,8 +104,7 @@ def ml_event_loop():
         current_file:FileInfo = files_queue.pop(0)
         print_log(f'Найден файл {current_file.alias_name}...')
 
-        card_id = find_card_by_file_id(current_file.id).id
-        update_status_for_card(card_id, 'ANALYZING')
+        update_status_for_file(current_file.id, 'ANALYZING')
 
         #region Прогоняем файл через модель
 
@@ -177,4 +177,4 @@ def ml_event_loop():
 
         #endregion Создание csv с предиктом
 
-        update_status_for_card(card_id, 'READY')
+        update_status_for_file(current_file.id, 'READY')

@@ -26,3 +26,8 @@ def get_files_by_ids(file_ids:list[str]) -> list[FileInfo]:
 
 def delete_file_by_id(id:str) -> None:
     files_db.delete_one({'id': id})
+
+
+def update_status_for_file(file_id:str, status:str):
+    files_db.update_one({'id': file_id},
+                        {'$set': {'file_status': status}})
