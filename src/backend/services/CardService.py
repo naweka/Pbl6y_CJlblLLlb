@@ -22,13 +22,13 @@ def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
     for i, card in enumerate(res):
         files = get_files_by_ids(card.files)
         if any([x.file_status == 'ERROR' for x in files]):
-            res[i].file_status = 'ERROR'
+            res[i].status = 'ERROR'
         if any([x.file_status == 'PREPARING' for x in files]):
-            res[i].file_status = 'PREPARING'
+            res[i].status = 'PREPARING'
         elif any([x.file_status == 'ANALYZING' for x in files]):
-            res[i].file_status = 'ANALYZING'
+            res[i].status = 'ANALYZING'
         else:
-            res[i].file_status = 'READY'
+            res[i].status = 'READY'
     return res, 200
 
 
