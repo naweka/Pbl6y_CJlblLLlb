@@ -12,15 +12,17 @@ import { detailPageStore } from '../../model'
 
 interface ToggleFileSettingsProps {
 	fileId: string
+	disabled?: boolean
 }
 
 export const ToggleFileSettings: FC<ToggleFileSettingsProps> = observer(
-	({ fileId }) => {
+	({ fileId, disabled }) => {
 		return (
 			<TooltipProvider delayDuration={0}>
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Toggle
+							disabled={disabled}
 							data-state={
 								detailPageStore.getToggleSetting(fileId) ? 'on' : 'off'
 							}

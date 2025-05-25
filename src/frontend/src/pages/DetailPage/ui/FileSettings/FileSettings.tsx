@@ -19,7 +19,7 @@ interface FileSettingsProps {
 export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 	const formId = useId()
 	const form = useForm<z.infer<typeof formSchema>>({
-		defaultValues: detailPageStore.getSetting(fileId),
+		values: detailPageStore.getSetting(fileId),
 	})
 
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {

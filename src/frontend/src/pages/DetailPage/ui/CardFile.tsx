@@ -70,7 +70,10 @@ const FileActions = observer(({ fileId }: { fileId: string }) => {
 	const upload = detailPageStore.getUpload(fileId)
 	return (
 		<>
-			<ToggleFileSettings fileId={fileId} />
+			<ToggleFileSettings
+				fileId={fileId}
+				disabled={!isEmpty(upload) || detailPageStore.isPreparingFile(fileId)}
+			/>
 			<DownloadFile fileId={fileId} disabled={!isEmpty(upload)} />
 			<DeleteFile onClick={() => detailPageStore.deleteFile(fileId)} />
 		</>

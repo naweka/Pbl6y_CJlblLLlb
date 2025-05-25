@@ -1,12 +1,13 @@
-import { EllipsisVertical, ExternalLink } from 'lucide-react'
+import { EllipsisVertical, ExternalLink, Trash } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardProps } from '@/entities/Card'
 import { ROUTE_CONSTANTS } from '@/shared/config'
 import { STATUS } from '@/shared/types'
 import {
 	Button,
+	DeadFish,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
@@ -15,35 +16,49 @@ import {
 	Spinner,
 } from '@/shared/ui'
 import { indexPageStore } from '../model'
+import { AlertDelete } from './AlertDelete'
 
 const ActionMore = (props: CardProps) => {
-	const { id } = props
+	const [open, setOpen] = useState(false)
+	const { id, onDelete } = props
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button size="icon" variant="ghost">
-					<EllipsisVertical />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-10">
-				<DropdownMenuGroup>
-					<DropdownMenuItem asChild>
-						<Link
-							className="cursor-pointer"
-							target="_blank"
-							to={ROUTE_CONSTANTS.DETAIL_CARD.TO(id)}
-						>
-							<ExternalLink />
-							<span>Открыть</span>
-						</Link>
-					</DropdownMenuItem>
-					{/* <DropdownMenuItem>
-						<Trash />
-						<span>Удалить</span>
-					</DropdownMenuItem> */}
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<>
+			<DropdownMenu modal={false}>
+				<DropdownMenuTrigger asChild>
+					<Button size="icon" variant="ghost">
+						<EllipsisVertical />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent className="w-10">
+					<DropdownMenuGroup>
+						<DropdownMenuItem asChild>
+							<Link
+								className="cursor-pointer"
+								target="_blank"
+								to={ROUTE_CONSTANTS.DETAIL_CARD.TO(id)}
+							>
+								<ExternalLink />
+								<span>Открыть</span>
+							</Link>
+						</DropdownMenuItem>
+						{onDelete && (
+							<DropdownMenuItem
+								className="cursor-pointer"
+								onClick={() => setOpen(true)}
+							>
+								<Trash />
+								<span>Удалить</span>
+							</DropdownMenuItem>
+						)}
+					</DropdownMenuGroup>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			<AlertDelete
+				open={open}
+				onOpenChange={setOpen}
+				onClick={() => onDelete?.(id)}
+			/>
+		</>
 	)
 }
 
@@ -69,20 +84,24 @@ const ContentError = () => {
 }
 
 const ContentSuccess = observer(() => {
-	return (
-		<div className="grid cursor-pointer gap-5 px-5 auto-fill-80">
-			{indexPageStore?.cards && indexPageStore.cards.length > 0 ? (
-				indexPageStore.cards.map((data) => (
-					<Card
-						{...data}
-						key={data.id}
-						to={ROUTE_CONSTANTS.DETAIL_CARD.TO(data.id)}
-						action={ActionMore}
-					/>
-				))
-			) : (
-				<div>Пусто</div>
-			)}
+	return indexPageStore?.cards && indexPageStore.cards.length > 0 ? (
+		<div className="grid w-full cursor-pointer gap-5 px-5 auto-fill-80">
+			{indexPageStore.cards.map((data) => (
+				<Card
+					{...data}
+					key={data.id}
+					to={ROUTE_CONSTANTS.DETAIL_CARD.TO(data.id)}
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					onDelete={indexPageStore.deleteCard}
+					action={ActionMore}
+				/>
+			))}
+		</div>
+	) : (
+		<div className="flex w-full grow flex-col items-center justify-center gap-2">
+			<DeadFish className="size-24" />
+			<p className="text-xl font-medium">Результаты не найдены.</p>
+			<p className="text-base">Попробуйте изменить свой поиск</p>
 		</div>
 	)
 })

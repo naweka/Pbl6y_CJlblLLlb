@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { getAllCard } from '@/entities/Card'
+import { deleteCard, getAllCard } from '@/entities/Card'
 import { Card } from '@/entities/Card/types'
 import { getTags } from '@/entities/Tags'
 import { debounce } from '@/shared/lib'
@@ -80,6 +80,18 @@ class IndexPageStore implements IIndexPageStore {
 		} catch (error) {
 			console.error(error)
 			this._statusTags = STATUS.ERROR
+		}
+	}
+
+	async deleteCard(id: string) {
+		try {
+			await deleteCard(id)
+			runInAction(async () => {
+				this._cards = this._cards.filter((card) => card.id !== id)
+				await this.fetchAllTags()
+			})
+		} catch (error) {
+			console.error(error)
 		}
 	}
 

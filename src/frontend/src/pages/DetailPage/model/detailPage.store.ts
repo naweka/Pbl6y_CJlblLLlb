@@ -170,6 +170,7 @@ class DetailPageStore implements IDetailPageStore {
 									this.setLoadingFile(file.id, false)
 									if (blob) {
 										this.setFileById({ ...file, url: blob })
+										this.fetchFileSetting(file.id)
 										return
 									}
 								} catch (error) {
@@ -184,6 +185,13 @@ class DetailPageStore implements IDetailPageStore {
 		} catch (error) {
 			console.error(error)
 		}
+	}
+
+	isPreparingFile(fileId: string) {
+		const file = this._files?.find(
+			(file) => file.id === fileId && this.checkWantToWatchFile(file),
+		)
+		return Boolean(file)
 	}
 
 	checkWantToWatchFiles(files: FileCard[]) {
@@ -233,6 +241,7 @@ class DetailPageStore implements IDetailPageStore {
 
 							if (blob) {
 								this.setFileById({ ...file, url: blob })
+								this.fetchFileSetting(file.id)
 								this.setLoadingFile(file.id, false)
 								return
 							}

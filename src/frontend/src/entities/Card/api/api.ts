@@ -24,6 +24,10 @@ export const getCard = async (data: GetCardData) => {
 	return await http?.post<any, AxiosResponse<Card>>(routes.get(), data)
 }
 
+export const deleteCard = async (id: string) => {
+	return await http?.post<any, AxiosResponse<Card>>(routes.delete(), { id })
+}
+
 export const getFilesCard = async (data: GetFilesCardData) => {
 	return await http?.post<any, AxiosResponse<Card>>(routes.getFiles(), data)
 }
@@ -38,11 +42,26 @@ export const getModelSettigsFile = async (fileId: string) => {
 	)
 }
 
+export const getModelDefaultSettingsFile = async () => {
+	return await http?.get<any, AxiosResponse<ModelSetting>>(
+		routes.getDefaultSettingsFile(),
+	)
+}
+
 export const sendUpdateModelSettingsFile = async (
 	data: SendUpdateModelSettingsFile,
 ) => {
 	return await http?.post<any, AxiosResponse<ModelSetting>>(
 		routes.updateSettingsFile(),
+		data,
+	)
+}
+
+export const sendUpdateModelDefaultSettingsFile = async (
+	data: ModelSetting,
+) => {
+	return await http?.post<any, AxiosResponse<ModelSetting>>(
+		routes.updateDefaultSettingsFile(),
 		data,
 	)
 }

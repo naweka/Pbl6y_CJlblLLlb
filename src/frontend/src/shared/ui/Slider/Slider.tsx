@@ -32,6 +32,8 @@ const Slider = React.forwardRef<
 					labelPosition === 'bottom' && 'pb-4',
 					className,
 				)}
+				defaultValue={value}
+				value={value}
 				{...props}
 			>
 				<SliderPrimitive.Track className="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-secondary">

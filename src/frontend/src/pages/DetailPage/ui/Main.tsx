@@ -35,9 +35,9 @@ const MainError = () => {
 const EmptyFiles = () => {
 	return (
 		<div className="flex flex-grow flex-col items-center justify-center gap-1 px-5">
-			<Fish className="h-12 w-12" />
+			<Fish className="h-12 w-12" strokeWidth="1" />
 			<p className="mb-1 text-center text-base text-foreground">
-				<span>Список пустой </span>&nbsp;
+				<span className="text-lg font-medium">Список пустой </span>&nbsp;
 				<br />
 				<span>
 					Нажмите <strong>&quot;Редактировать&quot;</strong>, чтобы загрузить
