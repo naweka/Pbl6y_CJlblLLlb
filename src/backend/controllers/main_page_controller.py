@@ -2,6 +2,7 @@ from flask import Blueprint, request, send_file
 from typing import List
 from appconfig import WORKING_DIRECTORY
 from models.Card import Card
+from models.FileInfo import FileInfo
 from models.ModelSettings import ModelSettings
 from controllers.controller_utils import (get_json_parameters,
                                           get_json_parameter)
@@ -17,6 +18,7 @@ from services.CardService import (get_card,
                                   get_card_files,
                                   update_card,
                                   remove_file)
+from services.FileInfoService import get_file_by_id
 from services.TagService import get_all_tags
 from services.IdGeneratorService import generate_id, generate_ids
 from services.IdkJsonHelper import endpoint_output_wrapper
@@ -161,6 +163,14 @@ def uploadFile(jwt_data:dict):
 def getFiles(jwt_data:dict) -> str:
     id = get_json_parameter(request.json, 'id')
     res, code = get_card_files(id)
+    return res, code
+
+
+@main_page_blueprint.route('/api/v1/getFile/<path:id>', methods=['GET'])
+@token_required
+@endpoint_output_wrapper
+def getFile(jwt_data:dict, id):
+    res, code = get_file_by_id(id)
     return res, code
 
 

@@ -14,6 +14,10 @@ def write_uploaded_file(filename:str, file_bytes:bytes) -> str:
     return path
 
 
+def get_file_by_id(id:str):
+    return get_files_by_ids([id]), 200
+
+
 def delete_uploaded_file(filename:str):
     path = WORKING_DIRECTORY + f'{REL_PATH_TO_WAV_FILES}{filename}.wav'
     if os.path.exists(path):
