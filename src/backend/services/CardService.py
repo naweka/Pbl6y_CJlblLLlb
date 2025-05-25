@@ -21,7 +21,7 @@ def get_cards(search_text:str, tags:List[str]) -> tuple[list[Card],int]:
     res = find_cards_by_search_text_and_tags(search_text, tags)
     for i, card in enumerate(res):
         files = get_files_by_ids(card.files)
-        if any([x.file_status == 'ERROR' for x in files]):
+        if any([x.status == 'ERROR' for x in files]):
             res[i].status = 'ERROR'
         if any([x.file_status == 'PREPARING' for x in files]):
             res[i].status = 'PREPARING'
