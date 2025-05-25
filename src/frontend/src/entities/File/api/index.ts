@@ -1,5 +1,6 @@
 export {
 	getFiles,
+	getFile,
 	getFileSpectrogram,
 	getIdForNewFile,
 	sendUploadFile,

@@ -76,8 +76,11 @@ const MainSuccess = observer(() => {
 
 export const Main: FC<MainProps> = observer(() => {
 	useEffect(() => {
-		detailPageStore.fetchFilesCard()
+		if (STATUS.SUCCESS) {
+			detailPageStore.fetchFilesCard()
+		}
 	}, [])
+
 	const Component = MapComponent[detailPageStore.statusFiles] || null
 	if (!Component) return null
 	return <Component />

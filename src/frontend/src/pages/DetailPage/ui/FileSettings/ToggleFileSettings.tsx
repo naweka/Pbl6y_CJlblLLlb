@@ -21,7 +21,9 @@ export const ToggleFileSettings: FC<ToggleFileSettingsProps> = observer(
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Toggle
-							data-state={detailPageStore.getToggleSetting(fileId) ? 'on' : 'off'}
+							data-state={
+								detailPageStore.getToggleSetting(fileId) ? 'on' : 'off'
+							}
 							onPressedChange={(value) =>
 								detailPageStore.setToggleSettings(fileId, value)
 							}

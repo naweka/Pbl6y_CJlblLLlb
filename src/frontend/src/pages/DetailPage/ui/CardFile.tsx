@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import type { FC } from 'react'
 import { DeleteFile } from '@/entities/DeleteFile'
 import { File } from '@/entities/File'
+import { Status } from '@/entities/Status'
 import { DownloadFile } from '@/features/Download'
 import { isEmpty } from '@/shared/lib'
 import { FishLoader, Progress } from '@/shared/ui'
@@ -81,13 +82,15 @@ export const CardFile: FC<CardFileProps> = observer(({ file }) => {
 		<div className="space-y-5">
 			<div className="flex flex-row gap-4">
 				<div
-					className="flex w-full items-center overflow-hidden rounded-md border p-3 py-1"
+					className="flex w-full items-center justify-between overflow-hidden rounded-md border p-3 py-1"
 					title={file.name}
 				>
 					<p className="overflow-hidden text-ellipsis whitespace-nowrap">
 						{file.name}
 					</p>
+					<Status status={file.file_status} />
 				</div>
+
 				<FileActions fileId={file.id} />
 			</div>
 			<FileSettings fileId={file.id} />

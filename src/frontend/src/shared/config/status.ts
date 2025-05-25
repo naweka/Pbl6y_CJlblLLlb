@@ -1,4 +1,4 @@
-export type STATUS_KEY = 'PREPARING' | 'ANALYZING' | 'READY' | 'ERROR'
+export type STATUS_KEY = 'PREPARING' | 'ANALYZING' | 'READY' | 'ERROR' | 'DONE'
 
 export type STATUS_VALUE = {
 	color: string
@@ -21,5 +21,9 @@ export const STATUS: Record<STATUS_KEY, STATUS_VALUE> = {
 	ERROR: {
 		color: 'bg-red-600',
 		title: 'ОШИБКА',
+	},
+	DONE: {
+		color: 'bg-lime-500',
+		title: 'ГОТОВО',
 	},
 }
