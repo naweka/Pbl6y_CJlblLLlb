@@ -20,7 +20,7 @@ def create_default_model_settings():
 
 
 def add_file_status_to_all_file_info():
-    files_db.update_many({}, {'$set': {'file_status': 'DONE'}})
+    files_db.update_many({}, {'$set': {'file_status': 'READY'}})
 
 
 upgrade_actions = [(2, remove_audio_spectrogram_action),
