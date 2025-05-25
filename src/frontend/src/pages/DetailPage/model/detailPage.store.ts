@@ -178,7 +178,7 @@ class DetailPageStore implements IDetailPageStore {
 							}
 						}),
 					)
-					this.mutateCard({ status: 'DONE' })
+					this.mutateCard({ status: 'READY' })
 				}
 			})
 		} catch (error) {
@@ -238,7 +238,7 @@ class DetailPageStore implements IDetailPageStore {
 							}
 						}),
 					)
-					this.mutateCard({ status: 'DONE' })
+					this.mutateCard({ status: 'READY' })
 				}
 			})
 		} catch (error) {

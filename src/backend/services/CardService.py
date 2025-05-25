@@ -74,7 +74,7 @@ def get_card(id:str) -> tuple[Card,int]:
     elif any([x.file_status == 'ANALYZING' for x in files]):
         res.status = 'ANALYZING'
     else:
-        res.status = 'DONE'
+        res.status = 'READY'
     if not res:
         return {
             'error_message': f'Card with id {id} not found'
