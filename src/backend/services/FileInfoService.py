@@ -15,7 +15,7 @@ def write_uploaded_file(filename:str, file_bytes:bytes) -> str:
 
 
 def get_file_by_id(id:str):
-    return get_files_by_ids([id]), 200
+    return get_files_by_ids([id])[0], 200
 
 
 def delete_uploaded_file(filename:str):
