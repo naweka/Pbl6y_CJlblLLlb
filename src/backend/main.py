@@ -64,6 +64,11 @@ if __name__ == '__main__':
     if not os.path.exists(path):
         raise Exception(f'Произошла проблема при распаковке весов модели! Убедитесь, что файл существует: {WORKING_DIRECTORY+"/packed_model/unpacked/swin_audio.pth"}')
 
+    import torch
+    from services.AiService import _model, ckpt,_device
+    _model.load_state_dict(torch.load(ckpt, map_location=torch.device('cpu')))
+    _model.eval().to(_device)
+
     if can_run_app:
         if PASSWORD_SALT == 'sample secret salt that can be stored on git':
             print('WARNING Вы используете стандартную соль для паролей. Не используйте её в продакшене! Для изменения зайдите в appconfig.py')

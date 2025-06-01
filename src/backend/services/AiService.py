@@ -47,8 +47,6 @@ model_name = 'swin_large_patch4_window7_224.ms_in22k'
 ckpt = WORKING_DIRECTORY+f'/packed_model/unpacked/swin_audio.pth'
 classes = ["call", "noise"]
 _model = timm.create_model(model_name, pretrained=False, num_classes=len(classes))
-_model.load_state_dict(torch.load(ckpt, map_location=torch.device('cpu')))
-_model.eval().to(_device)
 
 # Параметры
 sample_rate = 22050  # Частота дискретизации
