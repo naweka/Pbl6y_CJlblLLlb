@@ -2,12 +2,14 @@ from models.ModelSettings import ModelSettings
 from appconfig import WORKING_DIRECTORY
 from services.IdGeneratorService import generate_id
 from repositories.file_repository import get_files_by_ids
+from services.AiService import files_queue, processing_files
 from repositories.model_settings_repository import (add_model_settings,
                                                     update_default_model_settings,
                                                     update_model_settings,
                                                     find_model_settings_by_file_id,
                                                     find_default_model_settings_by_file_id,
                                                     delete_card_by_id)
+from repositories.file_repository import get_files_by_ids
 
 def get_default_model_settings_handler() -> tuple[list[ModelSettings],int]:
     return find_default_model_settings_by_file_id(), 200
@@ -60,6 +62,8 @@ def update_model_settings_handler(file_id,
                             ignore_sound_outliers,
                             confidence_limit,
                             offset_bounds)
+    files_queue.append(file[0])
+    processing_files.add(file_id)
     return res, 200
 
 

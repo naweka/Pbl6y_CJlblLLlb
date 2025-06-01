@@ -5,14 +5,19 @@ from flask_cors import CORS
 from controllers.main_page_controller import main_page_blueprint
 from threading import Thread
 from services.AiService import ml_event_loop
-from appconfig import TEST_USER_ID, IS_DEV_MODE_ENABLED, DB_VERSION, PASSWORD_SALT
+from appconfig import TEST_USER_ID, IS_DEV_MODE_ENABLED, DB_VERSION, PASSWORD_SALT, WORKING_DIRECTORY
 from services.DbService import system_db
 from repositories.user_repository import find_users_by_id, add_user
+import os
+import glob
+import zipfile
 
 if __name__ == '__main__':
     can_run_app = True
+    # run db
     initalize_normal_connection()
 
+    # init Flask stuff
     app = Flask(__name__)
     cors = CORS(app,
                 resources={r'*': {'origins': '*'}},
@@ -20,6 +25,7 @@ if __name__ == '__main__':
                 expose_headers=['Content-Disposition'])
     app.register_blueprint(main_page_blueprint)
 
+    # update db if needed
     system_settings = list(system_db.find({}))
     if not system_settings:
         system_db.insert_one({'db_version': DB_VERSION})
@@ -38,6 +44,26 @@ if __name__ == '__main__':
                 system_db.update_one({}, {'$set': {'db_version': DB_VERSION}})
             pass
 
+    # unpack NN model if needed
+    path = WORKING_DIRECTORY+f'/packed_model/unpacked/swin_audio.pth'
+    if not os.path.exists(path):
+        zip_prefix = "swin_audio.zip."
+        
+        parts = glob.glob(zip_prefix + '*')
+        n = len(parts)
+
+        with open("merged.zip", "wb") as outfile:
+            for i in range(1, n+1):
+                filename = zip_prefix + str(i).zfill(3)
+                with open(filename, "rb") as infile:
+                    outfile.write(infile.read())
+        
+        with zipfile.ZipFile("merged.zip", "r") as zip_ref:
+            zip_ref.extractall('unpacked')
+    
+    if not os.path.exists(path):
+        raise Exception(f'Произошла проблема при распаковке весов модели! Убедитесь, что файл существует: {WORKING_DIRECTORY+"/packed_model/unpacked/swin_audio.pth"}')
+
     if can_run_app:
         if PASSWORD_SALT == 'sample secret salt that can be stored on git':
             print('WARNING Вы используете стандартную соль для паролей. Не используйте её в продакшене! Для изменения зайдите в appconfig.py')
@@ -48,6 +74,6 @@ if __name__ == '__main__':
         ml_event_loop_thread = Thread(target=ml_event_loop, daemon=True, name='ml_event_loop')
         ml_event_loop_thread.start()
 
-        app.run(debug=True, host='0.0.0.0')
+        app.run(debug=False, host='0.0.0.0')
     else:
         print(f'[ERROR] CANNOT RUN APP')

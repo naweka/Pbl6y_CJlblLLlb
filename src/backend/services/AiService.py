@@ -9,20 +9,49 @@ from io import BytesIO
 import shutil
 from PIL import Image
 from appconfig import WORKING_DIRECTORY
-import tensorflow as tf
 from matplotlib.patches import Rectangle
 from repositories.card_repository import find_card_by_file_id
 from repositories.file_repository import update_status_for_file
+from repositories.model_settings_repository import find_model_settings_by_file_id, find_default_model_settings_by_file_id
 from multiprocessing import Process
+# import tensorflow as tf
+import torch
+import torchaudio
+import timm
+import torch.nn.functional as F
+from math import floor
+import pandas as pd
+import csv, io
+
+class LimitedReversedList():
+    def __init__(s, max_length=10):
+        s.l = []
+        s.limit = max_length
+
+    def add(s, elem):
+        s.l.insert(0, elem)
+        if len(s.l) > s.limit:
+            s.l = s.l[:s.limit]
+
+    def __call__(s):
+        return s.l
+
+    def __eq__(s, l):
+        return s.l == l
 
 processing_files = set()
 
-model = tf.keras.models.load_model(WORKING_DIRECTORY + "/marine_sound_classifier_v2.h5")
+# model = tf.keras.models.load_model(WORKING_DIRECTORY + "/marine_sound_classifier_v2.h5")
+_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model_name = 'swin_large_patch4_window7_224.ms_in22k'
+ckpt = WORKING_DIRECTORY+f'/packed_model/unpacked/swin_audio.pth'
+classes = ["call", "noise"]
+_model = timm.create_model(model_name, pretrained=False, num_classes=len(classes))
+_model.load_state_dict(torch.load(ckpt, map_location=torch.device('cpu')))
+_model.eval().to(_device)
 
 # Параметры
-segment_duration = 1.0  # Длительность сегмента в секундах
 sample_rate = 22050  # Частота дискретизации
-step_size = 0.33  # Шаг сканирования в секундах
 
 
 def preprocess_audio_segment(y, sr, duration):
@@ -93,6 +122,13 @@ def process_file(current_file, merged_detections, ram: BytesIO, filepath: str):
     im2.save(filepath, format='PNG')
 
 
+def sliding_windows(wav, sr, win_sec, hop_sec):
+    win_len = int(win_sec * sr)
+    hop_len = int(hop_sec * sr)
+    total = wav.shape[1]
+    for start in range(0, total - win_len + 1, hop_len):
+        yield start, wav[:, start:start+win_len]
+
 def ml_event_loop():
     global files_queue
     while True:
@@ -108,45 +144,181 @@ def ml_event_loop():
 
         #region Прогоняем файл через модель
 
-        y_full, sr = librosa.load(current_file.audio_file_path, sr=sample_rate)
+        print_log(f'Загрузка настроек модели...')
+        model_settings = find_model_settings_by_file_id(current_file.id)
+        if model_settings is None:
+            model_settings = find_default_model_settings_by_file_id()
 
-        # Разделение на сегменты и анализ
-        segment_start = 0
-        segment_end = segment_duration
-        detections = []
+        print_log(f'Загрузка аудиофайла...')
+        wav, sr = torchaudio.load(current_file.audio_file_path)
+        # стерео в моно
+        if wav.shape[0] == 2:
+            wav = wav.mean(dim=0, keepdim=True)
+        mel = torchaudio.transforms.MelSpectrogram(
+            sample_rate=sr,
+            n_mels=224,
+            win_length=400,
+            # hop_length=99
+            hop_length=160
+        )
 
-        while segment_start < len(y_full) / sr:
-            print('Progress:', 100.0 * (segment_start / (len(y_full) / sr)), '%')
-            start_sample = int(segment_start * sr)
-            end_sample = int(segment_end * sr)
-            segment = y_full[start_sample:end_sample]
+        results = []
+        print_log(f'Обработка через модель...')
+        for start, chunk in sliding_windows(wav, sr, model_settings.window_size, model_settings.window_step):
+            spec = mel(chunk).squeeze(0).log2().clamp(min=-10)
+            # превращаем в тензор с 3 каналами
+            spec = spec.unsqueeze(0).repeat(1, 3, 1, 1)
+            # Изменяем размер спектрограммы до 224x224
+            spec = F.interpolate(spec, size=(224, 224), mode='bilinear', align_corners=False).to(_device)
+            with torch.no_grad():
+                prob = torch.softmax(_model(spec), dim=1)[0]
+            score, cls = prob.max(0)
+            # трешхолд уверенности именно самой модели
+            # в теории, можно поменять, конечно, но потом всё равно будет ещё обработка
+            if score.item() >= 0.7:
+                t0 = start / sr
+                t1 = (start + model_settings.window_size * sr) / sr
+                results.append((t0, t1, classes[cls], score.item()))
+        
+        csv_buffer = io.StringIO()
+        csv_writer = csv.writer(csv_buffer)
+        csv_writer.writerow(["start_s", "end_s", "label", "score"])
+        csv_writer.writerows(results)
+        csv_buffer.seek(0)
+        results = pd.read_csv(csv_buffer)
+        
+        print_log(f'Постпроцессинг...')
+        predicted_intervals = []
+        win_width = model_settings.window_size
+        win_step = model_settings.window_step
+        offset = model_settings.offset_bounds
+        # "cut_when_at_least_one" / "cut_when_more_than_one" / "no_cut"
+        ignore_noise_outliers = model_settings.ignore_noise_outliers
+        # "insert_when_at_least_one" / "insert_when_more_than_one" / "no_insert"
+        ignore_sound_outliers = model_settings.ignore_sound_outliers
+        temp_interval = [-1, -1, []]
+        steps_in_window = floor(win_width / win_step)
+        # если мы двигаем окно слишком быстро, то и более
+        # точные предикты нам будут не нужны
+        if steps_in_window < 2:
+            steps_in_window = 0
+
+        llist = LimitedReversedList(steps_in_window)
+
+        for i, r in enumerate(results.iterrows()):
+            is_call = r[1][2] == 'call' # call or noise
+            start = r[1][0]
+            end = r[1][1]
+            prob = r[1][3]
+            # print(f'i {i}, is_call {is_call}, start {start}, end {end}, prob {prob}')
+
+            llist.add(is_call)
+            # пока мы не заполнили весь лист, работаем по упрощенной схеме "в лоб", ну или
+            # если двигаем окно слишком быстро, то и смысла действовать по-умному у нас нет
+            if steps_in_window == 0 or i < steps_in_window:
+                if is_call:
+                    if temp_interval == [-1, -1, []]:
+                        temp_interval = [start + offset, end - offset, [prob]]
+                        continue
+                    temp_interval[1] = end - offset
+                    temp_interval[2].append(prob)
+                else:
+                    if temp_interval != [-1, -1, []]:
+                        predicted_intervals.append(temp_interval)
+                        temp_interval = [-1, -1, []]
+                continue
+                
+            # работаем по-умному
+            # будем двигать окно очень медленно, чтобы собрать как можно больше
+            # предиктов, но в этом случае начинают появлять шумы посреди звука и наоборт
+            # данная система призвана обрабатывать такие случаи
+
+            # если был шум и щас шум, значит, ничего нового не происходит
+            if all([x == False for x in llist()]):
+                if temp_interval != [-1, -1, []]:
+                    predicted_intervals.append(temp_interval)
+                    temp_interval = [-1, -1, []]
+                continue
+
+            # если был звук и щас звук, просто обновляем интервал
+            if all([x == True for x in llist()]):
+                if temp_interval == [-1, -1, []]:
+                    temp_interval = [start + offset, end - offset, [prob]]
+                    continue
+                temp_interval[1] = end - offset
+                temp_interval[2].append(prob)
+                continue
+
+            # если нам попался звук, но ранее был шум, то возможно это вброс звука,
+            # для принятия решения смотрим на ignore_sound_outliers
+            if llist()[0] == True and llist()[-1] == False:
+                # игнорим вбросы звука и будем ждать пока llist полностью
+                # заполнится предиктом звука
+                if ignore_sound_outliers == 'no_insert':
+                    continue
+                # если щас был звук и прошлый предикт тоже был звук,
+                # то походу надо бы это детектить уже как звук
+                if ignore_sound_outliers == 'insert_when_more_than_one':
+                    if llist()[0] == True and llist()[1] == True:
+                        if temp_interval == [-1, -1, []]:
+                            temp_interval = [start + offset, end - offset, [prob]]
+                            continue
+                        temp_interval[1] = end - offset
+                        temp_interval[2].append(prob)
+                        continue
+                    else:
+                        continue
+                # добавляем в интервал в любом случае
+                if ignore_sound_outliers == 'insert_when_at_least_one':
+                    if temp_interval == [-1, -1, []]:
+                        temp_interval = [start + offset, end - offset, [prob]]
+                        continue
+                    temp_interval[1] = end - offset
+                    temp_interval[2].append(prob)
+                    continue
+                raise Exception('Что-то пошло не так 1')
             
-            segment = preprocess_audio_segment(segment, sr, duration=segment_duration)
-            
-            features = extract_features(segment, sr).reshape(1, -1)
-            prediction = model.predict(features,verbose = 0)
-            
-            # print(prediction[0][0])
-            if prediction[0][0] > 0.97:  # Порог для классификации
-                detections.append((segment_start, min(segment_end, len(y_full) / sr)))
-            
-            segment_start += step_size
-            segment_end += step_size
+            # если нам попался шум, но ранее был звук, то возможно это вброс шума,
+            # для принятия решения смотрим на ignore_noise_outliers
+            if llist()[0] == False and llist()[-1] == True:
+                # игнорим вбросы шума и будем ждать пока llist полностью
+                # заполнится предиктом шума
+                if ignore_noise_outliers == 'no_cut':
+                    continue
+                # если щас был шум и прошлый предикт тоже был шум,
+                # то походу надо бы это детектить уже как шум и резать
+                if ignore_noise_outliers == 'cut_when_more_than_one':
+                    if llist()[0] == False and llist()[1] == False:
+                        if temp_interval != [-1, -1, []]:
+                            predicted_intervals.append(temp_interval)
+                            temp_interval = [-1, -1, []]
+                        continue
+                    else:
+                        continue
+                # режем в любом случае
+                if ignore_noise_outliers == 'cut_when_at_least_one':
+                    if temp_interval != [-1, -1, []]:
+                        predicted_intervals.append(temp_interval)
+                        temp_interval = [-1, -1, []]
+                    continue
+                raise Exception('Что-то пошло не так 2')
+        if temp_interval != [-1, -1, []]:
+            predicted_intervals.append(temp_interval)
+            temp_interval = [-1, -1, []]
 
-        # Объединение пересекающихся интервалов
-        merged_detections = []
-        for start, end in detections:
-            if merged_detections and start <= merged_detections[-1][1]:
-                # Обновляем конец предыдущего интервала
-                merged_detections[-1] = (merged_detections[-1][0], max(merged_detections[-1][1], end))
-            else:
-                # Добавляем новый интервал
-                merged_detections.append((start, end))
+        _predicted_intervals = predicted_intervals
+        predicted_intervals = []
+        
+        for s, e, p in _predicted_intervals:
+            mean_prob = sum(p)/len(p)
+            # if True or (mean_prob > 0.8 and e-s > 0.1):
+            if mean_prob > model_settings.confidence_limit \
+                 and e-s > model_settings.min_sound_length:
+                predicted_intervals.append((s,e))
+                # print(f'{s:.2f}', '\t', f'{e:.2f}', '\t', mean_prob)
 
-
-        # print("Звуки морских животных найдены в следующих интервалах (в секундах):")
-        # for start, end in merged_detections:
-        #     print(f"Начало: {start:.2f} с, Конец: {end:.2f} с")
+        merged_detections = predicted_intervals
+        
         #endregion Прогоняем файл через модель
 
         #region Генерируем спектрограмму
@@ -166,7 +338,7 @@ def ml_event_loop():
 
         #region Создание csv с предиктом
 
-        csv_text = 'start_second,end_second'
+        csv_text = 'start_second,end_second\n'
         for pair in merged_detections:
             csv_text += f'{pair[0]},{pair[1]}\n'
         filepath = WORKING_DIRECTORY+f'/server_data/predicted_data/{current_file.alias_name}.csv'

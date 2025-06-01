@@ -29,12 +29,12 @@ export const FIELDS_CARD: Record<FieldKey, FormSwitcherProps> = {
 	ignore_noise_outliers: {
 		name: 'ignore_noise_outliers',
 		component: FieldTypes.MultiSelect,
-		label: 'Игнорировать вброс шума',
+		label: 'Политика работы с вбросами шума',
 	},
 	ignore_sound_outliers: {
 		name: 'ignore_sound_outliers',
 		component: FieldTypes.MultiSelect,
-		label: 'Игнорировать вброс звука',
+		label: 'Политика работы с вбросами звука',
 	},
 	confidence_limit: {
 		name: 'confidence_limit',
@@ -51,30 +51,30 @@ export const FIELDS_CARD: Record<FieldKey, FormSwitcherProps> = {
 export const optionsIgnoreNoiseOutliers = [
 	{
 		value: 'cut_when_at_least_one',
-		label: 'Вырезать, когда будет меньше одного',
+		label: 'Делить интервал, когда есть хотябы один вброс шума',
 	},
 	{
 		value: 'cut_when_more_than_one',
-		label: 'Вырезать, когда будет больше одного',
+		label: 'Делить интервал, когда есть более одного вброса шума',
 	},
 	{
 		value: 'no_cut',
-		label: 'Не вырезать',
+		label: 'Игнорировать вбросы шума',
 	},
 ]
 
 export const optionsIgnoreSoundOutliers = [
 	{
 		value: 'insert_when_at_least_one',
-		label: 'Вставлять, когда хотя бы один',
+		label: 'Добавлять интервал, если есть хотябы один предикт звука',
 	},
 	{
 		value: 'insert_when_more_than_one',
-		label: 'Вставлять, когда их будет больше одного',
+		label: 'Добавлять интервал, если есть более одного предикта звука',
 	},
 	{
 		value: 'no_insert',
-		label: 'Не вставлять',
+		label: 'Игнорировать вбросы звука',
 	},
 ]
 
