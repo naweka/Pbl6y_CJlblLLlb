@@ -47,19 +47,20 @@ if __name__ == '__main__':
     # unpack NN model if needed
     path = WORKING_DIRECTORY+f'/packed_model/unpacked/swin_audio.pth'
     if not os.path.exists(path):
+        print('Файл модели "/packed_model/unpacked/swin_audio.pth" не был найден! Распаковка...')
         zip_prefix = "swin_audio.zip."
         
-        parts = glob.glob(zip_prefix + '*')
+        parts = glob.glob(WORKING_DIRECTORY+f'/packed_model/' + zip_prefix + '*')
         n = len(parts)
 
-        with open("merged.zip", "wb") as outfile:
+        with open(WORKING_DIRECTORY+f'/packed_model/' + "merged.zip", "wb") as outfile:
             for i in range(1, n+1):
-                filename = zip_prefix + str(i).zfill(3)
+                filename = WORKING_DIRECTORY+f'/packed_model/' + zip_prefix + str(i).zfill(3)
                 with open(filename, "rb") as infile:
                     outfile.write(infile.read())
         
-        with zipfile.ZipFile("merged.zip", "r") as zip_ref:
-            zip_ref.extractall('unpacked')
+        with zipfile.ZipFile(WORKING_DIRECTORY+f'/packed_model/' + "merged.zip", "r") as zip_ref:
+            zip_ref.extractall(WORKING_DIRECTORY+f'/packed_model/unpacked')
     
     if not os.path.exists(path):
         raise Exception(f'Произошла проблема при распаковке весов модели! Убедитесь, что файл существует: {WORKING_DIRECTORY+"/packed_model/unpacked/swin_audio.pth"}')
