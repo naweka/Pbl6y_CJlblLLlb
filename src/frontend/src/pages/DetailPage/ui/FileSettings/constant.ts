@@ -15,36 +15,43 @@ export const FIELDS_CARD: Record<FieldKey, FormSwitcherProps> = {
 		name: 'window_size',
 		component: FieldTypes.Slider,
 		label: 'Длина окна для модели',
+		hintMsg: 'Подсказка window_size',
 	},
 	window_step: {
 		name: 'window_step',
 		component: FieldTypes.Slider,
 		label: 'Интервал движения окна',
+		hintMsg: 'Подсказка window_step',
 	},
 	min_sound_length: {
 		name: 'min_sound_length',
 		component: FieldTypes.Slider,
 		label: 'Минимальная длина звука',
+		hintMsg: 'Подсказка min_sound_length',
 	},
 	ignore_noise_outliers: {
 		name: 'ignore_noise_outliers',
-		component: FieldTypes.MultiSelect,
+		component: FieldTypes.Select,
 		label: 'Политика работы с вбросами шума',
+		hintMsg: 'Подсказка ignore_noise_outliers',
 	},
 	ignore_sound_outliers: {
 		name: 'ignore_sound_outliers',
-		component: FieldTypes.MultiSelect,
+		component: FieldTypes.Select,
 		label: 'Политика работы с вбросами звука',
+		hintMsg: 'Подсказка ignore_sound_outliers',
 	},
 	confidence_limit: {
 		name: 'confidence_limit',
 		component: FieldTypes.Slider,
 		label: 'Порог средней уверенности модели на интервале со звуком',
+		hintMsg: 'Подсказка confidence_limit',
 	},
 	offset_bounds: {
 		name: 'offset_bounds',
 		component: FieldTypes.Slider,
 		label: 'Обрезка интервалов с краёв',
+		hintMsg: 'Подсказка offset_bounds',
 	},
 }
 

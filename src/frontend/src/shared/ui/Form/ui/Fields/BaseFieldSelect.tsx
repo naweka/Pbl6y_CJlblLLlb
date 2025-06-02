@@ -20,6 +20,7 @@ import {
 	FormMessage,
 	useFormField,
 } from '../Form'
+import { HintTooltip } from '../HintTooltip'
 
 interface BaseFieldSelectProps
 	extends UseControllerProps,
@@ -70,6 +71,7 @@ export const BaseFieldSelect: FC<BaseFieldSelectProps> = ({
 	descriptionProps,
 	messageProps,
 	className,
+	hintMsg,
 	...inputProps
 }) => {
 	const form = useFormField()
@@ -86,7 +88,8 @@ export const BaseFieldSelect: FC<BaseFieldSelectProps> = ({
 				return (
 					<FormItem className={className}>
 						<FormLabel {...labelProps} className={cn(labelProps?.className)}>
-							{label}
+							<span>{label}</span>
+							{hintMsg && <HintTooltip text={hintMsg} />}
 						</FormLabel>
 						<FormControl>
 							<Select

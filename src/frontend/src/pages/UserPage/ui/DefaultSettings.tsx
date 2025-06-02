@@ -91,19 +91,19 @@ const DefaultSettingsSuccess = () => {
 						<BaseForm.BaseFieldSlider
 							step={0.1}
 							min={0.2}
-							max={2}
+							max={1.5}
 							className="w-1/3"
 							{...FIELDS_CARD.window_size}
 						/>
 						<BaseForm.BaseFieldSlider
 							step={0.1}
 							min={0.1}
-							max={2}
+							max={1.5}
 							className="w-1/3"
 							{...FIELDS_CARD.window_step}
 						/>
 						<BaseForm.BaseFieldSlider
-							step={0.1}
+							step={0.01}
 							min={0.7}
 							max={1}
 							className="w-1/3"
@@ -113,14 +113,16 @@ const DefaultSettingsSuccess = () => {
 					<div className="flex gap-3">
 						<BaseForm.BaseFieldSlider
 							min={0}
-							step={0.1}
+							step={0.01}
+							max={2}
 							className="w-1/2"
 							{...FIELDS_CARD.min_sound_length}
 						/>
 						<BaseForm.BaseFieldSlider
-							step={1}
+							step={0.1}
 							min={0}
 							max={50}
+							labelTbumb={(value) => `${value}%`}
 							className="w-1/2"
 							{...FIELDS_CARD.offset_bounds}
 						/>

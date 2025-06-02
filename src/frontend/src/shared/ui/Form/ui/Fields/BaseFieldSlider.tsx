@@ -13,6 +13,7 @@ import {
 	FormMessage,
 	useFormField,
 } from '../Form'
+import { HintTooltip } from '../HintTooltip'
 
 interface BaseFieldSliderProps
 	extends Omit<SliderProps, 'defaultValue' | 'name' | 'type' | 'dir'>,
@@ -34,6 +35,7 @@ export const BaseFieldSlider: FC<BaseFieldSliderProps> = ({
 	descriptionProps,
 	messageProps,
 	className,
+	hintMsg,
 	...inputProps
 }) => {
 	const form = useFormField()
@@ -50,7 +52,8 @@ export const BaseFieldSlider: FC<BaseFieldSliderProps> = ({
 				return (
 					<FormItem className={className}>
 						<FormLabel {...labelProps} className={cn(labelProps?.className)}>
-							{label}
+							<span>{label}</span>
+							{hintMsg && <HintTooltip text={hintMsg} />}
 						</FormLabel>
 						<FormControl>
 							<Slider

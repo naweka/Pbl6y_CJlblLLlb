@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC, useId } from 'react'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
-import { cn } from '@/shared/lib'
+import { cn, isEmpty } from '@/shared/lib'
 import { BaseForm, Button, Form } from '@/shared/ui'
 import { detailPageStore } from '../../model'
 import {
@@ -20,6 +20,9 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 	const formId = useId()
 	const form = useForm<z.infer<typeof formSchema>>({
 		values: detailPageStore.getSetting(fileId),
+		disabled:
+			!isEmpty(detailPageStore.getUpload(fileId)) ||
+			detailPageStore.isPreparingFile(fileId),
 	})
 
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
@@ -47,19 +50,19 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 								<BaseForm.BaseFieldSlider
 									step={0.1}
 									min={0.2}
-									max={2}
+									max={1.5}
 									className="w-1/3"
 									{...FIELDS_CARD.window_size}
 								/>
 								<BaseForm.BaseFieldSlider
 									step={0.1}
 									min={0.1}
-									max={2}
+									max={1.5}
 									className="w-1/3"
 									{...FIELDS_CARD.window_step}
 								/>
 								<BaseForm.BaseFieldSlider
-									step={0.1}
+									step={0.01}
 									min={0.7}
 									max={1}
 									className="w-1/3"
@@ -69,7 +72,8 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 							<div className="flex gap-3">
 								<BaseForm.BaseFieldSlider
 									min={0}
-									step={0.1}
+									step={0.01}
+									max={2}
 									className="w-1/2"
 									{...FIELDS_CARD.min_sound_length}
 								/>
@@ -77,6 +81,7 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 									step={1}
 									min={0}
 									max={50}
+									labelTbumb={(value) => `${value}%`}
 									className="w-1/2"
 									{...FIELDS_CARD.offset_bounds}
 								/>
@@ -96,13 +101,19 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 						</form>
 					</Form>
 					<div className="flex gap-3">
-						<Button form={formId} type="submit" className="w-full">
+						<Button
+							form={formId}
+							type="submit"
+							className="w-full"
+							disabled={form.formState.disabled || form.formState.isSubmitting}
+						>
 							Сохранить
 						</Button>
 						<Button
 							className="w-full"
 							variant="destructive"
 							onClick={() => form.reset(detailPageStore.getSetting(fileId))}
+							disabled={form.formState.disabled}
 						>
 							Сбросить
 						</Button>

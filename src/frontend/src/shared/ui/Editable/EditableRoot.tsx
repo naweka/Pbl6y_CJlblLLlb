@@ -23,7 +23,6 @@ const EditableRoot = forwardRef<HTMLDivElement, EditableRootProps>(
 				'defaultValue',
 				'disabled',
 				'edit',
-				'edit.controlled',
 				'finalFocusEl',
 				'form',
 				'id',
@@ -67,5 +66,7 @@ const EditableRoot = forwardRef<HTMLDivElement, EditableRootProps>(
 		)
 	},
 )
+
+EditableRoot.displayName = 'EditableRoot'
 
 export { EditableRoot }
