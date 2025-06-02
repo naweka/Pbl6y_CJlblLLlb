@@ -9,7 +9,7 @@ from repositories.model_settings_repository import (add_model_settings,
                                                     find_model_settings_by_file_id,
                                                     find_default_model_settings_by_file_id,
                                                     delete_card_by_id)
-from repositories.file_repository import get_files_by_ids
+from repositories.file_repository import get_files_by_ids, update_status_for_file
 
 def get_default_model_settings_handler() -> tuple[list[ModelSettings],int]:
     return find_default_model_settings_by_file_id(), 200
@@ -42,6 +42,8 @@ def update_model_settings_handler(file_id,
         return {
         'error_message': f'Not found entity with id: {file_id}'
     }, 400
+
+    update_status_for_file(file_id, 'PREPARING')
 
     x = find_model_settings_by_file_id(file_id)
     if x is None:
