@@ -91,7 +91,7 @@ def downloadPredictedData(jwt_data:dict, id):
 @endpoint_output_wrapper
 def allPredictedDataForCard(jwt_data:dict, id):
     files = get_card_files(id)
-    file_ids:list[str] = [x.id for x in files[0]]
+    file_ids:list[str] = [x.id for x in files]
 
     zipfile_path = WORKING_DIRECTORY+f'/server_data/temp/{id}.zip'
     with ZipFile(zipfile_path,'w') as zip: 
