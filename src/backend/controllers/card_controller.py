@@ -39,7 +39,7 @@ def getCard(jwt_data:dict) -> CardDto:
 @token_required
 @endpoint_output_wrapper
 def deleteCard(jwt_data:dict) -> None:
-    id = __get_json_parameter(request.json, 'id')(request.json, 'id')
+    id = __get_json_parameter(request.json, 'id')
     res = remove_card(id)
     return res, 200
 
