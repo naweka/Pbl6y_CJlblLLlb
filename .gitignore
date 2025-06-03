@@ -1,6 +1,8 @@
 # Python stuff
 *.py[cod]
 __pycache__
+*merged.zip*
+*secret_key*
 
 # Logs
 logs
