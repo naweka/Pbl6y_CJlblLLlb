@@ -1,2 +1,12 @@
-export { sendCreateCard, getAllCard, getCard, sendUpdateCard } from './api'
+export {
+	sendCreateCard,
+	getAllCard,
+	getCard,
+	deleteCard,
+	sendUpdateCard,
+	sendUpdateModelSettingsFile,
+	sendUpdateModelDefaultSettingsFile,
+	getModelSettigsFile,
+	getModelDefaultSettingsFile,
+} from './api'
 export * from './types'

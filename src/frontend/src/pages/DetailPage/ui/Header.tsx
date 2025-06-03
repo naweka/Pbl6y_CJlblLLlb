@@ -39,6 +39,7 @@ export const Header: FC<HeaderProps> = observer(() => {
 					<HeaderEditable />
 					<Edit
 						checked={detailPageStore.edit}
+						// eslint-disable-next-line @typescript-eslint/unbound-method
 						onCheckedChange={detailPageStore.setEdit}
 					/>
 				</div>

@@ -16,6 +16,7 @@ import type { Card as ICard } from './types'
 export interface CardProps extends ICard {
 	to?: To
 	action: (props: CardProps) => JSX.Element
+	onDelete?: (id: string) => Promise<void>
 }
 
 export const Card: FC<CardProps> = (props) => {

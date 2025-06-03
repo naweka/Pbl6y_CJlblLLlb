@@ -35,12 +35,13 @@ const MainError = () => {
 const EmptyFiles = () => {
 	return (
 		<div className="flex flex-grow flex-col items-center justify-center gap-1 px-5">
-			<Fish className="h-12 w-12" />
+			<Fish className="h-12 w-12" strokeWidth="1" />
 			<p className="mb-1 text-center text-base text-foreground">
-				<span>Список пустой </span>&nbsp;
+				<span className="text-lg font-medium">Список пустой </span>&nbsp;
 				<br />
 				<span>
-					Нажмите <strong>"Редактировать"</strong>, чтобы загрузить новый файл
+					Нажмите <strong>&quot;Редактировать&quot;</strong>, чтобы загрузить
+					новый файл
 				</span>
 			</p>
 		</div>
@@ -75,8 +76,11 @@ const MainSuccess = observer(() => {
 
 export const Main: FC<MainProps> = observer(() => {
 	useEffect(() => {
-		detailPageStore.fetchFilesCard()
+		if (STATUS.SUCCESS) {
+			detailPageStore.fetchFilesCard()
+		}
 	}, [])
+
 	const Component = MapComponent[detailPageStore.statusFiles] || null
 	if (!Component) return null
 	return <Component />

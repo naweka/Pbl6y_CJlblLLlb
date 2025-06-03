@@ -14,6 +14,10 @@ export const getFiles = async (data: GetFilesCardData) => {
 	return await http?.post<any, AxiosResponse<File[]>>(routes.getFiles(), data)
 }
 
+export const getFile = async (data: GetFileIdData) => {
+	return await http?.get<any, AxiosResponse<File>>(routes.getFile(data))
+}
+
 export const getFileSpectrogram = async (data: GetFileIdData) => {
 	return await http?.get<any, AxiosResponse<Blob>>(
 		routes.getSpectrogram(data),

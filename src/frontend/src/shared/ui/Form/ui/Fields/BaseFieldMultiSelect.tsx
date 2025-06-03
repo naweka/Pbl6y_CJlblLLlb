@@ -60,6 +60,8 @@ const MultiSelect = forwardRef<
 	)
 })
 
+MultiSelect.displayName = 'MultiSelect'
+
 export const BaseFieldMultiSelect: AssignComponent<
 	typeof CommandPrimitive,
 	BaseFieldMultiSelectProps
