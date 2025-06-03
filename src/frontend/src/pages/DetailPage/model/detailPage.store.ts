@@ -279,7 +279,6 @@ class DetailPageStore implements IDetailPageStore {
 	convertFileToCardFile(ids: string[]) {
 		return (file: File, index: number): FileCard => {
 			return {
-				alias_name: file.name,
 				id: ids[index],
 				name: file.name,
 				file_status: 'PREPARING',
