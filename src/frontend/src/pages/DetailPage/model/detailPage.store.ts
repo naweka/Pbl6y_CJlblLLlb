@@ -312,16 +312,16 @@ class DetailPageStore implements IDetailPageStore {
 		return progress || 0
 	}
 
-	async updateFileSetting(fileId: string, data: ModelSetting) {
+	async updateFileSetting(file_id: string, data: ModelSetting) {
 		try {
 			await sendUpdateModelSettingsFile({
-				file_id: fileId,
 				...data,
+				file_id,
 			})
-			this.setSettingFile(fileId, data)
+			this.setSettingFile(file_id, data)
 
-			this.setLoadingFile(fileId, true)
-			const file = await this.watchFile(fileId)
+			this.setLoadingFile(file_id, true)
+			const file = await this.watchFile(file_id)
 
 			const blob = await this.fetchFileSpec({
 				id: file.id,
