@@ -1,6 +1,6 @@
-from services.IdGeneratorService import generate_id
-from services.DbService import cards_db
-from models.Card import Card
+from services.id_generator_service import generate_id
+from services.db_service import cards_table
+from models.card import Card
 
 def add_card(title:str,
              description:str,
@@ -9,7 +9,7 @@ def add_card(title:str,
              status:str='READY',
              files:list[str]=None) -> Card:
     id = id if id else generate_id()
-    res = cards_db.insert_one({
+    res = cards_table.insert_one({
         'id': id,
         'title': title,
         'description': description,
@@ -35,7 +35,7 @@ def update_card_by_id(id:str,
     if files: update_dict['files'] = files
 
     if update_dict:
-        x = cards_db.find_one_and_update({'id': id}, {'$set': update_dict}, return_document=True)
+        x = cards_table.find_one_and_update({'id': id}, {'$set': update_dict}, return_document=True)
         res = Card(x['id'], x['title'], x['description'], x['status'], x['tags'], x['files'])
         return res
     return None
@@ -46,17 +46,18 @@ def find_cards_by_search_text_and_tags(search_text:str, tags:list[str]) -> list[
     has_search_text = search_text is not None and search_text != ''
     has_tags = tags is not None and len(tags) > 0
 
+    # TODO переписать этот бред по-русски
     if has_search_text and not has_tags: # только текст
-        res = list(cards_db.find({'$or': [
+        res = list(cards_table.find({'$or': [
             {'title': {'$regex': search_text, '$options': 'i'}},
             {'description': {'$regex': search_text, '$options': 'i'}},
         ]}))
 
     elif not has_search_text and has_tags: # только теги
-        res = list(cards_db.find({'tags': {'$all': tags}}))
+        res = list(cards_table.find({'tags': {'$all': tags}}))
 
     elif has_search_text and has_tags: # вместе
-        res = list(cards_db.find({'$and': [
+        res = list(cards_table.find({'$and': [
             {'tags': {'$all': tags}},
             {'$or': [
                 {'title': {'$regex': search_text, '$options': 'i'}},
@@ -65,7 +66,7 @@ def find_cards_by_search_text_and_tags(search_text:str, tags:list[str]) -> list[
         ]}))
 
     else:
-        res = list(cards_db.find({}))
+        res = list(cards_table.find({}))
 
     res = [Card(x['id'], x['title'], x['description'],
                 x['status'], x['tags'], x['files']) for x in res]
@@ -73,26 +74,26 @@ def find_cards_by_search_text_and_tags(search_text:str, tags:list[str]) -> list[
 
 
 def find_card_by_id(card_id:str) -> Card:
-    res = list(cards_db.find({'id': card_id}))
+    res = list(cards_table.find({'id': card_id}))
     res = [Card(x['id'], x['title'], x['description'],
                 x['status'], x['tags'], x['files']) for x in res]
     return res[0] if res else None
 
 
 def find_card_by_file_id(file_id:str) -> Card:
-    res = list(cards_db.find({'files': {'$in': [file_id]}}))
+    res = list(cards_table.find({'files': {'$in': [file_id]}}))
     res = [Card(x['id'], x['title'], x['description'],
                 x['status'], x['tags'], x['files']) for x in res]
     return res[0] if res else None
 
 
 def get_all_tags_from_cards() -> list[str]:
-    res = list(cards_db.distinct('tags'))
+    res = list(cards_table.distinct('tags'))
     return res
 
 
 def append_file_to_card(card_id:str, file_id:str) -> Card:
-    x = cards_db.find_one_and_update({'id': card_id},
+    x = cards_table.find_one_and_update({'id': card_id},
                                  {'$push': {'files': file_id}},
                                  return_document=True)
     res = Card(x['id'], x['title'], x['description'], x['status'], x['tags'], x['files'])
@@ -100,25 +101,21 @@ def append_file_to_card(card_id:str, file_id:str) -> Card:
 
 
 def delete_card_by_id(card_id:str):
-    cards_db.delete_one({'id': card_id})
+    cards_table.delete_one({'id': card_id})
 
 
 def delete_file_from_cards(file_id:str):
-    cards_db.update_many({'files': {'$in': [file_id]}},
-                         {'$pull': {'files': file_id}})
+    cards_table.update_many({'files': {'$in': [file_id]}},
+                            {'$pull': {'files': file_id}})
 
 
-# TODO
+# TODO когда-нибудь это будет реализовано
 def delete_tag_from_card(card_id:str, tag:str):
-    cards_db.update_one({'id': card_id},
-                        {'$pull': {'tags': tag}})
+    cards_table.update_one({'id': card_id},
+                           {'$pull': {'tags': tag}})
 
-# TODO
+
+# TODO когда-нибудь это будет реализовано
 def delete_tag_from_cards(tag:str):
-    cards_db.update_many({'tags': {'$in': [tag]}},
-                         {'$pull': {'files': tag}})
-
-
-def update_status_for_card(card_id:str, status:str):
-    cards_db.update_one({'id': card_id},
-                        {'$set': {'status': status}})
+    cards_table.update_many({'tags': {'$in': [tag]}},
+                            {'$pull': {'files': tag}})
