@@ -1,0 +1,1 @@
+export { DeadFish } from './DeadFish'
