@@ -28,13 +28,13 @@ def get_current_user(jwt_data:dict) -> Union[User,str]:
 
 # TODO перписать работу с токенами отдельно и возвращать UserDto
 def signup(user:User) -> User:
-    if user.login is None or user.password is None or user.fullname is None:
+    if user.login is None or user.password_hash is None or user.fullname is None:
         raise Exception('Все поля должны быть заполнены: логин, пароль и имя пользователя')
 
     if len(find_users_by_login(user.login, use_contains=False)) > 0:
         raise Exception('Пользователь с этим логином уже существует')
 
-    new_user = add_user(user.login, user.fullname, user.password)
+    new_user = add_user(user.login, user.fullname, user.password_hash)
 
     token = jwt.encode({
         'user_id': new_user.id,

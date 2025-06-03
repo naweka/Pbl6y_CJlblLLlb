@@ -17,9 +17,8 @@ def add_debug_user(login:str, fullname:str, password:str) -> User:
     return res
 
 
-def add_user(login:str, fullname:str, password:str) -> User:
+def add_user(login:str, fullname:str, password_hash:str) -> User:
     id = generate_id()
-    password_hash = create_password_hash(password)
     res = users_table.insert_one({
         'id': id,
         'login': login,
