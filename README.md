@@ -40,6 +40,15 @@
 
 ## 👀 Скриншоты
 
+![image](https://github.com/user-attachments/assets/bbbc96b3-12bd-4ebd-af1e-1913e475b3ea)
+
+
+![image](https://github.com/user-attachments/assets/33caf41f-ed59-4999-abf8-62b884a333f9)
+
+
+![image](https://github.com/user-attachments/assets/22c1730f-0cbc-4319-8fb0-845da53215e2)
+
+
 ## 🐳 Запуск через Docker
 
 ```
