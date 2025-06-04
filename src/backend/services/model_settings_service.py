@@ -56,7 +56,8 @@ def update_model_settings_handler(model_settings_dto:ModelSettingsDto) -> list[M
 
 
 def update_default_model_settings_handler(model_settings_dto:ModelSettingsDto) -> list[ModelSettings]:
-    res = update_default_model_settings(model_settings_dto.window_size,
+    res = update_default_model_settings(model_settings_dto.file_id,
+                          model_settings_dto.window_size,
                           model_settings_dto.window_step,
                           model_settings_dto.min_sound_length,
                           model_settings_dto.ignore_noise_outliers,

@@ -97,18 +97,18 @@ def __get_json_parameters(json, *args) -> list[object]:
     return res
 
 
-def convert_json_to_any(j, t) -> object:
+def convert_json_to_any(j, t, ignore_null=None) -> object:
     if issubclass(t, Model):
-        return __convert_json_to_model(j, t)
+        return __convert_json_to_model(j, t, ignore_null)
     
     if issubclass(t, Dto):
-        return __convert_json_to_dto(j, t)
+        return __convert_json_to_dto(j, t, ignore_null)
 
     raise Exception(f'Тип {t} должен быть DTO или моделью')
 
 
 # TODO переписать на словарь с экшонами, а не кучу ифов
-def __convert_json_to_model(j, m) -> Model:
+def __convert_json_to_model(j, m, ignore_null=None) -> Model:
     if issubclass(m, User):
         login, password, fullname = __get_json_parameters(j, 'login', 'password', 'fullname')
         if password is None:
@@ -120,7 +120,9 @@ def __convert_json_to_model(j, m) -> Model:
 
 
 # TODO переписать на словарь с экшонами, а не кучу ифов
-def __convert_json_to_dto(j, d) -> Dto:
+def __convert_json_to_dto(j, d, ignore_null=None) -> Dto:
+    if ignore_null is None:
+        ignore_null = []
     if issubclass(d, CardDto):
         id, title, description, tags = __get_json_parameters(j, 'id', 'title', 'description', 'tags')
         d = CardDto(id, title, description, None, tags, None)
@@ -134,7 +136,7 @@ def __convert_json_to_dto(j, d) -> Dto:
         'confidence_limit', 'offset_bounds')
 
         nones = []
-        if file_id is None: nones.append('file_id')
+        if file_id is None and 'file_id' not in ignore_null: nones.append('file_id')
         if window_size is None: nones.append('window_size')
         if window_step is None: nones.append('window_step')
         if min_sound_length is None: nones.append('min_sound_length')

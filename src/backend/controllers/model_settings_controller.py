@@ -27,7 +27,7 @@ def updateModelSettingsForFile(jwt_data:dict) -> ModelSettingsDto:
 @token_required
 @endpoint_output_wrapper
 def updateDefaultModelSettingsForFile(jwt_data:dict) -> ModelSettingsDto:
-    dto = convert_json_to_any(request.json, ModelSettingsDto)
+    dto = convert_json_to_any(request.json, ModelSettingsDto, ignore_null=['file_id'])
     model_settings = update_default_model_settings_handler(dto)
     res = convert_model_to_dto(model_settings)
     return res, 200

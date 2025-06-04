@@ -92,6 +92,6 @@ def find_default_model_settings() -> ModelSettings:
     if len(x) == 0:
         return None
     x = x[0]
-    res = ModelSettings(None, x['window_size'], x['window_step'], x['min_sound_length'], x['ignore_noise_outliers'], \
+    res = ModelSettings('None', x['window_size'], x['window_step'], x['min_sound_length'], x['ignore_noise_outliers'], \
                         x['ignore_sound_outliers'], x['confidence_limit'], x['offset_bounds'])
     return res

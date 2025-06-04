@@ -69,7 +69,7 @@ def process_file(current_file, merged_detections, filepath: str):
 
     fig, ax = plt.subplots(nrows=1)
     plt.margins(0)
-    fig.set_figwidth(duration_sec // 4)
+    fig.set_figwidth(duration_sec // 1)
     fig.set_figheight(2)
     ax.axis('off')
 
