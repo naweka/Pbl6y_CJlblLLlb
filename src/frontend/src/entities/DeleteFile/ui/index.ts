@@ -1,0 +1,1 @@
+export { DeleteFile } from './DeleteFile'
