@@ -132,6 +132,21 @@ def __convert_json_to_dto(j, d) -> Dto:
             offset_bounds = __get_json_parameters(j, 'file_id', 'window_size', \
         'window_step', 'min_sound_length', 'ignore_noise_outliers', 'ignore_sound_outliers', \
         'confidence_limit', 'offset_bounds')
+
+        nones = []
+        if file_id is None: nones.append('file_id')
+        if window_size is None: nones.append('window_size')
+        if window_step is None: nones.append('window_step')
+        if min_sound_length is None: nones.append('min_sound_length')
+        if ignore_noise_outliers is None: nones.append('ignore_noise_outliers')
+        if ignore_sound_outliers is None: nones.append('ignore_sound_outliers')
+        if confidence_limit is None: nones.append('confidence_limit')
+        if offset_bounds is None: nones.append('offset_bounds')
+
+        if len(nones) > 0:
+            error = 'Следующие поля должны быть заполнены: ' + ', '.join(nones)
+            raise Exception(error)
+
         d = ModelSettingsDto(file_id, window_size, window_step, min_sound_length, ignore_noise_outliers, \
             ignore_sound_outliers, confidence_limit, offset_bounds)
         return d

@@ -20,6 +20,7 @@ def get_model_settings_handler(file_id) -> ModelSettings:
     x = find_model_settings_by_file_id(file_id)
     if x is None:
         x = find_default_model_settings()
+        x.file_id = file_id
     return x
 
 
