@@ -18,11 +18,13 @@ interface FileSettingsProps {
 
 export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 	const formId = useId()
+
+	const disabled =
+		!isEmpty(detailPageStore.getUpload(fileId)) ||
+		detailPageStore.isPreparingFile(fileId)
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		values: detailPageStore.getSetting(fileId),
-		disabled:
-			!isEmpty(detailPageStore.getUpload(fileId)) ||
-			detailPageStore.isPreparingFile(fileId),
 	})
 
 	const onSubmit = async (payload: z.infer<typeof formSchema>) => {
@@ -105,7 +107,7 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 							form={formId}
 							type="submit"
 							className="w-full"
-							disabled={form.formState.disabled || form.formState.isSubmitting}
+							disabled={disabled || form.formState.isSubmitting}
 						>
 							Сохранить
 						</Button>
@@ -113,7 +115,7 @@ export const FileSettings: FC<FileSettingsProps> = observer(({ fileId }) => {
 							className="w-full"
 							variant="destructive"
 							onClick={() => form.reset(detailPageStore.getSetting(fileId))}
-							disabled={form.formState.disabled}
+							disabled={disabled}
 						>
 							Сбросить
 						</Button>

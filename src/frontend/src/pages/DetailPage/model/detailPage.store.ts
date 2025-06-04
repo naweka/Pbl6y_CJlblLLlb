@@ -170,7 +170,7 @@ class DetailPageStore implements IDetailPageStore {
 									this.setLoadingFile(file.id, false)
 									if (blob) {
 										this.setFileById({ ...file, url: blob })
-										this.fetchFileSetting(file.id)
+										await this.fetchFileSetting(file.id)
 										return
 									}
 								} catch (error) {

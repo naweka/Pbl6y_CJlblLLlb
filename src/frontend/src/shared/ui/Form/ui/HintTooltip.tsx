@@ -23,7 +23,7 @@ export const HintTooltip: FC<HintTooltipProps> = ({ text, ...props }) => {
 				<TooltipTrigger className="align-text-bottom">
 					<HelpCircle className="size-4" />
 				</TooltipTrigger>
-				<TooltipContent>
+				<TooltipContent className="max-w-xs">
 					<p>{text}</p>
 				</TooltipContent>
 			</Tooltip>
