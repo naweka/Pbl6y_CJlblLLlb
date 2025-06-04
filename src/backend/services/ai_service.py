@@ -174,7 +174,7 @@ def ai_event_loop():
         predicted_intervals = []
         win_width = model_settings.window_size
         win_step = model_settings.window_step
-        offset = model_settings.offset_bounds
+        offset = (model_settings.offset_bounds / 100.0) * win_width
         # "cut_when_at_least_one" / "cut_when_more_than_one" / "no_cut"
         ignore_noise_outliers = model_settings.ignore_noise_outliers
         # "insert_when_at_least_one" / "insert_when_more_than_one" / "no_insert"
