@@ -1,26 +1,34 @@
 from services.db_service import initalize_test_connection
+
 initalize_test_connection()
 
-from services.db_service import (cards_table,
-                                 model_settings_table,
-                                 files_table,
-                                 users_table,
-                                 system_table)
+from services.db_service import (
+    cards_table,
+    model_settings_table,
+    files_table,
+    users_table,
+    system_table,
+)
 from services.password_service import create_password_hash
 from repositories.user_repository import add_user, find_users_by_login
-from repositories.card_repository import (add_card,
-                                          update_card_by_id,
-                                          get_all_tags_from_cards,
-                                          find_card_by_id,
-                                          find_cards_by_search_text_and_tags,
-                                          find_card_by_file_id,
-                                          append_file_to_card)
-from repositories.model_settings_repository import (add_model_settings,
-                                                    update_default_model_settings,
-                                                    update_model_settings,
-                                                    find_model_settings_by_file_id,
-                                                    find_default_model_settings)
+from repositories.card_repository import (
+    add_card,
+    update_card_by_id,
+    get_all_tags_from_cards,
+    find_card_by_id,
+    find_cards_by_search_text_and_tags,
+    find_card_by_file_id,
+    append_file_to_card,
+)
+from repositories.model_settings_repository import (
+    add_model_settings,
+    update_default_model_settings,
+    update_model_settings,
+    find_model_settings_by_file_id,
+    find_default_model_settings,
+)
 import pytest
+
 
 @pytest.fixture(autouse=True)
 def setup_teardown():
@@ -29,12 +37,12 @@ def setup_teardown():
     clear_test_database()
 
 
-LOGIN = 'test_login'
-FULLNAME = 'Test User Name'
-PASSWORD = 'Password123'
+LOGIN = "test_login"
+FULLNAME = "Test User Name"
+PASSWORD = "Password123"
 
 
-def clear_test_database():    
+def clear_test_database():
     cards_table.delete_many({})
     model_settings_table.delete_many({})
     files_table.delete_many({})
@@ -45,6 +53,7 @@ def clear_test_database():
 def test_add_user_should_create_user_when_data_is_valid():
     # Arrange
     from repositories.user_repository import add_user
+
     pwd_hash = create_password_hash(PASSWORD)
 
     # Act
@@ -59,8 +68,10 @@ def test_add_user_should_create_user_when_data_is_valid():
 
 def test_find_users_by_login_should_return_several_users_when_many_usernames_start_with_same_substring_and_use_contains_allowed():
     # Arrange
-    for i in range(1,11):
-        add_user(f'{LOGIN}{i}', f'{FULLNAME}{i}', create_password_hash(f'{PASSWORD}{i}'))
+    for i in range(1, 11):
+        add_user(
+            f"{LOGIN}{i}", f"{FULLNAME}{i}", create_password_hash(f"{PASSWORD}{i}")
+        )
 
     # Act
     results = find_users_by_login(LOGIN, True)
@@ -73,17 +84,19 @@ def test_find_users_by_login_should_return_several_users_when_many_usernames_sta
 
 def test_find_users_by_login_should_return_single_user_when_many_usernames_start_with_same_substring_and_use_contains_not_allowed():
     # Arrange
-    for i in range(1,11):
-        add_user(f'{LOGIN}{i}', f'{FULLNAME}{i}', create_password_hash(f'{PASSWORD}{i}'))
+    for i in range(1, 11):
+        add_user(
+            f"{LOGIN}{i}", f"{FULLNAME}{i}", create_password_hash(f"{PASSWORD}{i}")
+        )
 
     # Act
     results_for_substring = find_users_by_login(LOGIN, False)
-    results_for_fullname = find_users_by_login(f'{LOGIN}1', False)
+    results_for_fullname = find_users_by_login(f"{LOGIN}1", False)
 
     # Assert
     assert len(results_for_substring) == 0
     assert len(results_for_fullname) == 1
-    assert results_for_fullname[0].login == f'{LOGIN}1'
+    assert results_for_fullname[0].login == f"{LOGIN}1"
 
 
 def test_add_card_should_create_new_card_when_data_is_valid():
@@ -91,7 +104,7 @@ def test_add_card_should_create_new_card_when_data_is_valid():
     # Act
     card = add_card("Test Title", "Test Description", ["tag1", "tag2"])
     db_card = cards_table.find_one({"id": card.id})
-    
+
     # Assert
     assert card is not None
     assert card.title == "Test Title"
@@ -105,7 +118,7 @@ def test_add_card_should_create_new_card_when_data_is_valid():
 def test_update_card_by_id_should_change_information():
     # Arrange
     card = add_card("Original", "Original Desc", ["original"])
-    
+
     # Act
     updated = update_card_by_id(
         card.id,
@@ -113,10 +126,10 @@ def test_update_card_by_id_should_change_information():
         description="Updated Desc",
         tags=["updated"],
         status="UPDATED",
-        files=["file1"]
+        files=["file1"],
     )
     partially_updated = update_card_by_id(card.id, title="Partial")
-    
+
     # Assert
     assert updated.title == "Updated"
     assert updated.description == "Updated Desc"
@@ -134,7 +147,7 @@ def test_find_card_by_id_should_return_card_when_it_exist():
     # Act
     found = find_card_by_id(card.id)
     not_found = find_card_by_id("non_existent_id")
-    
+
     # Assert
     assert found is not None
     assert found.id == card.id
@@ -158,10 +171,12 @@ def test_find_card_by_file_id_should_return_card_when_it_exist():
 
 def test_find_cards_by_search_text_and_tags_should_return_cards():
     # Arrange
-    card1 = add_card("Python Guide", "Learn Python programming", ["programming", "python"])
+    card1 = add_card(
+        "Python Guide", "Learn Python programming", ["programming", "python"]
+    )
     card2 = add_card("Java Basics", "Introduction to Java", ["programming", "java"])
     card3 = add_card("Cooking Recipes", "Best Italian recipes", ["cooking", "food"])
-    
+
     # Act
     results = find_cards_by_search_text_and_tags("python", None)
     results2 = find_cards_by_search_text_and_tags(None, ["programming"])
@@ -177,13 +192,13 @@ def test_find_cards_by_search_text_and_tags_should_return_cards():
     ids = {r.id for r in results2}
     assert card1.id in ids
     assert card2.id in ids
-    
+
     assert len(results3) == 1
     assert results3[0].id == card2.id
-    
+
     assert len(results4) == 1
     assert results4[0].id == card2.id
-    
+
     assert len(results5) == 3
 
 
@@ -219,17 +234,17 @@ def test_append_file_to_card_should_add_new_file_to_card_when_card_exist():
 def test_add_model_settings_should_create_new_settings_when_valid_file_id_provided():
     # Arrange
     file_id = "test_file_123"
-    
+
     # Act
     settings = add_model_settings(
         file_id=file_id,
         window_size=0.6,
         window_step=0.2,
         min_sound_length=0.2,
-        confidence_limit=0.9
+        confidence_limit=0.9,
     )
     db_settings = model_settings_table.find_one({"file_id": file_id})
-    
+
     # Assert
     assert settings is not None
     assert settings.file_id == file_id
@@ -239,6 +254,7 @@ def test_add_model_settings_should_create_new_settings_when_valid_file_id_provid
     assert settings.confidence_limit == 0.9
     assert db_settings is not None
     assert db_settings["window_size"] == 0.6
+
 
 def test_add_model_settings_should_raise_exception_when_file_id_is_none():
     # Arrange
@@ -251,17 +267,14 @@ def test_add_model_settings_should_raise_exception_when_file_id_is_none():
 def test_update_default_model_settings_should_update_settings_when_called():
     # Arrange
     # TODO Это костыль, кстати. Надо вообще запретить создвать с айди 'None'
-    initial_settings = add_model_settings(file_id='None')
-    
+    initial_settings = add_model_settings(file_id="None")
+
     # Act
     updated_settings = update_default_model_settings(
-        file_id='None',
-        window_size=1.0,
-        window_step=0.5,
-        confidence_limit=0.95
+        file_id="None", window_size=1.0, window_step=0.5, confidence_limit=0.95
     )
     default_settings = find_default_model_settings()
-    
+
     # Assert
     assert updated_settings.window_size == 1.0
     assert updated_settings.window_step == 0.5
@@ -273,15 +286,13 @@ def test_update_model_settings_should_update_existing_settings_when_file_id_exis
     # Arrange
     file_id = "existing_file_123"
     add_model_settings(file_id=file_id)
-    
+
     # Act
     updated_settings = update_model_settings(
-        file_id=file_id,
-        window_size=0.8,
-        min_sound_length=0.3
+        file_id=file_id, window_size=0.8, min_sound_length=0.3
     )
     db_settings = model_settings_table.find_one({"file_id": file_id})
-    
+
     # Assert
     assert updated_settings.window_size == 0.8
     assert updated_settings.min_sound_length == 0.3
@@ -301,10 +312,10 @@ def test_find_model_settings_by_file_id_should_return_settings_when_file_id_exis
     file_id = "find_me_123"
     expected_window_size = 0.7
     add_model_settings(file_id=file_id, window_size=expected_window_size)
-    
+
     # Act
     found_settings = find_model_settings_by_file_id(file_id)
-    
+
     # Assert
     assert found_settings is not None
     assert found_settings.file_id == file_id
@@ -315,21 +326,21 @@ def test_find_model_settings_by_file_id_should_return_none_when_file_id_not_exis
     # Arrange
     # Act
     found_settings = find_model_settings_by_file_id("non_existent_file")
-    
+
     # Assert
     assert found_settings is None
 
 
 def test_find_default_model_settings_should_return_settings_when_default_exists():
     # Arrange
-    add_model_settings(file_id='None', window_size=0.5)
-    
+    add_model_settings(file_id="None", window_size=0.5)
+
     # Act
     default_settings = find_default_model_settings()
-    
+
     # Assert
     assert default_settings is not None
-    assert default_settings.file_id == 'None'
+    assert default_settings.file_id == "None"
     assert default_settings.window_size == 0.5
 
 
@@ -337,7 +348,7 @@ def test_find_default_model_settings_should_return_none_when_default_not_exists(
     # Arrange
     # Act
     default_settings = find_default_model_settings()
-    
+
     # Assert
     assert default_settings is None
 
@@ -345,12 +356,12 @@ def test_find_default_model_settings_should_return_none_when_default_not_exists(
 def test_model_settings_should_use_default_values_when_optional_params_not_provided():
     # Arrange
     file_id = "test_default_values"
-    
+
     # Act
     settings = add_model_settings(file_id=file_id)
-    
+
     # Assert
     assert settings.window_size == 0.5  # default value
     assert settings.window_step == 0.1  # default value
     assert settings.confidence_limit == 0.8  # default value
-    assert settings.ignore_noise_outliers == 'cut_when_at_least_one'  # default value
+    assert settings.ignore_noise_outliers == "cut_when_at_least_one"  # default value
