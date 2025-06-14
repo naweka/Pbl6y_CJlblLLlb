@@ -15,6 +15,7 @@ from repositories.card_repository import (add_card,
                                           find_cards_by_search_text_and_tags,
                                           find_card_by_file_id,
                                           append_file_to_card)
+
 from repositories.model_settings_repository import (add_model_settings,
                                                     update_default_model_settings,
                                                     update_model_settings,
