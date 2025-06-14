@@ -26,6 +26,7 @@ def get_current_user(jwt_data:dict) -> Union[User,str]:
     current_user = user[0]
     return current_user
 
+
 # TODO перписать работу с токенами отдельно и возвращать UserDto
 def signup(user:User) -> User:
     if user.login is None or user.password_hash is None or user.fullname is None:
