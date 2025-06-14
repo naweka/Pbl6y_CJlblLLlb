@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval \"db.adminCommand('ping')\""
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # тесты будут брать из этой переменной
+      DB_CONNECTION_STRING: "mongodb://localhost:27017/"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('src/backend/requirements.txt') }}-${{ matrix.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/backend/requirements.txt
+
+      - name: Run Ruff (lint)
+        run: |
+          ruff check ./src/backend/
+
+      - name: Run Pytest (tests)
+        run: |
+          pytest src/backend/tests.py
