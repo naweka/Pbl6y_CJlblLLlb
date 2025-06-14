@@ -1,5 +1,5 @@
 # E402 Module level import not at top of file
-# ruff: noqa: E402
+# ruff: noqa: E402 
 
 from services.db_service import initalize_test_connection
 initalize_test_connection()
