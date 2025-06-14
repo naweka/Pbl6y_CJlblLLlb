@@ -62,8 +62,8 @@ def test_add_user_should_create_user_when_data_is_valid():
     user = add_user(LOGIN, FULLNAME, pwd_hash)
 
     # Assert
-    assert user is not None
-    assert user.id is not None
+    assert user is None
+    assert user.id is None
     assert user.fullname == FULLNAME
     assert user.password_hash == pwd_hash
 
