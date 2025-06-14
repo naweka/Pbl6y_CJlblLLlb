@@ -1,3 +1,8 @@
+# E722 Do not use bare `except`
+# ruff: noqa: E722
+# E721 Use `is` and `is not` for type comparisons, or `isinstance()` for isinstance checks
+# ruff: noqa: E721
+
 from flask.wrappers import Response
 from functools import wraps
 import traceback

@@ -1,3 +1,5 @@
+# E741 Ambiguous variable name
+# ruff: noqa: E741
 class LimitedReversedList:
     def __init__(s, max_length=10):
         s.l = []

@@ -1,5 +1,7 @@
-from services.db_service import initalize_test_connection
+# E402 Module level import not at top of file
+# ruff: noqa: E402
 
+from services.db_service import initalize_test_connection
 initalize_test_connection()
 
 from services.db_service import (
@@ -175,7 +177,7 @@ def test_find_cards_by_search_text_and_tags_should_return_cards():
         "Python Guide", "Learn Python programming", ["programming", "python"]
     )
     card2 = add_card("Java Basics", "Introduction to Java", ["programming", "java"])
-    card3 = add_card("Cooking Recipes", "Best Italian recipes", ["cooking", "food"])
+    add_card("Cooking Recipes", "Best Italian recipes", ["cooking", "food"])
 
     # Act
     results = find_cards_by_search_text_and_tags("python", None)
@@ -267,7 +269,7 @@ def test_add_model_settings_should_raise_exception_when_file_id_is_none():
 def test_update_default_model_settings_should_update_settings_when_called():
     # Arrange
     # TODO Это костыль, кстати. Надо вообще запретить создвать с айди 'None'
-    initial_settings = add_model_settings(file_id="None")
+    add_model_settings(file_id="None")
 
     # Act
     updated_settings = update_default_model_settings(
