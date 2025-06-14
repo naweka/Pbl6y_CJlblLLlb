@@ -1,3 +1,6 @@
+# E402 Module level import not at top of file
+# ruff: noqa: E402
+
 print("Подключение к СУБД...")
 from services.db_service import initalize_normal_connection
 

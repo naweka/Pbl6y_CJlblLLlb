@@ -76,7 +76,7 @@ def process_file(current_file, merged_detections, filepath: str):
     fig.set_figheight(2)
     ax.axis("off")
 
-    img = librosa.display.specshow(
+    librosa.display.specshow(
         S_db, sr=sr, hop_length=64, x_axis="time", y_axis="linear", ax=ax
     )
 
@@ -217,14 +217,16 @@ def ai_event_loop():
                 # данная система призвана обрабатывать такие случаи
 
                 # если был шум и щас шум, значит, ничего нового не происходит
-                if all([x == False for x in llist()]):
+                # if all([x == False for x in llist()]):
+                if all([not x for x in llist()]):
                     if temp_interval != [-1, -1, []]:
                         predicted_intervals.append(temp_interval)
                         temp_interval = [-1, -1, []]
                     continue
 
                 # если был звук и щас звук, просто обновляем интервал
-                if all([x == True for x in llist()]):
+                # if all([x == True for x in llist()]):
+                if all([x for x in llist()]):
                     if temp_interval == [-1, -1, []]:
                         temp_interval = [start + offset, end - offset, [prob]]
                         continue
@@ -234,7 +236,8 @@ def ai_event_loop():
 
                 # если нам попался звук, но ранее был шум, то возможно это вброс звука,
                 # для принятия решения смотрим на ignore_sound_outliers
-                if llist()[0] == True and llist()[-1] == False:
+                # if llist()[0] == True and llist()[-1] == False:
+                if llist()[0] and not llist()[-1]:
                     # игнорим вбросы звука и будем ждать пока llist полностью
                     # заполнится предиктом звука
                     if ignore_sound_outliers == "no_insert":
@@ -242,7 +245,8 @@ def ai_event_loop():
                     # если щас был звук и прошлый предикт тоже был звук,
                     # то походу надо бы это детектить уже как звук
                     if ignore_sound_outliers == "insert_when_more_than_one":
-                        if llist()[0] == True and llist()[1] == True:
+                        # if llist()[0] == True and llist()[1] == True:
+                        if llist()[0] and not llist()[1]:
                             if temp_interval == [-1, -1, []]:
                                 temp_interval = [start + offset, end - offset, [prob]]
                                 continue
@@ -263,7 +267,8 @@ def ai_event_loop():
 
                 # если нам попался шум, но ранее был звук, то возможно это вброс шума,
                 # для принятия решения смотрим на ignore_noise_outliers
-                if llist()[0] == False and llist()[-1] == True:
+                # if llist()[0] == False and llist()[-1] == True:
+                if not llist()[0] and llist()[-1]:
                     # игнорим вбросы шума и будем ждать пока llist полностью
                     # заполнится предиктом шума
                     if ignore_noise_outliers == "no_cut":
@@ -271,7 +276,8 @@ def ai_event_loop():
                     # если щас был шум и прошлый предикт тоже был шум,
                     # то походу надо бы это детектить уже как шум и резать
                     if ignore_noise_outliers == "cut_when_more_than_one":
-                        if llist()[0] == False and llist()[1] == False:
+                        # if llist()[0] == False and llist()[1] == False:
+                        if not llist()[0] and not llist()[1]:
                             if temp_interval != [-1, -1, []]:
                                 predicted_intervals.append(temp_interval)
                                 temp_interval = [-1, -1, []]

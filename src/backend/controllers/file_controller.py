@@ -1,3 +1,7 @@
+# E722 Do not use bare `except`
+# ruff: noqa: E722
+
+
 from flask import Blueprint, request, send_file
 from services.json_helper_service import endpoint_output_wrapper
 from services.user_service import token_required

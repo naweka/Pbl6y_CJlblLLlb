@@ -1,3 +1,6 @@
+# E722 Do not use bare `except`
+# ruff: noqa: E722
+
 import traceback
 from services.db_service import (
     model_settings_table,
