@@ -22,7 +22,7 @@ def convert_dto_to_model(d):
         raise Exception(f"Объект не является Dto: {type(d)}")
 
     if isinstance(d, UserDto):
-        temp = find_users_by_id([m.id])[0]
+        temp = find_users_by_id([d.id])[0]
         m = User(d.id, d.login, d.fullname, temp.password_hash)
         return d
 
