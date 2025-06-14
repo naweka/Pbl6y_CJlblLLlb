@@ -30,9 +30,7 @@ class GenerateGuidBehavior(TaskSet):
             "Content-Type": "application/json",
             "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDEwMTAxMDEtMDgwOC0wODA4LTA4MDgtMDgwODA4MDgwODA4IiwiZXhwIjoxNzM1NTI4Mjk3fQ.wgErDp-sONXAAO8R9flrlphQPsId5P3Xbyoc1bpUPE8",
         }
-        self.client.get(
-            "/api/v1/generateGuid", headers=headers
-        )
+        self.client.get("/api/v1/generateGuid", headers=headers)
 
 
 class WebsiteUser(HttpUser):

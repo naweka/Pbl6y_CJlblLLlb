@@ -1,12 +1,12 @@
 from flask.wrappers import Response
 from functools import wraps
-import traceback 
+import traceback
 
 
 def obj_to_dict_simple(o):
     if type(o) in [str, int]:
         return o
-        
+
     res = o.__dict__
     return res
 
@@ -35,7 +35,6 @@ def obj_to_dict(item, attributes=None):
             return [_d_serialize(d) for d in _item]
 
         if not _attributes:
-
             if isinstance(_item, dict):
                 _attributes = list(_item.keys())
             else:
@@ -105,12 +104,9 @@ def endpoint_output_wrapper(f):
             # был ли этот словарь ошибкой или объектом.
 
             if type(res) is not dict:
-                # Тут всё просто, добавляем res в нужно поле и 
+                # Тут всё просто, добавляем res в нужно поле и
                 # отправляем наружу.
-                res_dict = {
-                    'error_message': '',
-                    'result': res
-                }
+                res_dict = {"error_message": "", "result": res}
                 return res_dict, code
 
             # Если это всё-таки словарь, тогда проверим, есть
@@ -119,20 +115,18 @@ def endpoint_output_wrapper(f):
 
             res_dict = dict()
 
-            if 'error_message' not in res:
-                res_dict['error_message'] = ''
-                res_dict['result'] = res
+            if "error_message" not in res:
+                res_dict["error_message"] = ""
+                res_dict["result"] = res
             else:
-                res_dict['error_message'] = res['error_message']
-                res_dict['result'] = None
-        
+                res_dict["error_message"] = res["error_message"]
+                res_dict["result"] = None
+
             return res_dict, code
-        
+
         except Exception as e:
-            traceback.print_exc() 
+            traceback.print_exc()
             # print(e)
-            return obj_to_dict({
-                'error_message': str(e)
-            }), 500
-  
+            return obj_to_dict({"error_message": str(e)}), 500
+
     return decorated
